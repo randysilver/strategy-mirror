@@ -1,0 +1,79 @@
+/* Modern + Out of Owls: neutral canvas, brand gold as the emphasis, large tight type, bento hero,
+   segmented progress, flock with trails, post-it notes for open questions. */
+body{font-size:14.5px;letter-spacing:-.005em}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;letter-spacing:-.025em}
+header.top{position:static;padding:20px 0 16px}
+.top-row{position:relative}
+.brand{flex:0 0 100%;flex-direction:row;align-items:center;gap:22px;min-height:92px}
+.brand .logo{display:none}
+.bty{position:absolute;right:0;top:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.bty span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.oo-logo{height:64px;width:auto;background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px 6px}
+.brand h1{font-size:38px;line-height:1.05;font-weight:700;letter-spacing:-.045em}
+.sample{background:var(--warn-soft);color:var(--fg)}
+.btn,.seg,.nav a{border-radius:10px}
+.btn.primary,.fab{background:var(--accent);color:var(--accent-fg)}
+.tier,.queue-item,.src-card,.matrixwrap,.rm,.stat{border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+section>h2{font-size:24px}
+.hero{margin-top:22px;border-radius:28px;grid-template-columns:480px 1fr;box-shadow:0 1px 2px rgba(0,0,0,.04),0 24px 48px -24px rgba(0,0,0,.18)}
+.hero-text{padding:36px}
+.hero-text h2{font-size:46px;line-height:1;letter-spacing:-.02em}
+.northstar{background:var(--surface2);color:var(--fg);transform:none;box-shadow:none;border:1px solid var(--line);border-radius:16px}
+.northstar svg path{fill:var(--star)}
+.northstar b{color:var(--muted)}
+.northstar span{font-family:var(--font-body);font-size:15px;font-weight:500;line-height:1.35}
+.sky{background:radial-gradient(60% 70% at 86% 20%,color-mix(in srgb,var(--star) 26%,transparent),transparent 70%),var(--surface2)}
+.starbig{top:20%;right:44px;filter:drop-shadow(0 0 28px var(--star))}
+.flight{gap:8px;padding:20px 36px 24px}
+.flight::before{display:none}
+.stop{flex:1;width:auto;align-items:stretch;text-align:left;gap:8px}
+.stop .dot,.stop.star .dot{height:8px;width:100%;border:0;border-radius:99px;font-size:0;margin:0;display:block;background:var(--rag,var(--muted))}
+.stop.star .dot svg{display:none}
+.stop.star b::before{content:"\2605  ";color:var(--star)}
+.ragkey{display:flex;align-items:center;gap:8px;position:absolute;left:16px;bottom:10px;font-size:11px;color:var(--muted)}
+.ragkey i{display:block;width:120px;height:8px;border-radius:99px;background:linear-gradient(90deg,hsl(142 55% 40%),hsl(43 95% 52%),hsl(3 78% 50%))}
+.stop b{font-size:14px}
+/* roadmap bars in brand colours */
+.pa.goal,.pa.disc,.pa.delay,.bar.b-discovery{color:#111}
+.pa.res{color:#fff}
+.pa.idea,.bar.b-delivery{color:var(--on-idea)}
+.pa.idea.unl,.bar.unl{color:#111}
+/* post-it notes */
+.qcard{border:0;border-radius:3px;color:var(--ink);box-shadow:0 8px 16px rgba(0,0,0,.18);background:var(--note-a);padding:20px 20px 16px}
+.qcard:nth-child(3n+1){transform:rotate(-1deg)}
+.qcard:nth-child(3n+2){background:var(--note-b);transform:rotate(.8deg)}
+.qcard:nth-child(3n){background:var(--note-c);transform:rotate(-.5deg)}
+.qcard h3{font-family:var(--font-hand);font-size:26px;line-height:1.08;font-weight:700;letter-spacing:0}
+.qcard .row,.qcard .label{color:#2b2b2b}
+.qcard .row strong{color:var(--ink)!important}
+.qcard textarea{background:rgba(255,255,255,.6);border-color:rgba(0,0,0,.2);color:var(--ink)}
+.qcard .btn{background:var(--ink);color:#fff;border-color:var(--ink)}
+.qcard .btn:not(.primary){background:transparent;color:var(--ink);border-color:rgba(0,0,0,.4)}
+.qcard .pill{background:rgba(255,255,255,.7);color:var(--ink)}
+.qcard .diff ins{color:#0b5a32}
+/* status colours: gradient green to amber to red; red only where severity is high */
+.p-conflict{background:#D92D20;color:#fff}
+.p-drift,.p-partial{background:#F5B82E;color:#111}
+.p-aligned,.p-validated{background:#2F9E5B;color:#fff}
+.p-hypothesis{background:var(--hyp-soft);color:var(--fg)}
+.stat{border-top:4px solid var(--line)}
+.stat.bad{border-top-color:#D92D20} .stat.warn{border-top-color:var(--warn)} .stat.ok{border-top-color:#2F9E5B}
+.stat.bad b,.stat.warn b,.stat.ok b{color:var(--fg)}
+.chip-o.none{color:var(--fg)}
+.pa.goal.unl{color:var(--fg)}
+.cap2{background:color-mix(in srgb,var(--surface2) 82%,transparent);padding:2px 8px;border-radius:6px}
+.ragkey{background:color-mix(in srgb,var(--surface2) 82%,transparent);padding:2px 8px;border-radius:6px}
+
+
+/* wordmark: dotless i topped with the North Star */
+.wm{display:inline-block;font-weight:700;letter-spacing:-.02em}
+.brand h1 .sample{letter-spacing:0;font-size:11px;font-weight:600}
+.wm-i{position:relative;display:inline-block}
+.wm-star{position:absolute;left:50%;top:.06em;width:.4em;height:.4em;transform:translateX(-50%);color:#F9AE21;filter:drop-shadow(0 0 .12em rgba(249,174,33,.55))}
+.brand .tag{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--muted);margin:3px 0 6px;display:flex;align-items:center;gap:10px}
+.brand .tag::before{content:"";width:22px;height:2px;border-radius:2px;background:#F9AE21}
+.brand .tag[hidden]{display:none}
+/* background: soft tonal wash, no pattern */
+html body,html body header.top{background-attachment:fixed;background-image:linear-gradient(135deg,rgba(255,255,255,.8),rgba(0,0,0,.025) 55%,rgba(0,0,0,.045))}
+html[data-theme="dark"] body,html[data-theme="dark"] body header.top{background-image:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,0) 50%,rgba(0,0,0,.35))}
+@media (prefers-color-scheme: dark){html:not([data-theme="light"]) body,html:not([data-theme="light"]) body header.top{background-image:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,0) 50%,rgba(0,0,0,.35))}}

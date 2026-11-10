@@ -1,28 +1,9 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>[hidden]{display:none!important}body{margin:0}</style>
-<title>Strategy Mirror</title>
+<title>/*@TITLE@*/</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<!--@FONTS@-->
 <style>
 /* Layout: sticky header, summary strip, vertical Decision Stack (5 tiers), each tier = Said / Done / Understood columns; side drawer chat. */
-:root{
-  --bg:#f3f5f7; --surface:#ffffff; --surface2:#eaeef2; --fg:#16212b; --muted:#566573; --line:#d5dce3;
-  --accent:#0f6e6e; --accent-fg:#ffffff; --accent-soft:#d9eeee;
-  --ok:#1d7a46; --ok-soft:#dcf1e4; --warn:#9a6700; --warn-soft:#fbefcc; --bad:#b4312b; --bad-soft:#f9dedb;
-  --hyp:#5b4bb0; --hyp-soft:#e8e5f7;
-  --band-a:#dfe4e8; --band-b:#f1f3f5; --g-goal:#f2c53d; --g-res:#8a2fb3; --g-disc:#c93066; --g-idea:#c94a17; --g-delay:#6b6b6b;
-  --font-display:"Space Grotesk",system-ui,sans-serif; --font-body:"IBM Plex Sans",system-ui,sans-serif; --font-mono:"IBM Plex Mono",ui-monospace,monospace;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0f161c; --surface:#17212a; --surface2:#1f2b36; --fg:#e6edf3; --muted:#9aabba; --line:#2b3a47;
-  --accent:#4fc1bd; --accent-fg:#06201f; --accent-soft:#143a3a;
-  --ok:#5fd08d; --ok-soft:#14321f; --warn:#e5b43c; --warn-soft:#3a2d0c; --bad:#ff8a80; --bad-soft:#40201d;
-  --hyp:#b3a8f5; --hyp-soft:#2a2550; --band-a:#1e2a35; --band-b:#131b22; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0f161c; --surface:#17212a; --surface2:#1f2b36; --fg:#e6edf3; --muted:#9aabba; --line:#2b3a47;
-  --accent:#4fc1bd; --accent-fg:#06201f; --accent-soft:#143a3a;
-  --ok:#5fd08d; --ok-soft:#14321f; --warn:#e5b43c; --warn-soft:#3a2d0c; --bad:#ff8a80; --bad-soft:#40201d;
-  --hyp:#b3a8f5; --hyp-soft:#2a2550; --band-a:#1e2a35; --band-b:#131b22; color-scheme:dark}
+/*@TOKENS@*/
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:14px;line-height:1.5;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 80px}
@@ -205,6 +186,40 @@ tr.unl td.cell.has{background:color-mix(in srgb,var(--warn) 28%,transparent)}
 .bar.b-delivery{background:var(--g-idea)} .bar.b-discovery{background:var(--g-disc)} .bar.unl{background:var(--warn);color:var(--accent-fg)}
 .chip-o{font-family:var(--font-mono);font-size:10px;border-radius:3px;padding:0 5px;background:var(--accent-soft);color:var(--accent);margin-right:3px;font-weight:600;display:inline-block}
 .chip-o.none{background:var(--warn-soft);color:var(--warn)}
+.ragkey{display:none}
+.hdr-actions{display:flex;gap:8px}
+.fab{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;font-size:15px;font-weight:600;animation:fabpulse 2.4s ease-out 1.2s 2}
+@keyframes fabpulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}100%{box-shadow:0 0 0 18px transparent}}
+.acts{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap}
+.acts a{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:3px 10px;font-size:12px;color:var(--fg);text-decoration:none}
+.acts a:hover{background:var(--surface)}
+.credits{margin-top:40px;padding:22px 0 30px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}.credits a{color:inherit;text-decoration:underline}
+/* default hero layout (skins override) */
+.hero{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:grid;grid-template-columns:410px 1fr}
+.hero-text{padding:26px 28px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.hero-text h2{font-size:32px;line-height:1.08}
+.hero-text p{margin:0;color:var(--muted)}
+.northstar{display:flex;gap:10px;align-items:flex-start;background:var(--star);color:var(--ink);padding:12px 14px;border-radius:10px;transform:rotate(-.8deg);box-shadow:0 4px 0 rgba(0,0,0,.1)}
+.northstar svg{flex:none;width:22px;height:22px}
+.northstar b{font-size:11px;letter-spacing:.08em;text-transform:uppercase;display:block;font-family:var(--font-body)}
+.northstar span{font-family:var(--font-hand);font-size:21px;line-height:1.12;display:block}
+.sky{position:relative;min-height:270px;background:linear-gradient(180deg,transparent 30%,var(--accent-soft))}
+.sky canvas{position:absolute;inset:0;width:100%;height:100%}
+.starbig{position:absolute;right:38px;top:44%;transform:translateY(-50%);width:88px;height:88px;filter:drop-shadow(0 0 20px var(--star))}
+.cap2{position:absolute;right:16px;bottom:10px;font-size:11px;color:var(--muted)}
+.flight{grid-column:1/-1;position:relative;display:flex;justify-content:space-between;padding:20px 44px 22px;border-top:1px solid var(--line)}
+.flight::before{content:"";position:absolute;left:100px;right:100px;top:40px;border-top:3px dashed var(--line)}
+.stop{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;color:var(--fg);width:120px;text-align:center}
+.stop .dot{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-mono);font-size:12px;font-weight:600;border:3px solid;background:var(--surface)}
+.stop.conflict .dot{border-color:var(--bad);color:var(--bad)}
+.stop.drift .dot{border-color:var(--warn);color:var(--warn)}
+.stop.aligned .dot{border-color:var(--ok);color:var(--ok)}
+.stop b{font-size:14px;font-weight:700}
+.stop small{color:var(--muted);font-size:12px}
+.stop.star .dot{width:52px;height:52px;background:var(--star);border-color:var(--star);margin-top:-6px}
+.stop.star .dot svg{width:28px;height:28px}
+.stop:hover b{text-decoration:underline}
+/*@SKIN@*/
 @media (max-width:760px){
   .sdu,.tri{grid-template-columns:1fr}
   .col{border-right:0;border-bottom:1px solid var(--line)} .col:last-child{border-bottom:0}
@@ -216,22 +231,35 @@ tr.unl td.cell.has{background:color-mix(in srgb,var(--warn) 28%,transparent)}
 </style>
 
 <header class="top"><div class="wrap top-row">
-  <div class="brand">
-    <h1>Strategy Mirror <span class="sample">Synthetic sample data</span></h1>
-    <div class="sub">Meridian Freight (fictional) · Said vs Done vs Understood · scanned <span class="mono">10 Nov 2026</span> · 34 sources</div>
-  </div>
+  <div class="brand"><!--@LOGO@--><svg class="logo" viewBox="0 0 44 44" aria-hidden="true"><path d="M6 28c5-11 11-13 16-6 5-7 11-5 16 6-5-3-10-2-16 4-6-6-11-7-16-4z" fill="currentColor"/><path d="M34 6l1.7 3.5 3.8.5-2.8 2.7.7 3.8-3.4-1.8-3.4 1.8.7-3.8-2.8-2.7 3.8-.5z" fill="#ffd23f"/></svg><div class="bt"><h1><span class="wm" id="wm">Starling</span> <span class="sample">Synthetic sample data</span></h1><div class="tag" id="tagline" hidden></div><div class="sub">Meridian Freight (fictional) · Said vs Done vs Understood · scanned <span class="mono">10 Nov 2026</span> · 34 sources</div></div></div>
   <nav class="nav" aria-label="Sections">
     <a href="#stack">Decision Stack</a><a href="#work">Work</a><a href="#questions">Open questions</a><a href="#queue">Pending changes <span class="mono" id="qcount"></span></a><a href="#sources">Sources</a>
   </nav>
-  <button class="btn" id="themeBtn" type="button">Theme</button>
+  <div class="hdr-actions"><button class="btn primary" id="askTop" type="button">Ask Starling</button><button class="btn" id="themeBtn" type="button">Theme</button></div>
 </div></header>
 
 <main class="wrap">
+  <section class="hero" id="hero" aria-label="Alignment overview">
+    <div class="hero-text">
+      <div class="label">The question</div>
+      <h2 id="heroTitle">Is everyone flying toward the same star?</h2>
+      <p id="heroLead">Each bird is a team or person. The North Star is the company vision. A tight flock means the documents, the work and people’s understanding agree.</p>
+      <div class="northstar"><svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6l13.2 27.2 29.8 4.3-21.6 21 5.1 29.7L50 74.1 23.5 88.2l5.1-29.7-21.6-21 29.8-4.3z" fill="#1b2559"/></svg><div><b id="starLabel">North Star · Vision</b><span id="starText"></span></div></div>
+    </div>
+    <div class="sky">
+      <canvas id="flock" aria-hidden="true"></canvas>
+      <svg class="starbig" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 4l14 28.8 31.6 4.6-22.9 22.3 5.4 31.5L50 76.2 21.9 91.2l5.4-31.5L4.4 37.4 36 32.8z" fill="#ffd23f"/></svg>
+      <div class="ragkey" aria-hidden="true"><span>Aligned</span><i></i><span>Severe gap</span></div>
+      <div class="cap2" id="flockCap"></div>
+    </div>
+    <div class="flight" id="flightEl" aria-label="Flight path from work to vision"></div>
+  </section>
+
   <div class="strip" id="strip"></div>
 
   <section id="stack">
     <h2>Decision Stack</h2>
-    <p class="lede">Each tier is read three ways: what the documents say, what the work and data show, and what people report understanding. Gaps between them are flagged, not resolved. Owners can approve changes; decision makers answer open questions.</p>
+    <p class="lede">Organised on Martin Eriksson’s Decision Stack. Each tier is read three ways: what the documents say, what the work and data show, and what people report understanding. Gaps between them are flagged, not resolved. Owners can approve changes; decision makers answer open questions.</p>
     <div class="stack" id="stackEl"></div>
   </section>
 
@@ -267,16 +295,19 @@ tr.unl td.cell.has{background:color-mix(in srgb,var(--warn) 28%,transparent)}
     <div class="dropzone">Drop files here or point to a folder to scan (sample: control is inactive)</div>
   </section>
 </main>
+<footer class="credits"><div class="wrap">Built on the <a href="https://www.mindtheproduct.com/the-product-decision-stack-martin-eriksson/" target="_blank" rel="noopener">Decision Stack</a> by Martin Eriksson and the <a href="https://itamargilad.com/outcome-roadmaps/" target="_blank" rel="noopener">outcome roadmap</a> template by Itamar Gilad. Packaged by <a href="https://outofowls.com" target="_blank" rel="noopener">Out of Owls</a>.</div></footer>
 
-<button class="btn primary fab" id="fab" type="button" aria-expanded="false" aria-controls="drawer">Ask the knowledge base</button>
-<aside class="drawer" id="drawer" hidden aria-label="Ask the knowledge base">
-  <div class="drawer-head"><div><strong>Ask the knowledge base</strong><small>Answers cite sources and mark confidence</small></div><button class="btn sm" id="closeChat" type="button">Close</button></div>
+
+<button class="btn primary fab" id="fab" type="button" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-6l-5 4v-4H7a3 3 0 0 1-3-3z" fill="currentColor"/></svg>Ask Starling</button>
+<aside class="drawer" id="drawer" hidden aria-label="Ask Starling">
+  <div class="drawer-head"><div><strong>Ask Starling</strong><small>Answers cite sources and mark confidence</small></div><button class="btn sm" id="closeChat" type="button">Close</button></div>
   <div class="msgs" id="msgs" aria-live="polite"></div>
   <div class="chips" id="chips"></div>
   <div class="notice">Sample: replies are scripted from the data on this page. A live build sends the question to a model hosted inside your network.</div>
   <form class="composer" id="chatForm"><label for="chatIn" class="label" style="position:absolute;left:-9999px">Question</label><input type="text" id="chatIn" placeholder="Ask about strategy, gaps, owners…" autocomplete="off"><button class="btn primary" type="submit">Send</button></form>
 </aside>
 
+<script>window.SKIN=/*@CONFIG@*/{};</script>
 <script>
 /* ---------- synthetic data ---------- */
 const SOURCES = {
@@ -346,14 +377,14 @@ const QUEUE = [
  {id:"C1",kind:"Correction",tier:"Company Objectives",who:"VP Customer Success",approver:"CFO",before:"NRR 104%",after:"NRR 106% (restated after Oct close)",src:"S2"}
 ];
 const CHAT = [
- {k:["gap","misalign","conflict","biggest"],a:"Three of five tiers show a conflict between what is said and what is done: Vision, Principles and the Analytics product line. The sharpest is Vision: documents target mid-market, but 68% of recent roadmap effort served enterprise accounts [S1][S3][S9]. Confidence: validated for the documents and roadmap, partial for staff understanding (a survey, n=212) [S5]."},
+ {k:["gap","misalign","conflict","biggest"],a:"Four of the six levels show a conflict between what is said and what is done: Work, Product line, Principles and the North Star (vision). Strategy and Objectives are drifting. The sharpest is the vision: documents target mid-market, but 68% of recent roadmap effort served enterprise accounts [S1][S3][S9]. Confidence: validated for the documents and roadmap, partial for staff understanding (a survey, n=212) [S5].",act:[["Go to the Decision Stack","#stack"],["See open questions","#questions"]]},
  {k:["owner","who owns","approve"],a:"Each tier lists an owner and an approver. For Company Strategy the owner is the Chief Strategy Officer and the approver is the CEO [S1]. Owners are taken from document authorship and the org chart, and are unconfirmed until someone approves them."},
  {k:["metric","onboarding","arr","target"],a:"Onboarding is 74 days against a 45-day objective for Mar 2027 and a 21-day aspiration [S7][S1]. ARR is £48m against £90m by FY29 [S2]. Mid-market trial conversion has a 12% target but no data source, so progress is unknown."},
  {k:["decision","milestone","when"],a:"Two decision points are set: Jun 2027 (scale self-serve or revert) and Jan 2028 (carrier partnerships). The second has no defined criteria yet, which is open question Q4 [S1][S10]."},
  {k:["analytics","division","product line"],a:"The Analytics team's objective is 3,000 weekly active mid-market users, but six planning sessions focus on enterprise dashboards and nobody mentioned the objective [S1][S8]. The objective itself is a hypothesis, not validated."},
- {k:["unaligned","not linked","no objective","effort","fte","unlinked"],a:"10 of 27.5 FTE (36%) sit on initiatives with no linked objective: Enterprise custom dashboards (7 FTE, Analytics) and the Rate-card editor (3 FTE, Platform) [S3][S8]. Confidence: partly validated, since effort figures are estimates from the roadmap export, not timesheets."},
- {k:["carrier","partnership"],a:"No initiative is linked to the “Carrier API partnerships” step of the strategy hypothesis. The Jan 2028 decision point depends on it, and its criteria are undefined (Q4) [S1][S3][S10]."},
- {k:["roadmap","after target","late","lands"],a:"On the outcome roadmap, the effect of Self-serve onboarding flow is expected in May 2027, after O1’s Mar 2027 target [S1][S3]. Either the target date or the delivery plan needs to change; this is a question for the owner, not a conclusion."},
+ {k:["unaligned","not linked","no objective","effort","fte","unlinked"],act:[["See unlinked work","#work"]],a:"10 of 27.5 FTE (36%) sit on initiatives with no linked objective: Enterprise custom dashboards (7 FTE, Analytics) and the Rate-card editor (3 FTE, Platform) [S3][S8]. Confidence: partly validated, since effort figures are estimates from the roadmap export, not timesheets."},
+ {k:["carrier","partnership"],act:[["See the work view","#work"],["See open questions","#questions"]],a:"No initiative is linked to the “Carrier API partnerships” step of the strategy hypothesis. The Jan 2028 decision point depends on it, and its criteria are undefined (Q4) [S1][S3][S10]."},
+ {k:["roadmap","after target","late","lands"],act:[["See the roadmap","#work"]],a:"On the outcome roadmap, the effect of Self-serve onboarding flow is expected in May 2027, after O1’s Mar 2027 target [S1][S3]. Either the target date or the delivery plan needs to change; this is a question for the owner, not a conclusion."},
  {k:["open","question","decide"],a:"Four questions are open. The nearest due date is Q3 (CPO, 21 Nov 2026): enterprise dashboards or the mid-market one-screen view for Analytics."}
 ];
 const state = {open:{strategy:true}, answers:{}, queue:[...QUEUE]};
@@ -370,12 +401,12 @@ function toast(m){const t=document.createElement("div");t.className="toast";t.te
 
 /* ---------- render ---------- */
 function renderStrip(){
-  const c = k => TIERS.filter(t=>t.status===k).length;
+  const c = k => stops().filter(t=>t.status===k).length;
   const openQ = QUESTIONS.filter(q=>q.status==="open").length;
   $("#strip").innerHTML = `
-   <div class="stat bad"><b>${c("conflict")}</b><span>tiers in conflict</span></div>
-   <div class="stat warn"><b>${c("drift")}</b><span>tiers drifting</span></div>
-   <div class="stat ok"><b>${c("aligned")}</b><span>tiers aligned</span></div>
+   <div class="stat bad"><b>${c("conflict")}</b><span>levels in conflict</span></div>
+   <div class="stat warn"><b>${c("drift")}</b><span>levels drifting</span></div>
+   <div class="stat ok"><b>${c("aligned")}</b><span>levels aligned</span></div>
    <div class="stat warn"><b>${linkStats().unPct}%</b><span>of effort not linked to an objective</span></div>
    <div class="stat"><b>${openQ}</b><span>open questions</span></div>
    <div class="stat"><b>${state.queue.length}</b><span>changes awaiting approval</span></div>`;
@@ -395,7 +426,7 @@ function strategyDetail(){
 function renderStack(){
   $("#stackEl").innerHTML = TIERS.map(t=>{
     const open = !!state.open[t.id];
-    return `<div class="tier ${t.level==="division"?"sub":""}">
+    return `<div class="tier ${t.level==="division"?"sub":""}" id="tier-${t.id}">
      <button class="tier-head" type="button" data-tier="${t.id}" aria-expanded="${open}">
        <span class="tier-no">${t.no}</span>
        <span class="tier-title"><h3>${esc(t.name)}</h3><small>${esc(t.sub)}</small></span>
@@ -434,7 +465,7 @@ function renderQueue(){
 function renderSources(){
   $("#srcEl").innerHTML = Object.entries(SOURCES).map(([id,s])=>`<div class="src-card"><div class="meta"><span class="src">${id}</span><span>${esc(s.type)}</span><span>${esc(s.date)}</span></div><b>${esc(s.name)}</b><span class="meta">Owner: ${esc(s.owner)}</span></div>`).join("");
 }
-function renderAll(){renderStrip();renderStack();renderWork();renderQuestions();renderQueue();renderSources()}
+function renderAll(){renderHero();renderStrip();renderStack();renderWork();renderQuestions();renderQueue();renderSources()}
 
 /* ---------- work alignment + outcome roadmap ---------- */
 const MON=["Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -532,6 +563,78 @@ function renderWork(){
   }
 }
 
+/* ---------- Starling hero: flight path and flock ---------- */
+const SEV={vision:.78,principles:.88,strategy:.5,objectives:.38,division:.82}; /* sample gap severity 0 (aligned) to 1 (severe) */
+function rag(x){const k=[[142,55,40],[43,95,52],[3,78,50]],u=Math.max(0,Math.min(1,x)),i=u<=.5?0:1,t=u<=.5?u/.5:(u-.5)/.5,a=k[i],b=k[i+1],m=j=>Math.round((a[j]+(b[j]-a[j])*t)*10)/10;return `hsl(${m(0)} ${m(1)}% ${m(2)}%)`}
+function workStatus(){const p=linkStats().unPct;return p>25?"conflict":p>10?"drift":"aligned"}
+function tStat(id){return TIERS.find(t=>t.id===id).status}
+function stops(){return [
+ {code:"W",label:"Work",status:workStatus(),sev:Math.min(1,linkStats().unPct/45),href:"#work"},
+ {code:"4a",label:"Product line",status:tStat("division"),sev:SEV.division,href:"#tier-division"},
+ {code:"4",label:"Objectives",status:tStat("objectives"),sev:SEV.objectives,href:"#tier-objectives"},
+ {code:"3",label:"Strategy",status:tStat("strategy"),sev:SEV.strategy,href:"#tier-strategy"},
+ {code:"2",label:"Principles",status:tStat("principles"),sev:SEV.principles,href:"#tier-principles"},
+ {code:"1",label:"North Star",status:tStat("vision"),sev:SEV.vision,href:"#tier-vision",star:true}]}
+function flockScore(){const s=stops();return s.reduce((a,x)=>a+({aligned:1,drift:.5,conflict:0}[x.status]),0)/s.length}
+function renderHero(){
+  const SK=window.SKIN||{}; if(SK.wordmark){$("#wm").innerHTML='Starl<span class="wm-i">\u0131<svg class="wm-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.2 5.7 20.9l1.5-7.1L1.8 8.9l7.2-.8z" fill="currentColor"/></svg></span>ng';$("#wm").setAttribute("aria-label","Starling")} if(SK.tagline){const t=$("#tagline");t.textContent=SK.tagline;t.hidden=false} if(SK.title)$("#heroTitle").textContent=SK.title; if(SK.lead)$("#heroLead").textContent=SK.lead; if(SK.starLabel)$("#starLabel").textContent=SK.starLabel;
+  $("#starText").textContent=TIERS.find(t=>t.id==="vision").said.t;
+  $("#flightEl").innerHTML=stops().map(s=>`<a class="stop ${s.status}${s.star?" star":""}" href="${s.href}" style="--rag:${rag(s.sev)}" title="${s.label}: gap severity ${Math.round(s.sev*100)}% (sample)"><span class="dot">${s.star?'<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6l13.2 27.2 29.8 4.3-21.6 21 5.1 29.7L50 74.1 23.5 88.2l5.1-29.7-21.6-21 29.8-4.3z" fill="#1b2559"/></svg>':s.code}</span><b>${s.label}</b><small>${statusLabel[s.status]}</small></a>`).join("");
+  $("#flockCap").textContent=`Flock tightness ${Math.round(flockScore()*100)}% · drawn from the six levels below, illustrative`;
+}
+let flockStarted=false;
+function initFlock(){
+  const cv=$("#flock"); if(!cv||flockStarted) return; flockStarted=true;
+  const SK=window.SKIN||{}, ctx=cv.getContext("2d"), dpr=Math.min(2,window.devicePixelRatio||1), score=flockScore(), reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  let W=1,H=1; const size=()=>{const r=cv.getBoundingClientRect();W=r.width||600;H=r.height||270;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};
+  size(); addEventListener("resize",size);
+  const N=230,B=[]; for(let i=0;i<N;i++){const r=Math.sqrt(Math.random()),q=Math.random()*6.283;B.push({x:W*.3+Math.random()*W*.4,y:H*.5+(Math.random()-.5)*H*.6,vx:1+Math.random(),vy:(Math.random()-.5),p:Math.random()*6.28,g:Math.random()<.52?0:1,sp:.8+Math.random()*.4,wa:Math.random()*6.28,c:SK.palette?SK.palette[i%SK.palette.length]:null})}
+  let t=0,color="#1b2559"; const cvar=SK.colorVar||"--fg";
+  let SX=0,SY=0; const starEl=document.querySelector(".starbig"); const locStar=()=>{if(!starEl)return;const r=starEl.getBoundingClientRect(),c=cv.getBoundingClientRect();SX=r.left+r.width/2-c.left;SY=r.top+r.height/2-c.top}; locStar(); addEventListener("resize",locStar);
+  function step(){
+    t++;
+    /* murmuration: 7 nearest neighbours, soft separation, wander, and a target path that leans toward the star as alignment rises (and away from it as it falls) */
+    const coh=.0006+.0078*score*score+.002*score, ali=.004+.085*score, sep=.55, wander=.2+.75*(1-score), pull=.0005+.0019*score;
+    const lean=-.30+1.0*score, bx0=W*.40, by0=H*.56;
+    const px=bx0+Math.sin(t/310)*W*.17, py=by0+Math.sin(t/190+1)*H*.2;
+    const ax=Math.max(W*.08,Math.min(W*.94,px+lean*(SX-px))), ay=Math.max(H*.1,Math.min(H*.85,py+lean*(SY-py)));
+    const sw=Math.max(0,Math.sin(t/420)), split=Math.pow(sw,3)*.17*(.4+.6*score);
+    const bx=ax+Math.cos(t/520)*W*split, by=ay+Math.sin(t/520)*H*split*1.6;
+    const spd=1.4+.5*score, RM=26;
+    for(const b of B){
+      const ds=[];
+      for(const o of B){if(o===b)continue;const dx=o.x-b.x,dy=o.y-b.y;ds.push([dx*dx+dy*dy,o])}
+      ds.sort((p,q)=>p[0]-q[0]);
+      let cx=0,cy=0,vx=0,vy=0,sx=0,sy=0;
+      for(let i=0;i<7;i++){const [d,o]=ds[i];cx+=o.x;cy+=o.y;vx+=o.vx;vy+=o.vy;if(d<300){const f=1-d/300;sx+=(b.x-o.x)*f;sy+=(b.y-o.y)*f}}
+      cx/=7;cy/=7;vx/=7;vy/=7;
+      b.vx+=(cx-b.x)*coh+(vx-b.vx)*ali+sx*sep*.012;
+      b.vy+=(cy-b.y)*coh+(vy-b.vy)*ali+sy*sep*.012;
+      const tx=b.g?bx:ax, ty=b.g?by:ay;
+      b.vx+=(tx-b.x)*pull; b.vy+=(ty-b.y)*pull;
+      b.wa+=(Math.random()-.5)*.25; b.vx+=Math.cos(b.wa)*wander*.1; b.vy+=Math.sin(b.wa)*wander*.1;
+      const m=46; if(b.x<m)b.vx+=.24*(m-b.x)/m; if(b.x>W-RM)b.vx-=.24*(b.x-(W-RM))/m; if(b.y<m)b.vy+=.24*(m-b.y)/m; if(b.y>H-m-24)b.vy-=.24*(b.y-(H-m-24))/m;
+      const sp=Math.hypot(b.vx,b.vy)||1, want=spd*b.sp; const nsp=sp+(want-sp)*.12; b.vx*=nsp/sp; b.vy*=nsp/sp;
+    }
+    for(const b of B){b.x+=b.vx;b.y+=b.vy}
+  }
+  function draw(){
+    if(SK.trails){ctx.globalCompositeOperation="destination-out";ctx.fillStyle="rgba(0,0,0,"+(SK.trailFade||.16)+")";ctx.fillRect(0,0,W,H);ctx.globalCompositeOperation="source-over"}
+    else ctx.clearRect(0,0,W,H);
+    ctx.fillStyle=color; ctx.globalAlpha=SK.alpha||.85;
+    for(const b of B){
+      if(SK.birds==="pixel"){ctx.fillStyle=b.c||color;ctx.fillRect(Math.round(b.x/3)*3,Math.round(b.y/3)*3,3,3);continue}
+      if(SK.birds==="dot"){ctx.beginPath();ctx.arc(b.x,b.y,SK.dotR||1.8,0,6.283);ctx.fill();continue}
+      const a=Math.atan2(b.vy,b.vx), f=.55+.45*Math.sin(t*.35+b.p);
+      ctx.save(); ctx.translate(b.x,b.y); ctx.rotate(a); ctx.beginPath(); ctx.moveTo(6,0); ctx.lineTo(-4,-3.4*f); ctx.lineTo(-2,0); ctx.lineTo(-4,3.4*f); ctx.closePath(); ctx.fill(); ctx.restore();
+    }
+    ctx.globalAlpha=1;
+  }
+  function loop(){ if(t%45===0) color=getComputedStyle(document.documentElement).getPropertyValue(cvar).trim()||color; step(); draw(); requestAnimationFrame(loop) }
+  color=getComputedStyle(document.documentElement).getPropertyValue(cvar).trim()||color;
+  if(reduce){for(let i=0;i<500;i++)step();draw()} else loop();
+}
+
 /* ---------- events ---------- */
 document.addEventListener("click",e=>{const v=e.target.closest("[data-view]");if(v){state.view=v.dataset.view;renderWork()}});
 document.addEventListener("click",e=>{
@@ -566,13 +669,15 @@ $("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.datase
 /* chat */
 const drawer=$("#drawer"),fab=$("#fab"),msgs=$("#msgs");
 function openChat(o){drawer.hidden=!o;fab.hidden=o;fab.setAttribute("aria-expanded",o);if(o)$("#chatIn").focus()}
-fab.onclick=()=>openChat(true); $("#closeChat").onclick=()=>openChat(false);
+fab.onclick=()=>openChat(true); $("#askTop").onclick=()=>openChat(true);
+document.addEventListener("click",e=>{if(e.target.closest("[data-closechat]"))openChat(false)}); $("#closeChat").onclick=()=>openChat(false);
 function addMsg(cls,html){const d=document.createElement("div");d.className="msg "+cls;d.innerHTML=html;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight}
 function answer(q){
-  const l=q.toLowerCase(); const hit=CHAT.find(c=>c.k.some(k=>l.includes(k)));
-  const txt=hit?hit.a:"I can’t find that in the knowledge base. In this sample I only answer about gaps, owners, metrics, decision points, Analytics and open questions.";
+  const l=q.toLowerCase(); const hit=CHAT.find(c=>c.k.some(k=>new RegExp("\\b"+k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).test(l)));
+  const txt=hit?hit.a:"I can’t find that in the knowledge base. In this sample I only answer about gaps, owners, metrics, decision points, Analytics, unlinked work, carrier partnerships and open questions.";
   const ids=[...new Set((txt.match(/S\d+/g)||[]))];
-  return esc(txt).replace(/\[(S\d+)\]/g,"")+(ids.length?`<div class="cites">${srcTags(ids)}</div>`:"");
+  const acts=hit&&hit.act?`<div class="acts">${hit.act.map(a=>`<a href="${a[1]}" data-closechat>${esc(a[0])}</a>`).join("")}</div>`:"";
+  return esc(txt).replace(/\s*\[(S\d+)\]/g,"")+(ids.length?`<div class="cites">${srcTags(ids)}</div>`:"")+acts;
 }
 function ask(q){addMsg("u",esc(q));setTimeout(()=>addMsg("a",answer(q)),250)}
 $("#chatForm").onsubmit=e=>{e.preventDefault();const v=$("#chatIn").value.trim();if(!v)return;$("#chatIn").value="";ask(v)};
@@ -582,6 +687,5 @@ $("#chips").onclick=e=>{const c=e.target.closest(".chip");if(c)ask(c.textContent
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!drawer.hidden)openChat(false)});
 
 renderAll();
+initFlock();
 </script>
-
-</html>

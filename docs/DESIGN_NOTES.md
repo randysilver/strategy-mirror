@@ -11,6 +11,8 @@ Show, for one company, division or team: what the strategy documents say (said),
 - **Roadmap view:** follows Itamar Gilad's outcome roadmap template: goal bars with a target diamond, then Research, Product Discovery, Product Delivery (ideas inside a dashed box, or "to be determined"), and Effect Delay. Source: itamargilad.com/outcome-roadmaps. A by-team view is an addition not in Gilad's template.
 - **Confidence:** each item carries a validated / partly validated / hypothesis marker.
 - **Alignment:** every initiative links to zero or more objectives. Work linked to none is shown as unaligned.
+- **Name:** Starling. The North Star is the company vision; the flock is the people and teams; tightness reflects alignment.
+- **Skins:** two looks (starling, modern) share one base. See `SKINS.md`.
 - **Target:** desktop only for now. No phone layout.
 - **Delivery:** bespoke per client. Prerequisites: somewhere to host code (GitHub by default) and a database (Sheets, Excel, Airtable or other, decided in onboarding). Everything stays on the client's internal infrastructure.
 
@@ -24,3 +26,5 @@ Show, for one company, division or team: what the strategy documents say (said),
 - Because the database varies by client, a storage adapter layer is likely needed. Not designed yet.
 - Onboarding prompt and profile template have not been run against a real client.
 - No independent audit (Codex or other) has been run on the prompt, template or mockup.
+
+- **Open (design):** the animation has only been checked in a headless browser, not on real screens. Tagline wording ("Enabling strategic alignment") is a placeholder; alternatives considered: "Fly the same way", "One flock, one star".

@@ -1,0 +1,21 @@
+/* Brand colours: Sunflower Gold F9AE21, Gunmetal 434343, Sweet Peony E36397, Icy Blue A3D9FF, plus black.
+   Status colours (ok, warn, bad) sit outside the brand palette because they carry meaning. */
+:root{
+  --bg:#fafafa; --surface:#ffffff; --surface2:#f2f2f2; --fg:#111111; --muted:#5a5a5a; --line:#e3e3e3;
+  --accent:#111111; --accent-fg:#ffffff; --accent-soft:#fdf1d6;
+  --star:#F9AE21; --ink:#111111; --note-a:#F9AE21; --note-b:#E36397; --note-c:#A3D9FF;
+  --ok:#0f8a4f; --ok-soft:#dff5e9; --warn:#E9A100; --warn-soft:#fdf0d0; --bad:#d12e2e; --bad-soft:#fde4e2;
+  --hyp:#434343; --hyp-soft:#ececec;
+  --band-a:#f0f0f0; --band-b:#fafafa; --g-goal:#F9AE21; --g-res:#434343; --g-disc:#E36397; --g-idea:#111111; --g-delay:#A3D9FF; --on-idea:#ffffff;
+  --font-display:"Geist",system-ui,sans-serif; --font-body:"Geist",system-ui,sans-serif; --font-mono:"Geist Mono",ui-monospace,monospace; --font-hand:"Caveat","Comic Sans MS",cursive;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d0d0d; --surface:#161616; --surface2:#1e1e1e; --fg:#f5f5f5; --muted:#a3a3a3; --line:#2a2a2a;
+  --accent:#F9AE21; --accent-fg:#111111; --accent-soft:#2f2610;
+  --ok:#4ade80; --ok-soft:#10301d; --warn:#fbbf24; --warn-soft:#352706; --bad:#f87171; --bad-soft:#3a1717; --hyp:#c9c9c9; --hyp-soft:#2a2a2a;
+  --band-a:#161616; --band-b:#101010; --g-res:#6a6a6a; --g-idea:#f5f5f5; --on-idea:#111111; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d0d0d; --surface:#161616; --surface2:#1e1e1e; --fg:#f5f5f5; --muted:#a3a3a3; --line:#2a2a2a;
+  --accent:#F9AE21; --accent-fg:#111111; --accent-soft:#2f2610;
+  --ok:#4ade80; --ok-soft:#10301d; --warn:#fbbf24; --warn-soft:#352706; --bad:#f87171; --bad-soft:#3a1717; --hyp:#c9c9c9; --hyp-soft:#2a2a2a;
+  --band-a:#161616; --band-b:#101010; --g-res:#6a6a6a; --g-idea:#f5f5f5; --on-idea:#111111; color-scheme:dark}

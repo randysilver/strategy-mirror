@@ -1,0 +1,16 @@
+{
+  "title_tag": "Starling Modern",
+  "logo": true,
+  "broughtBy": "Brought to you by",
+  "birds": "chevron",
+  "dotR": 2,
+  "trails": false,
+  "trailFade": 0.3,
+  "alpha": 0.9,
+  "colorVar": "--accent",
+  "title": "Are we all heading the same way?",
+  "lead": "Each bird is a team or person. The star is the company vision. The tighter the flock, the more your documents, your work and your people agree.",
+  "starLabel": "North Star",
+  "wordmark": true,
+  "tagline": "Enabling strategic alignment"
+}

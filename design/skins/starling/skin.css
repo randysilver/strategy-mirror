@@ -1,0 +1,23 @@
+/* Starling skin: dusk-sky murmuration, North Star, sticky-note questions, journey stepper */
+body{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;font-size:15px}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:-.005em;font-weight:600}
+.brand{flex-direction:row;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:14px;background:var(--surface);border:1px solid var(--line);flex:none;color:var(--fg)}
+.brand h1{font-size:26px}
+.btn,.seg,.nav a{border-radius:99px}
+.btn.primary{background:var(--accent);color:var(--accent-fg)}
+.tier,.queue-item,.src-card,.matrixwrap,.rm{border-radius:16px}
+.stat{border-radius:14px}
+.stat b{font-family:var(--font-display)}
+section>h2{font-size:24px}
+.qcard{border:0;border-radius:3px;color:var(--ink);box-shadow:0 7px 14px rgba(0,0,0,.16);background:var(--note-a);padding:18px 18px 16px}
+.qcard:nth-child(odd){transform:rotate(-.9deg)}
+.qcard:nth-child(even){background:var(--note-b);transform:rotate(.8deg)}
+.qcard h3{font-family:var(--font-hand);font-size:25px;line-height:1.1;font-weight:700}
+.qcard .row,.qcard .label{color:#3a4478}
+.qcard .row strong{color:var(--ink)!important}
+.qcard textarea{background:rgba(255,255,255,.62);border-color:rgba(27,37,89,.25);color:var(--ink)}
+.qcard .btn{background:var(--ink);color:#fff;border-color:var(--ink)}
+.qcard .btn:not(.primary){background:transparent;color:var(--ink);border-color:rgba(27,37,89,.4)}
+.qcard .pill{background:rgba(255,255,255,.7);color:var(--ink)}
+.qcard .diff ins{color:#0f5c33}
