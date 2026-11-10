@@ -3,3 +3,5 @@
 client/
 .env
 *.secret
+
+Claude outputs/
