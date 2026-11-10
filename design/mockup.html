@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Strategy Mirror</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: sticky header, summary strip, vertical Decision Stack (5 tiers), each tier = Said / Done / Understood columns; side drawer chat. */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --surface2:#eaeef2; --fg:#16212b; --muted:#566573; --line:#d5dce3;
+  --accent:#0f6e6e; --accent-fg:#ffffff; --accent-soft:#d9eeee;
+  --ok:#1d7a46; --ok-soft:#dcf1e4; --warn:#9a6700; --warn-soft:#fbefcc; --bad:#b4312b; --bad-soft:#f9dedb;
+  --hyp:#5b4bb0; --hyp-soft:#e8e5f7;
+  --band-a:#dfe4e8; --band-b:#f1f3f5; --g-goal:#f2c53d; --g-res:#8a2fb3; --g-disc:#c93066; --g-idea:#c94a17; --g-delay:#6b6b6b;
+  --font-display:"Space Grotesk",system-ui,sans-serif; --font-body:"IBM Plex Sans",system-ui,sans-serif; --font-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f161c; --surface:#17212a; --surface2:#1f2b36; --fg:#e6edf3; --muted:#9aabba; --line:#2b3a47;
+  --accent:#4fc1bd; --accent-fg:#06201f; --accent-soft:#143a3a;
+  --ok:#5fd08d; --ok-soft:#14321f; --warn:#e5b43c; --warn-soft:#3a2d0c; --bad:#ff8a80; --bad-soft:#40201d;
+  --hyp:#b3a8f5; --hyp-soft:#2a2550; --band-a:#1e2a35; --band-b:#131b22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f161c; --surface:#17212a; --surface2:#1f2b36; --fg:#e6edf3; --muted:#9aabba; --line:#2b3a47;
+  --accent:#4fc1bd; --accent-fg:#06201f; --accent-soft:#143a3a;
+  --ok:#5fd08d; --ok-soft:#14321f; --warn:#e5b43c; --warn-soft:#3a2d0c; --bad:#ff8a80; --bad-soft:#40201d;
+  --hyp:#b3a8f5; --hyp-soft:#2a2550; --band-a:#1e2a35; --band-b:#131b22; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 80px}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{font-family:var(--font-display);margin:0;text-wrap:balance;font-weight:600}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,textarea:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:12px 0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.top-row{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:2px;min-width:0}
+.brand h1{font-size:20px}
+.brand .sub{color:var(--muted);font-size:12px}
+.sample{display:inline-block;background:var(--warn-soft);color:var(--warn);font-size:11px;font-weight:600;padding:1px 8px;border-radius:99px;margin-left:8px;vertical-align:middle}
+.nav{display:flex;gap:4px;flex-wrap:wrap}
+.nav a{padding:6px 12px;border-radius:6px;color:var(--muted);text-decoration:none;font-weight:500}
+.nav a:hover{background:var(--surface2);color:var(--fg)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:6px;font-weight:500}
+.btn:hover{background:var(--surface2)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.sm{padding:3px 9px;font-size:12px}
+
+section{padding-top:28px}
+section>h2{font-size:18px;margin-bottom:4px}
+section>p.lede{color:var(--muted);margin:0 0 14px;max-width:70ch}
+
+/* summary strip */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:20px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px}
+.stat b{display:block;font-family:var(--font-display);font-size:26px;line-height:1.1}
+.stat span{color:var(--muted);font-size:12px}
+.stat.bad b{color:var(--bad)} .stat.warn b{color:var(--warn)} .stat.ok b{color:var(--ok)}
+
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.p-validated{background:var(--ok-soft);color:var(--ok)}
+.p-partial{background:var(--warn-soft);color:var(--warn)}
+.p-hypothesis{background:var(--hyp-soft);color:var(--hyp)}
+.p-aligned{background:var(--ok-soft);color:var(--ok)}
+.p-drift{background:var(--warn-soft);color:var(--warn)}
+.p-conflict{background:var(--bad-soft);color:var(--bad)}
+.p-unknown{background:var(--surface2);color:var(--muted)}
+
+/* stack */
+.stack{display:flex;flex-direction:column;gap:10px}
+.tier{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.tier-head{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 14px;width:100%;background:none;border:0;text-align:left}
+.tier-head:hover{background:var(--surface2)}
+.tier-no{font-family:var(--font-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:2px 6px}
+.tier-title{display:flex;flex-direction:column;gap:2px;min-width:0}
+.tier-title h3{font-size:16px}
+.tier-title small{color:var(--muted)}
+.tier-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.tier.sub{margin-left:28px;border-style:dashed}
+.tier-body{border-top:1px solid var(--line)}
+.sdu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.col{padding:14px;border-right:1px solid var(--line);min-width:0}
+.col:last-child{border-right:0}
+.col h4{margin:0 0 6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.col p{margin:0 0 8px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;color:var(--muted);font-size:12px}
+.src{font-family:var(--font-mono);font-size:11px;background:var(--surface2);padding:1px 6px;border-radius:4px;color:var(--muted)}
+.finding{margin:0;padding:10px 14px;background:var(--bad-soft);color:var(--fg);border-top:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.finding.drift{background:var(--warn-soft)} .finding.aligned{background:var(--ok-soft)}
+.finding b{white-space:nowrap}
+.owners{display:flex;flex-wrap:wrap;gap:12px;padding:10px 14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);align-items:center}
+.owners strong{color:var(--fg);font-weight:500}
+
+/* strategy detail */
+.tri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}
+.tri .col h4{color:var(--accent)}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;font-weight:600;padding:4px 6px 4px 0}
+td{padding:6px 6px 6px 0;border-top:1px solid var(--line);vertical-align:top}
+.tablewrap{overflow-x:auto}
+.timeline{border-top:1px solid var(--line);padding:14px}
+.tl{position:relative;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:10px}
+.ms{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--bg)}
+.ms .date{font-family:var(--font-mono);font-size:12px;color:var(--accent);font-weight:500}
+.ms.decision{border-color:var(--accent);background:var(--accent-soft)}
+.ms .tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.hyp-steps{margin:0;padding-left:18px}
+.hyp-steps li{margin-bottom:6px}
+
+/* questions & approvals */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.qcard h3{font-size:15px}
+.qcard .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:12px}
+.qcard.answered{opacity:.85}
+form.answer{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+textarea,select,input[type=text]{width:100%;font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px}
+textarea{min-height:70px;resize:vertical}
+.row-end{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.queue-item{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;gap:12px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+.queue-item+.queue-item{margin-top:8px}
+.queue-item>div{min-width:0;flex:1 1 280px}
+.diff{font-size:12.5px;margin-top:4px}
+.diff del{color:var(--bad);text-decoration:line-through} .diff ins{color:var(--ok);text-decoration:none;font-weight:500}
+.empty{color:var(--muted);padding:12px;border:1px dashed var(--line);border-radius:8px}
+
+/* sources */
+.src-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.src-card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.src-card b{font-weight:500;overflow-wrap:anywhere}
+.dropzone{border:2px dashed var(--line);border-radius:10px;padding:16px;text-align:center;color:var(--muted);margin-top:10px}
+
+/* chat */
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:20;box-shadow:0 4px 16px rgba(0,0,0,.25);border-radius:99px;padding:10px 18px}
+.drawer{position:fixed;top:0;bottom:0;right:0;width:min(420px,100%);z-index:30;background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;box-shadow:-8px 0 24px rgba(0,0,0,.18);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-right:env(safe-area-inset-right,0px)}
+.drawer-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.drawer-head small{display:block;color:var(--muted)}
+.msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:92%;padding:9px 12px;border-radius:10px;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:var(--accent);color:var(--accent-fg)}
+.msg.a{align-self:flex-start;background:var(--surface2)}
+.msg .cites{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
+.chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:3px 10px;font-size:12px}
+.chip:hover{background:var(--surface2)}
+.composer{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.notice{font-size:12px;color:var(--muted);padding:8px 14px;border-top:1px solid var(--line);background:var(--warn-soft)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(20px,env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:8px;z-index:50}
+
+/* work alignment + outcome roadmap (Gilad template: goals on top, research > discovery > delivery ideas > effect delay) */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:6px 14px;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+.work-bar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.gaps{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.gaps .finding{border:1px solid var(--line);border-radius:8px}
+.matrixwrap{overflow-x:auto;margin-bottom:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+table.matrix th,table.matrix td{padding:6px 10px 6px 0;text-align:center}
+table.matrix th:first-child,table.matrix td:first-child{text-align:left;min-width:190px}
+td.cell{font-family:var(--font-mono);border-top:1px solid var(--line)}
+td.cell.has{background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--fg);font-weight:500}
+tr.unl td.cell.has{background:color-mix(in srgb,var(--warn) 28%,transparent)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:0 0 10px}
+.sw{display:inline-block;width:16px;height:10px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.rm{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.rm-inner{min-width:980px}
+.qhead,.bands{display:grid;grid-template-columns:2fr 3fr 3fr 3fr 3fr}
+.qhead{border-bottom:3px solid var(--fg)}
+.qhead div{padding:10px;text-align:center;font-family:var(--font-display);font-weight:600;font-size:16px}
+.qhead div:nth-child(odd),.bands div:nth-child(odd){background:var(--band-a)}
+.qhead div:nth-child(even),.bands div:nth-child(even){background:var(--band-b)}
+.rmt{position:relative}
+.bands{position:absolute;inset:0}
+.blk{position:relative;border-top:1px solid var(--line)}
+.blk:first-of-type{border-top:0}
+.pa{position:absolute;border-radius:3px;font-size:12px;line-height:1.2;padding:0 8px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#fff;height:28px}
+.pa span{overflow:hidden;text-overflow:ellipsis}
+.pa.goal{background:var(--g-goal);color:#1b1b1b;font-weight:600;font-size:13px;height:32px;border-radius:2px;justify-content:center}
+.pa.goal.unl{background:repeating-linear-gradient(45deg,var(--warn-soft),var(--warn-soft) 8px,transparent 8px,transparent 16px);border:1px dashed var(--warn);color:var(--warn)}
+.pa.res{background:var(--g-res)}
+.pa.disc{background:var(--g-disc)}
+.pa.idea{background:var(--g-idea);height:26px}
+.pa.idea.unl{background:var(--warn);color:var(--accent-fg)}
+.pa.delay{background:var(--g-delay)}
+.dia{position:absolute;width:15px;height:15px;background:var(--fg);transform:rotate(45deg)}
+.dbox{position:absolute;border:1.5px dashed var(--muted);border-radius:12px;color:var(--fg)}
+.dbox b{position:absolute;left:12px;top:4px;font-size:11px;font-weight:600}
+.dbox.tbd{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
+.cap{position:absolute;font-size:11px;color:var(--muted);white-space:nowrap}
+.rrow{display:grid;grid-template-columns:250px repeat(14,minmax(50px,1fr));align-items:center;border-top:1px solid var(--line);min-height:38px}
+.rhead{background:var(--surface2);font-size:11px;font-family:var(--font-mono);color:var(--muted);border-top:0;line-height:1.2}
+.rhead div{padding:6px 2px;text-align:center;border-left:1px solid var(--line)}
+.rhead div:first-child{border-left:0;text-align:left;padding-left:12px}
+.rl{padding:6px 12px;min-width:0;grid-row:1;grid-column:1}
+.rl b{font-weight:500;display:block;overflow-wrap:anywhere}
+.rl small{color:var(--muted);display:block}
+.lane{background:var(--accent-soft)}
+.lane .rl b{font-family:var(--font-display);font-size:14px}
+.bar{height:18px;border-radius:3px;grid-row:1;font-size:10px;line-height:18px;padding:0 5px;overflow:hidden;white-space:nowrap;color:#fff}
+.bar.b-delivery{background:var(--g-idea)} .bar.b-discovery{background:var(--g-disc)} .bar.unl{background:var(--warn);color:var(--accent-fg)}
+.chip-o{font-family:var(--font-mono);font-size:10px;border-radius:3px;padding:0 5px;background:var(--accent-soft);color:var(--accent);margin-right:3px;font-weight:600;display:inline-block}
+.chip-o.none{background:var(--warn-soft);color:var(--warn)}
+@media (max-width:760px){
+  .sdu,.tri{grid-template-columns:1fr}
+  .col{border-right:0;border-bottom:1px solid var(--line)} .col:last-child{border-bottom:0}
+  .tier.sub{margin-left:12px}
+  .tier-head{grid-template-columns:1fr}
+  .tier-right{justify-content:flex-start}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="top"><div class="wrap top-row">
+  <div class="brand">
+    <h1>Strategy Mirror <span class="sample">Synthetic sample data</span></h1>
+    <div class="sub">Meridian Freight (fictional) · Said vs Done vs Understood · scanned <span class="mono">10 Nov 2026</span> · 34 sources</div>
+  </div>
+  <nav class="nav" aria-label="Sections">
+    <a href="#stack">Decision Stack</a><a href="#work">Work</a><a href="#questions">Open questions</a><a href="#queue">Pending changes <span class="mono" id="qcount"></span></a><a href="#sources">Sources</a>
+  </nav>
+  <button class="btn" id="themeBtn" type="button">Theme</button>
+</div></header>
+
+<main class="wrap">
+  <div class="strip" id="strip"></div>
+
+  <section id="stack">
+    <h2>Decision Stack</h2>
+    <p class="lede">Each tier is read three ways: what the documents say, what the work and data show, and what people report understanding. Gaps between them are flagged, not resolved. Owners can approve changes; decision makers answer open questions.</p>
+    <div class="stack" id="stackEl"></div>
+  </section>
+
+  <section id="work">
+    <h2>Work and outcomes</h2>
+    <p class="lede">Every initiative should serve at least one objective. The roadmap puts each objective on top, with research, discovery and delivery below it, following Itamar Gilad’s outcome roadmap template. Switch to team view to see who is working on what.</p>
+    <div class="work-bar">
+      <div class="seg" role="group" aria-label="Group work by"><button type="button" data-view="obj" aria-pressed="true">By objective</button><button type="button" data-view="team" aria-pressed="false">By team</button></div>
+      <span class="meta">Sample effort figures in FTE; sources S3, S8</span>
+    </div>
+    <div class="gaps" id="gapsEl"></div>
+    <div class="matrixwrap" id="matrixEl"></div>
+    <div class="legend" id="legendEl"></div>
+    <div class="rm"><div class="rm-inner" id="rmEl"></div></div>
+  </section>
+
+  <section id="questions">
+    <h2>Open questions</h2>
+    <p class="lede">Questions the evidence raises that the organisation has not answered. Each has a named decision maker. Answers go to the approval queue before they change the record.</p>
+    <div class="cards" id="qEl"></div>
+  </section>
+
+  <section id="queue">
+    <h2>Pending changes</h2>
+    <p class="lede">Suggested corrections and answers wait here for the owner of the affected item.</p>
+    <div id="queueEl"></div>
+  </section>
+
+  <section id="sources">
+    <h2>Knowledge base</h2>
+    <p class="lede">Everything the page is built from. Folders are rescanned on a schedule; uploads are added immediately and tagged by type.</p>
+    <div class="src-grid" id="srcEl"></div>
+    <div class="dropzone">Drop files here or point to a folder to scan (sample: control is inactive)</div>
+  </section>
+</main>
+
+<button class="btn primary fab" id="fab" type="button" aria-expanded="false" aria-controls="drawer">Ask the knowledge base</button>
+<aside class="drawer" id="drawer" hidden aria-label="Ask the knowledge base">
+  <div class="drawer-head"><div><strong>Ask the knowledge base</strong><small>Answers cite sources and mark confidence</small></div><button class="btn sm" id="closeChat" type="button">Close</button></div>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="chips" id="chips"></div>
+  <div class="notice">Sample: replies are scripted from the data on this page. A live build sends the question to a model hosted inside your network.</div>
+  <form class="composer" id="chatForm"><label for="chatIn" class="label" style="position:absolute;left:-9999px">Question</label><input type="text" id="chatIn" placeholder="Ask about strategy, gaps, owners…" autocomplete="off"><button class="btn primary" type="submit">Send</button></form>
+</aside>
+
+<script>
+/* ---------- synthetic data ---------- */
+const SOURCES = {
+  S1:{name:"FY27 Strategy Deck v4",type:"Strategy doc",date:"Aug 2026",owner:"Chief Strategy Officer"},
+  S2:{name:"Board pack Q3",type:"Report",date:"Oct 2026",owner:"CFO"},
+  S3:{name:"Product roadmap export",type:"Spreadsheet",date:"Nov 2026",owner:"CPO"},
+  S4:{name:"Company values one-pager",type:"Strategy doc",date:"Jan 2026",owner:"CEO"},
+  S5:{name:"Quarterly pulse survey (n=212)",type:"Survey",date:"Oct 2026",owner:"People Lead"},
+  S6:{name:"Leadership offsite transcript",type:"Transcript",date:"Sep 2026",owner:"CEO"},
+  S7:{name:"Onboarding funnel metrics",type:"Metrics",date:"Nov 2026",owner:"VP Customer Success"},
+  S8:{name:"Analytics team planning transcripts (x6)",type:"Transcript",date:"Sep–Oct 2026",owner:"Head of Analytics"},
+  S9:{name:"Sales pipeline report",type:"Report",date:"Nov 2026",owner:"CRO"},
+  S10:{name:"Partnerships weekly notes",type:"Transcript",date:"Oct 2026",owner:"Head of Partnerships"}
+};
+const TIERS = [
+ {id:"vision",no:"1",name:"Company Vision",sub:"Why we exist, and the future we are building toward",level:"company",
+  said:{t:"Make every shipment visible, dock to door, for every mid-market shipper by 2030.",src:["S1","S4"],conf:"validated"},
+  done:{t:"68% of roadmap effort in the last two quarters served enterprise accounts (>500 shipments/mo).",src:["S3","S9"],conf:"validated"},
+  und:{t:"41% of staff can state the vision unprompted. Half of those say “track enterprise freight”.",src:["S5"],conf:"partial"},
+  status:"conflict",finding:"Documents say mid-market; roadmap effort and staff recall point to enterprise.",
+  owner:"CEO",approver:"Chief Strategy Officer"},
+ {id:"principles",no:"2",name:"Principles",sub:"Rules that guide trade-offs",level:"company",
+  said:{t:"Four principles, e.g. “Customer outcomes even over feature count”; “Speed of learning even over speed of delivery”.",src:["S4"],conf:"validated"},
+  done:{t:"14 of 19 launches this year were justified by feature parity in planning docs, not customer outcomes.",src:["S3","S8"],conf:"partial"},
+  und:{t:"22% recall any principle. Teams cite “ship what sales asked for” as the working rule.",src:["S5","S8"],conf:"partial"},
+  status:"conflict",finding:"Stated principles are not visible in how work is justified.",
+  owner:"CEO",approver:"People Lead"},
+ {id:"strategy",no:"3",name:"Company Strategy",sub:"Baseline, aspiration and hypothesis",level:"company",open:true,
+  said:{t:"Grow from £48m to £90m ARR by FY29 by winning mid-market via self-serve onboarding, carrier integrations and packaging.",src:["S1","S2"],conf:"validated"},
+  done:{t:"Self-serve onboarding is in beta with 9 accounts. No work on carrier integrations is on the roadmap.",src:["S3","S7","S10"],conf:"validated"},
+  und:{t:"Leaders describe three different growth paths. 58% of managers cannot name the target ARR.",src:["S5","S6"],conf:"partial"},
+  status:"drift",finding:"Documented hypothesis has three steps; only one is being executed.",
+  owner:"Chief Strategy Officer",approver:"CEO",detail:true},
+ {id:"objectives",no:"4",name:"Company Objectives",sub:"Measurable outcomes for the next 2–4 quarters",level:"company",
+  said:{t:"O1 Cut onboarding to 45 days. O2 Reach 12% mid-market trial conversion. O3 Lift NRR to 112%.",src:["S1"],conf:"validated"},
+  done:{t:"Onboarding at 74 days, trending down slowly. Mid-market trial conversion is not measured. NRR 104%.",src:["S7","S9","S2"],conf:"validated"},
+  und:{t:"Most teams can state O1. O2 is unknown to 7 of 9 team leads interviewed.",src:["S5","S8"],conf:"partial"},
+  status:"drift",finding:"O2 has no data source, so progress cannot be seen.",
+  owner:"Chief Strategy Officer",approver:"CFO"},
+ {id:"division",no:"4a",name:"Product Line Strategy & Objectives",sub:"Analytics line (one of three lines in sample)",level:"division",
+  said:{t:"Analytics: “Give mid-market shippers a one-screen answer on late shipments.” Objective: 3,000 weekly active mid-market users.",src:["S1"],conf:"hypothesis"},
+  done:{t:"Six planning sessions focus on enterprise dashboards and custom reporting. No mid-market user research since March.",src:["S8","S3"],conf:"validated"},
+  und:{t:"Team believes the objective is “enterprise renewals”. Nobody mentioned weekly active users.",src:["S8"],conf:"partial"},
+  status:"conflict",finding:"Product line objectives contradict the company objective they should serve (see open question Q3).",
+  owner:"Head of Analytics",approver:"CPO"}
+];
+const STRAT = {
+ baseline:{narr:"Strong enterprise base, slow to onboard, mid-market barely penetrated.",metrics:[
+   ["ARR","£48m","£48m","validated"],["Enterprise share of revenue","78%","—","validated"],["Onboarding time","74 days","—","validated"],["Net revenue retention","104%","—","validated"],["Mid-market trial conversion","not measured","—","unknown"]]},
+ aspiration:{narr:"A product mid-market shippers can adopt without a services project, with growth no longer dependent on a handful of large accounts.",metrics:[
+   ["ARR (FY29)","—","£90m","partial"],["Mid-market share of new ARR","—","40%","hypothesis"],["Onboarding time","—","21 days","hypothesis"],["Net revenue retention","—","112%","partial"]]},
+ hypothesis:{narr:"If onboarding becomes self-serve, carrier connections become standard, and packaging fits smaller shippers, mid-market becomes a repeatable growth engine.",steps:[
+   ["Self-serve onboarding","In progress (beta, 9 accounts)","validated"],["Carrier API partnerships","No roadmap items found","partial"],["Mid-market packaging and pricing","Draft only; owner unclear","hypothesis"]]},
+ milestones:[
+   {d:"Mar 2027",t:"Onboarding under 45 days",k:"target"},
+   {d:"Jun 2027",t:"Decision: scale self-serve or return to assisted onboarding",k:"decision",trigger:"If beta cohort onboarding >60 days or activation <50%"},
+   {d:"Sep 2027",t:"Mid-market trial conversion ≥12%",k:"target"},
+   {d:"Jan 2028",t:"Decision: commit to carrier partnerships",k:"decision",trigger:"Criteria not yet defined (see Q4)"}]
+};
+const QUESTIONS = [
+ {id:"Q1",t:"Is mid-market the growth segment, or an experiment we may drop?",why:"The vision says mid-market; 68% of roadmap effort serves enterprise.",dm:"CEO",due:"28 Nov 2026",tier:"Company Vision",status:"open"},
+ {id:"Q2",t:"Which single measure shows we are winning: ARR, shipments tracked, or mid-market conversion?",why:"Board pack leads with ARR; the pulse survey shows teams optimise for shipments tracked.",dm:"CEO + CFO",due:"12 Dec 2026",tier:"Company Strategy",status:"open"},
+ {id:"Q3",t:"Should the Analytics roadmap prioritise enterprise dashboards or the mid-market one-screen view?",why:"Product line objective and planning activity disagree.",dm:"CPO",due:"21 Nov 2026",tier:"Product Line",status:"open"},
+ {id:"Q4",t:"What evidence would justify committing to carrier partnerships in Jan 2028?",why:"A decision point exists with no stated criteria or owner for the work.",dm:"Chief Strategy Officer",due:"31 Jan 2027",tier:"Company Strategy",status:"open"}
+];
+const QUEUE = [
+ {id:"C1",kind:"Correction",tier:"Company Objectives",who:"VP Customer Success",approver:"CFO",before:"NRR 104%",after:"NRR 106% (restated after Oct close)",src:"S2"}
+];
+const CHAT = [
+ {k:["gap","misalign","conflict","biggest"],a:"Three of five tiers show a conflict between what is said and what is done: Vision, Principles and the Analytics product line. The sharpest is Vision: documents target mid-market, but 68% of recent roadmap effort served enterprise accounts [S1][S3][S9]. Confidence: validated for the documents and roadmap, partial for staff understanding (a survey, n=212) [S5]."},
+ {k:["owner","who owns","approve"],a:"Each tier lists an owner and an approver. For Company Strategy the owner is the Chief Strategy Officer and the approver is the CEO [S1]. Owners are taken from document authorship and the org chart, and are unconfirmed until someone approves them."},
+ {k:["metric","onboarding","arr","target"],a:"Onboarding is 74 days against a 45-day objective for Mar 2027 and a 21-day aspiration [S7][S1]. ARR is £48m against £90m by FY29 [S2]. Mid-market trial conversion has a 12% target but no data source, so progress is unknown."},
+ {k:["decision","milestone","when"],a:"Two decision points are set: Jun 2027 (scale self-serve or revert) and Jan 2028 (carrier partnerships). The second has no defined criteria yet, which is open question Q4 [S1][S10]."},
+ {k:["analytics","division","product line"],a:"The Analytics team's objective is 3,000 weekly active mid-market users, but six planning sessions focus on enterprise dashboards and nobody mentioned the objective [S1][S8]. The objective itself is a hypothesis, not validated."},
+ {k:["unaligned","not linked","no objective","effort","fte","unlinked"],a:"10 of 27.5 FTE (36%) sit on initiatives with no linked objective: Enterprise custom dashboards (7 FTE, Analytics) and the Rate-card editor (3 FTE, Platform) [S3][S8]. Confidence: partly validated, since effort figures are estimates from the roadmap export, not timesheets."},
+ {k:["carrier","partnership"],a:"No initiative is linked to the “Carrier API partnerships” step of the strategy hypothesis. The Jan 2028 decision point depends on it, and its criteria are undefined (Q4) [S1][S3][S10]."},
+ {k:["roadmap","after target","late","lands"],a:"On the outcome roadmap, the effect of Self-serve onboarding flow is expected in May 2027, after O1’s Mar 2027 target [S1][S3]. Either the target date or the delivery plan needs to change; this is a question for the owner, not a conclusion."},
+ {k:["open","question","decide"],a:"Four questions are open. The nearest due date is Q3 (CPO, 21 Nov 2026): enterprise dashboards or the mid-market one-screen view for Analytics."}
+];
+const state = {open:{strategy:true}, answers:{}, queue:[...QUEUE]};
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const confLabel = {validated:"Validated",partial:"Partly validated",hypothesis:"Hypothesis",unknown:"No data"};
+const confPill = c => `<span class="pill ${c==="unknown"?"p-unknown":"p-"+c}"><i></i>${confLabel[c]}</span>`;
+const statusLabel = {aligned:"Aligned",drift:"Drifting",conflict:"Conflict"};
+const statusPill = s => `<span class="pill p-${s}"><i></i>${statusLabel[s]}</span>`;
+const srcTags = ids => ids.map(i=>`<span class="src" title="${esc(SOURCES[i].name)}">${i}</span>`).join(" ");
+function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+
+/* ---------- render ---------- */
+function renderStrip(){
+  const c = k => TIERS.filter(t=>t.status===k).length;
+  const openQ = QUESTIONS.filter(q=>q.status==="open").length;
+  $("#strip").innerHTML = `
+   <div class="stat bad"><b>${c("conflict")}</b><span>tiers in conflict</span></div>
+   <div class="stat warn"><b>${c("drift")}</b><span>tiers drifting</span></div>
+   <div class="stat ok"><b>${c("aligned")}</b><span>tiers aligned</span></div>
+   <div class="stat warn"><b>${linkStats().unPct}%</b><span>of effort not linked to an objective</span></div>
+   <div class="stat"><b>${openQ}</b><span>open questions</span></div>
+   <div class="stat"><b>${state.queue.length}</b><span>changes awaiting approval</span></div>`;
+  $("#qcount").textContent = `(${state.queue.length})`;
+}
+function cell(label,x){return `<div class="col"><h4>${label}</h4><p>${esc(x.t)}</p><div class="meta">${confPill(x.conf)} ${srcTags(x.src)}</div></div>`}
+function strategyDetail(){
+  const b=STRAT.baseline,a=STRAT.aspiration,h=STRAT.hypothesis;
+  const mt = rows => `<div class="tablewrap"><table><thead><tr><th>Metric</th><th>Now</th><th>Target</th><th>Status</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td class="mono">${esc(r[1])}</td><td class="mono">${esc(r[2])}</td><td>${confPill(r[3])}</td></tr>`).join("")}</tbody></table></div>`;
+  return `<div class="tri">
+    <div class="col"><h4>Baseline · where we are</h4><p>${esc(b.narr)}</p>${mt(b.metrics)}</div>
+    <div class="col"><h4>Aspiration · where we want to be</h4><p>${esc(a.narr)}</p>${mt(a.metrics)}</div>
+    <div class="col"><h4>Hypothesis · how we get there</h4><p>${esc(h.narr)}</p><ol class="hyp-steps">${h.steps.map(s=>`<li><strong>${esc(s[0])}</strong><br><span class="meta">${esc(s[1])} ${confPill(s[2])}</span></li>`).join("")}</ol></div>
+  </div>
+  <div class="timeline"><div class="label">Milestones and decision points</div><div class="tl">${STRAT.milestones.map(m=>`<div class="ms ${m.k==="decision"?"decision":""}"><div class="date">${esc(m.d)}</div>${m.k==="decision"?'<div class="tag">Decision point</div>':'<div class="tag" style="color:var(--muted)">Target</div>'}<div>${esc(m.t)}</div>${m.trigger?`<div class="meta" style="margin-top:4px">${esc(m.trigger)}</div>`:""}</div>`).join("")}</div></div>`;
+}
+function renderStack(){
+  $("#stackEl").innerHTML = TIERS.map(t=>{
+    const open = !!state.open[t.id];
+    return `<div class="tier ${t.level==="division"?"sub":""}">
+     <button class="tier-head" type="button" data-tier="${t.id}" aria-expanded="${open}">
+       <span class="tier-no">${t.no}</span>
+       <span class="tier-title"><h3>${esc(t.name)}</h3><small>${esc(t.sub)}</small></span>
+       <span class="tier-right">${statusPill(t.status)}<span class="meta">${open?"Hide":"Show"} detail</span></span>
+     </button>
+     <div class="sdu" style="border-top:1px solid var(--line)">${cell("Said (documents)",t.said)}${cell("Done (work and data)",t.done)}${cell("Understood (people)",t.und)}</div>
+     <div class="finding ${t.status}"><b>Gap</b><span>${esc(t.finding)}</span></div>
+     ${open&&t.detail?`<div class="tier-body">${strategyDetail()}</div>`:""}
+     <div class="owners"><span>Owner <strong>${esc(t.owner)}</strong></span><span>Approver <strong>${esc(t.approver)}</strong></span>
+       <button class="btn sm" type="button" data-correct="${t.id}">Suggest a correction</button></div>
+    </div>`}).join("");
+}
+function renderQuestions(){
+  $("#qEl").innerHTML = QUESTIONS.map(q=>{
+    const ans = state.answers[q.id];
+    return `<article class="qcard ${ans?"answered":""}">
+      <div class="row"><span class="mono">${q.id}</span><span>${esc(q.tier)}</span><span class="pill ${ans?"p-partial":"p-conflict"}"><i></i>${ans?"Answer pending approval":"Open"}</span></div>
+      <h3>${esc(q.t)}</h3>
+      <div>${esc(q.why)}</div>
+      <div class="row"><span>Decision maker <strong style="color:var(--fg);font-weight:500">${esc(q.dm)}</strong></span><span>Due <span class="mono">${esc(q.due)}</span></span></div>
+      ${ans?`<div class="diff"><ins>${esc(ans)}</ins></div>`:`
+      <form class="answer" data-q="${q.id}">
+        <label class="label" for="a-${q.id}">Your answer</label>
+        <textarea id="a-${q.id}" required placeholder="Answer, or add evidence the decision maker should see"></textarea>
+        <div class="row-end"><button class="btn primary sm" type="submit">Submit for approval</button></div>
+      </form>`}
+    </article>`}).join("");
+}
+function renderQueue(){
+  $("#queueEl").innerHTML = state.queue.length ? state.queue.map((c,i)=>`<div class="queue-item">
+    <div><div class="meta"><span class="pill p-partial"><i></i>${esc(c.kind)}</span> <span>${esc(c.tier)}</span> <span>from ${esc(c.who)}</span> ${c.src?srcTags([c.src]):""}</div>
+      <div class="diff">${c.before?`<del>${esc(c.before)}</del> → `:""}<ins>${esc(c.after)}</ins></div></div>
+    <div class="row-end"><span class="meta">Approver: ${esc(c.approver)}</span><button class="btn sm" data-reject="${i}" type="button">Reject</button><button class="btn primary sm" data-approve="${i}" type="button">Approve</button></div>
+  </div>`).join("") : `<div class="empty">Nothing waiting. Suggested corrections and answers appear here for the owner to approve.</div>`;
+}
+function renderSources(){
+  $("#srcEl").innerHTML = Object.entries(SOURCES).map(([id,s])=>`<div class="src-card"><div class="meta"><span class="src">${id}</span><span>${esc(s.type)}</span><span>${esc(s.date)}</span></div><b>${esc(s.name)}</b><span class="meta">Owner: ${esc(s.owner)}</span></div>`).join("");
+}
+function renderAll(){renderStrip();renderStack();renderWork();renderQuestions();renderQueue();renderSources()}
+
+/* ---------- work alignment + outcome roadmap ---------- */
+const MON=["Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const NM=14;
+const mi=s=>(+s.slice(0,4)-2026)*12+(+s.slice(5,7))-11;
+const mname=i=>MON[i]+" "+(i<2?2026:2027);
+const OBJS=[
+ {id:"O1",name:"Cut onboarding to 45 days",kr:"Onboarding time ≤45 days",target:"2027-03",owner:"VP Customer Success",res:["2026-11","2026-12"],disc:["2026-11","2027-01"],lag:2},
+ {id:"O2",name:"Reach 12% mid-market trial conversion",kr:"Trial-to-paid ≥12% (not yet measured)",target:"2027-09",owner:"CRO",res:["2026-12","2027-02"],disc:["2027-01","2027-05"],lag:3},
+ {id:"O3",name:"Lift net revenue retention to 112%",kr:"NRR ≥112%",target:"2027-12",owner:"CFO",res:["2026-11","2026-12"],disc:["2026-11","2027-01"],lag:4}];
+const TEAMS=["Onboarding","Growth","Pricing","CS Platform","Analytics","Platform"];
+const STEPS=[{id:"self",name:"Self-serve onboarding"},{id:"carrier",name:"Carrier API partnerships"},{id:"pack",name:"Mid-market packaging and pricing"}];
+const CONF={low:["hypothesis","Low confidence"],med:["partial","Medium confidence"],val:["validated","Validated"]};
+/* stage "delivery" = idea passed discovery and is being built; "discovery" = still being tested */
+const INITS=[
+ {id:"I1",name:"Self-serve onboarding flow",team:"Onboarding",fte:6,objs:["O1","O2"],step:"self",conf:"med",stage:"delivery",from:"2026-12",to:"2027-04"},
+ {id:"I2",name:"Guided setup checklist",team:"Onboarding",fte:3,objs:["O1"],step:"self",conf:"med",stage:"delivery",from:"2026-12",to:"2027-02"},
+ {id:"I3",name:"Trial funnel instrumentation",team:"Growth",fte:2,objs:["O2"],step:null,conf:"med",stage:"delivery",from:"2027-01",to:"2027-03"},
+ {id:"I4",name:"Mid-market packaging experiments",team:"Pricing",fte:1.5,objs:["O2"],step:"pack",conf:"low",stage:"discovery",from:"2027-01",to:"2027-05"},
+ {id:"I5",name:"Renewal health scoring",team:"CS Platform",fte:4,objs:["O3"],step:null,conf:"med",stage:"delivery",from:"2027-01",to:"2027-06"},
+ {id:"I6",name:"Enterprise custom dashboards",team:"Analytics",fte:7,objs:[],step:null,conf:"med",stage:"delivery",from:"2026-11",to:"2027-07"},
+ {id:"I7",name:"Rate-card editor (feature parity)",team:"Platform",fte:3,objs:[],step:null,conf:"med",stage:"delivery",from:"2026-11",to:"2027-03"},
+ {id:"I8",name:"One-screen late-shipment view",team:"Analytics",fte:1,objs:["O2"],step:null,conf:"low",stage:"discovery",from:"2027-03",to:"2027-05"}
+];
+function linkStats(){
+  const tot=INITS.reduce((s,i)=>s+i.fte,0), un=INITS.filter(i=>!i.objs.length).reduce((s,i)=>s+i.fte,0);
+  return {tot,un,unPct:Math.round(100*un/tot)};
+}
+const chips=(i,skip)=>i.objs.length?i.objs.filter(o=>o!==skip).map(o=>`<span class="chip-o">${o}</span>`).join(""):`<span class="chip-o none">No objective</span>`;
+const pct=x=>(x/NM*100)+"%";
+const span=(a,b)=>`left:${pct(a)};width:${pct(b-a)}`;
+const ideasFor=o=>INITS.filter(i=>i.objs.includes(o.id)&&i.stage==="delivery");
+const effectEnd=o=>{const d=ideasFor(o);return d.length?Math.max(...d.map(i=>mi(i.to)))+o.lag:null};
+
+function objBlock(o){
+  const t=mi(o.target)+1, ideas=ideasFor(o), testing=INITS.filter(i=>i.objs.includes(o.id)&&i.stage==="discovery");
+  const Y={goal:6,cap:42,res:64,disc:100,del:138};
+  let h=`<div class="pa goal" style="${span(0,t)};top:${Y.goal}px" title="${esc(o.kr)}"><span>${o.id} ${esc(o.name)}</span></div>`;
+  h+=`<div class="dia" style="${t>=NM?"right:4px":"left:calc("+pct(t)+" - 8px)"};top:${Y.goal+9}px" title="${o.id} target: ${mname(t-1)}"></div>`;
+  h+=`<div class="cap" style="left:10px;top:${Y.cap}px">${esc(o.kr)} · Owner ${esc(o.owner)}</div>`;
+  h+=`<div class="pa res" style="${span(mi(o.res[0]),mi(o.res[1]))};top:${Y.res}px">Research</div>`;
+  h+=`<div class="pa disc" style="${span(mi(o.disc[0]),mi(o.disc[1]))};top:${Y.disc}px">Product Discovery</div>`;
+  if(testing.length) h+=`<div class="cap" style="left:calc(${pct(mi(o.disc[1]))} + 8px);top:${Y.disc+8}px">Testing: ${testing.map(i=>esc(i.name)).join("; ")}</div>`;
+  let bottom;
+  if(ideas.length){
+    const cs=Math.max(0,Math.min(...ideas.map(i=>mi(i.from)))-.4), ce=Math.min(NM,Math.max(...ideas.map(i=>mi(i.to)))+.4), ch=30+ideas.length*32;
+    h+=`<div class="dbox" style="${span(cs,ce)};top:${Y.del}px;height:${ch}px"><b>Product Delivery</b></div>`;
+    ideas.forEach((i,k)=>{const c=CONF[i.conf][1];h+=`<div class="pa idea" style="${span(mi(i.from),mi(i.to))};top:${Y.del+26+k*32}px" title="${esc(i.name)} · ${esc(i.team)} · ${i.fte} FTE · ${c} · ${mname(mi(i.from))} to ${mname(mi(i.to)-1)}"><span>${esc(i.name)}</span></div>`});
+    bottom=Y.del+ch+12;
+    const e=effectEnd(o), s=Math.max(...ideas.map(i=>mi(i.to)));
+    h+=`<div class="pa delay" style="${span(s,Math.min(NM,e))};top:${bottom}px" title="Effect delay: results expected by ${mname(e-1)}">Effect Delay</div>`;
+  }else{
+    const cs=Math.min(NM-3,mi(o.disc[1])), ch=64;
+    h+=`<div class="dbox tbd" style="${span(cs,cs+3)};top:${Y.del}px;height:${ch}px">Product Delivery: to be determined</div>`;
+    bottom=Y.del+ch+12;
+  }
+  return `<div class="blk" style="height:${bottom+28+14}px">${h}</div>`;
+}
+function unlinkedBlock(){
+  const unl=INITS.filter(i=>!i.objs.length), st=linkStats();
+  let h=`<div class="pa goal unl" style="left:0;width:100%;top:6px"><span>Not linked to any objective · ${unl.length} initiatives · ${st.un} FTE</span></div>`;
+  const cs=Math.max(0,Math.min(...unl.map(i=>mi(i.from)))-.4), ce=Math.min(NM,Math.max(...unl.map(i=>mi(i.to)))+.4), ch=30+unl.length*32;
+  h+=`<div class="dbox" style="${span(cs,ce)};top:54px;height:${ch}px"><b>Work in delivery</b></div>`;
+  unl.forEach((i,k)=>h+=`<div class="pa idea unl" style="${span(mi(i.from),mi(i.to))};top:${80+k*32}px" title="${esc(i.name)} · ${esc(i.team)} · ${i.fte} FTE"><span>${esc(i.name)}</span></div>`);
+  return `<div class="blk" style="height:${54+ch+20}px">${h}</div>`;
+}
+function workRow(i){
+  const c=CONF[i.conf];
+  const bar=`<div class="bar b-${i.stage}${i.objs.length?"":" unl"}" style="grid-column:${2+mi(i.from)}/${2+mi(i.to)}" title="${esc(i.name)} · ${i.stage==="delivery"?"Delivery":"Discovery"} · ${mname(mi(i.from))} to ${mname(mi(i.to)-1)}">${i.stage==="delivery"?"Delivery":"Discovery"}</div>`;
+  return `<div class="rrow"><div class="rl"><b>${esc(i.name)}</b><small>${esc(i.team)} · ${i.fte} FTE</small><small>${chips(i)} <span class="pill p-${c[0]}"><i></i>${c[1]}</span></small></div>${bar}</div>`;
+}
+function renderWork(){
+  const view=state.view||"obj", st=linkStats();
+  document.querySelectorAll("[data-view]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.view===view));
+  const unl=INITS.filter(i=>!i.objs.length), gaps=[];
+  if(unl.length) gaps.push(["conflict",`${st.un} of ${st.tot} FTE (${st.unPct}%) are on work with no linked objective: ${unl.map(i=>i.name).join("; ")}.`]);
+  STEPS.filter(s=>!INITS.some(i=>i.step===s.id)).forEach(s=>gaps.push(["conflict",`Strategy hypothesis step “${s.name}” has no linked initiatives.`]));
+  OBJS.forEach(o=>{const e=effectEnd(o);if(e&&e>mi(o.target)+1)gaps.push(["drift",`${o.id}: effect of the planned delivery lands in ${mname(e-1)}, after the ${mname(mi(o.target))} target.`])});
+  OBJS.forEach(o=>{if(!ideasFor(o).length)gaps.push(["drift",`${o.id}: no idea has passed discovery yet, so delivery is still to be determined.`])});
+  $("#gapsEl").innerHTML=gaps.map(g=>`<div class="finding ${g[0]==="drift"?"drift":""}"><b>${g[0]==="drift"?"Timing":"Coverage"}</b><span>${esc(g[1])}</span></div>`).join("");
+  const rows=[...OBJS.map(o=>({lab:`${o.id} ${o.name}`,f:i=>i.objs.includes(o.id)})),{lab:"Not linked to any objective",f:i=>!i.objs.length,unl:true}];
+  $("#matrixEl").innerHTML=`<div class="label" style="margin-bottom:6px">Initiatives per objective and team</div><div class="tablewrap"><table class="matrix"><thead><tr><th>Objective</th>${TEAMS.map(t=>`<th>${esc(t)}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr class="${r.unl?"unl":""}"><td>${esc(r.lab)}</td>${TEAMS.map(t=>{const n=INITS.filter(i=>i.team===t&&r.f(i)).length;return `<td class="cell ${n?"has":""}">${n||"·"}</td>`}).join("")}</tr>`).join("")}</tbody></table></div>`;
+  const lg=view==="obj"?[["var(--g-goal)","Goal (diamond = target date)"],["var(--g-res)","Research"],["var(--g-disc)","Product Discovery"],["var(--g-idea)","Product Delivery (ideas)"],["var(--g-delay)","Effect Delay"],["var(--warn)","Not linked to an objective"]]:[["var(--g-disc)","Discovery"],["var(--g-idea)","Delivery"],["var(--warn)","Not linked to an objective"]];
+  $("#legendEl").innerHTML=lg.map(x=>`<span><span class="sw" style="background:${x[0]}"></span>${x[1]}</span>`).join("");
+  if(view==="obj"){
+    $("#rmEl").innerHTML=`<div class="qhead"><div>Q4 ’26</div><div>Q1 ’27</div><div>Q2 ’27</div><div>Q3 ’27</div><div>Q4 ’27</div></div><div class="rmt"><div class="bands" aria-hidden="true"><div></div><div></div><div></div><div></div><div></div></div>${OBJS.map(objBlock).join("")}${unlinkedBlock()}</div>`;
+  }else{
+    let body=`<div class="rrow rhead"><div>Team and work</div>${MON.map((m,i)=>`<div>${m}<br>${i<2?"26":"27"}</div>`).join("")}</div>`;
+    TEAMS.forEach(t=>{
+      const its=INITS.filter(i=>i.team===t), f=its.reduce((s,i)=>s+i.fte,0), l=its.filter(i=>i.objs.length).reduce((s,i)=>s+i.fte,0);
+      body+=`<div class="rrow lane"><div class="rl"><b>${esc(t)}</b><small>${f} FTE · ${Math.round(100*l/f)}% linked to an objective</small></div></div>`;
+      its.forEach(i=>body+=workRow(i));
+    });
+    $("#rmEl").innerHTML=body;
+  }
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",e=>{const v=e.target.closest("[data-view]");if(v){state.view=v.dataset.view;renderWork()}});
+document.addEventListener("click",e=>{
+  const th=e.target.closest("[data-tier]"); if(th){state.open[th.dataset.tier]=!state.open[th.dataset.tier];renderStack();return}
+  const co=e.target.closest("[data-correct]"); if(co){
+    const t=TIERS.find(x=>x.id===co.dataset.correct);
+    const txt=prompt2(`Suggested correction to "${t.name}"`); return;}
+  const ap=e.target.closest("[data-approve]"); if(ap){state.queue.splice(+ap.dataset.approve,1);renderAll();toast("Approved. Record updated and logged.");return}
+  const rj=e.target.closest("[data-reject]"); if(rj){state.queue.splice(+rj.dataset.reject,1);renderAll();toast("Rejected. Submitter notified.");return}
+});
+/* confirm/prompt dialogs are unavailable in the viewer, so corrections use an inline form */
+function prompt2(title){
+  const old=$("#corrForm"); if(old) old.remove();
+  const f=document.createElement("form"); f.id="corrForm"; f.className="qcard"; f.style.marginTop="12px";
+  f.innerHTML=`<h3>${esc(title)}</h3><label class="label" for="corrTxt">What is wrong, and what does the evidence say?</label><textarea id="corrTxt" required></textarea><div class="row-end"><button type="button" class="btn sm" id="corrCancel">Cancel</button><button class="btn primary sm" type="submit">Send to approver</button></div>`;
+  $("#queue").insertBefore(f,$("#queueEl"));
+  f.scrollIntoView({block:"center"});
+  $("#corrCancel").onclick=()=>f.remove();
+  f.onsubmit=ev=>{ev.preventDefault();state.queue.unshift({kind:"Correction",tier:title.replace(/^Suggested correction to "|"$/g,""),who:"You",approver:"Tier approver",after:$("#corrTxt").value});f.remove();renderAll();toast("Sent to the approver.")}
+}
+document.addEventListener("submit",e=>{
+  const f=e.target.closest("form.answer"); if(!f) return; e.preventDefault();
+  const id=f.dataset.q, v=f.querySelector("textarea").value.trim(); if(!v) return;
+  state.answers[id]=v; const q=QUESTIONS.find(x=>x.id===id);
+  state.queue.unshift({kind:"Answer",tier:q.tier,who:"You",approver:q.dm,after:v});
+  renderAll(); toast("Submitted. The decision maker will review it.");
+});
+
+/* theme */
+$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark"};
+
+/* chat */
+const drawer=$("#drawer"),fab=$("#fab"),msgs=$("#msgs");
+function openChat(o){drawer.hidden=!o;fab.hidden=o;fab.setAttribute("aria-expanded",o);if(o)$("#chatIn").focus()}
+fab.onclick=()=>openChat(true); $("#closeChat").onclick=()=>openChat(false);
+function addMsg(cls,html){const d=document.createElement("div");d.className="msg "+cls;d.innerHTML=html;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight}
+function answer(q){
+  const l=q.toLowerCase(); const hit=CHAT.find(c=>c.k.some(k=>l.includes(k)));
+  const txt=hit?hit.a:"I can’t find that in the knowledge base. In this sample I only answer about gaps, owners, metrics, decision points, Analytics and open questions.";
+  const ids=[...new Set((txt.match(/S\d+/g)||[]))];
+  return esc(txt).replace(/\[(S\d+)\]/g,"")+(ids.length?`<div class="cites">${srcTags(ids)}</div>`:"");
+}
+function ask(q){addMsg("u",esc(q));setTimeout(()=>addMsg("a",answer(q)),250)}
+$("#chatForm").onsubmit=e=>{e.preventDefault();const v=$("#chatIn").value.trim();if(!v)return;$("#chatIn").value="";ask(v)};
+addMsg("a","Ask where strategy, work and understanding disagree, who owns something, or what decision is next.");
+$("#chips").innerHTML=["What are the biggest gaps?","Who owns the strategy?","What decisions are coming?","What is open?"].map(c=>`<button class="chip" type="button">${c}</button>`).join("");
+$("#chips").onclick=e=>{const c=e.target.closest(".chip");if(c)ask(c.textContent)};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!drawer.hidden)openChat(false)});
+
+renderAll();
+</script>
+
+</html>

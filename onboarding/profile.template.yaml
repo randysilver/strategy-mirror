@@ -1,0 +1,199 @@
+# Strategy Mirror: onboarding profile template
+# template_version: 0.1.0
+#
+# One copy of this file per client implementation, stored in the client's own repo
+# (client/onboarding/profile.yaml). The generic package contains only this blank template.
+#
+# Conventions
+#   - null            = not yet asked or not yet answered. Never guess a value to fill a gap.
+#   - status          = per section: not_started | in_progress | complete | blocked
+#   - assumptions     = anything the interviewer inferred rather than was told. Each needs a
+#                       "check_with" (a named role) and stays here until confirmed.
+#   - Values marked "one of:" accept only those options, or "other" plus a note.
+#   - Role names, not personal names, in anything that may reach the generic package.
+#     The client copy may use personal names; keep it private.
+
+meta:
+  template_version: "0.1.0"
+  client_alias: null            # short non-identifying label, e.g. "client-a"
+  started: null                 # YYYY-MM-DD
+  interviewer: null             # role, e.g. "consultant"
+  client_sponsor_role: null     # who authorised the work
+  overall_status: not_started   # not_started | in_progress | ready_to_build | blocked
+  scope_unit: null              # one of: company | division | team
+  scope_description: null       # what part of the organisation this instance covers
+
+# ---------------------------------------------------------------------------
+# 1. Hosting: where the code and the running page live
+# ---------------------------------------------------------------------------
+hosting:
+  status: not_started
+  code_host: null               # one of: github | gitlab | azure_devops | bitbucket | other
+  code_host_default_used: null  # true if GitHub chosen because no alternative exists
+  repo_location: null           # org/repo path once created
+  repo_visibility: null         # one of: private | internal
+  who_can_create_repos_role: null
+  runtime_target: null          # one of: internal_server | private_cloud | vpn_only_vm | desktop_only | other
+  network_boundary: null        # e.g. "reachable only on corporate network or VPN"
+  authentication: null          # one of: sso | basic_auth | network_only | other
+  deployment_method: null       # e.g. "CI pipeline", "manual copy"
+  admin_role: null              # who keeps it running
+  constraints: []               # free text, e.g. "no external CDNs", "change board approval needed"
+  assumptions: []
+
+# ---------------------------------------------------------------------------
+# 2. Data store: the single source of truth for records and edits
+# ---------------------------------------------------------------------------
+data_store:
+  status: not_started
+  options_considered: []        # list of { type, why_considered, pros, cons, verified: true|false }
+  chosen:
+    type: null                  # one of: google_sheets | excel_sharepoint | airtable | sql_database | other
+    reason: null
+    decided_by_role: null
+    decision_date: null
+  access:
+    method: null                # one of: api | export_import | manual
+    credential_holder_role: null
+    credential_storage: null    # where secrets live. Never record the secret itself.
+  capabilities_needed:          # fill true/false once the chosen store is known; false = a gap
+    multi_user_writes: null
+    record_history_audit_trail: null
+    relational_links: null      # initiative <-> objective is many-to-many
+    field_level_permissions: null
+    approval_workflow_support: null
+    attachments_or_source_links: null
+    row_or_size_limits_ok: null
+  workarounds_for_gaps: []      # how each false capability is handled
+  backup_and_recovery: null
+  assumptions: []
+
+# ---------------------------------------------------------------------------
+# 3. Information sources: what gets ingested, from where, with what permission
+# ---------------------------------------------------------------------------
+information_sources:
+  status: not_started
+  ingestion_principles_confirmed: null   # true once sponsor agrees: nothing is read before permission is recorded
+  sources: []
+  # Each entry:
+  # - id: S1
+  #   name: null
+  #   kind: null                  # one of: strategy_doc | report | spreadsheet | transcript | metrics | survey | work_tracker | other
+  #   location: null              # drive/folder path, URL, or system name
+  #   access_route: null          # one of: upload | folder_scan | connector | export
+  #   owner_role: null
+  #   decision_stack_tier: null   # one of: vision | principles | strategy | objectives | division | work | cross_cutting
+  #   evidence_role: null         # one of: said | done | understood
+  #   permission_status: null     # one of: granted | pending | denied
+  #   permission_granted_by_role: null
+  #   sensitivity: null           # one of: general | confidential | restricted
+  #   redaction_needed: null      # e.g. names in transcripts
+  #   scan_frequency: null        # one of: manual | daily | weekly | monthly | on_change
+  #   retention: null
+  #   known_quality_issues: null
+  gaps_in_coverage: []          # tiers with no source, or only "said" evidence and no "done" evidence
+
+# ---------------------------------------------------------------------------
+# 4. Schema and framework: how the client already structures strategy
+# ---------------------------------------------------------------------------
+schema_alignment:
+  status: not_started
+  client_has_schema: null       # true | false
+  client_schema_location: null
+  framework_in_use: null        # e.g. OKRs, V2MOM, none
+  decision_stack_mapping:       # map the client's own terms onto the stack tiers
+    vision: null
+    principles: null
+    strategy: null
+    objectives: null
+    division_level_needed: null # true if product-line or division strategy must sit between objectives and work
+    division_units: []          # names of divisions or product lines
+  default_schema_used: null     # true if no client schema exists
+  planning_horizon: null        # e.g. "annual objectives, quarterly reviews"
+  review_cadence: null
+  decision_points_defined: null # do milestones and triggers exist anywhere in the source material?
+  terminology_differences: []   # client term -> package term
+  assumptions: []
+
+# ---------------------------------------------------------------------------
+# 5. Work tracking: initiatives, teams, links to objectives, effort
+# ---------------------------------------------------------------------------
+work_tracking:
+  status: not_started
+  initiatives_live_in: null     # one of: jira | linear | azure_boards | spreadsheet | slides | none | other
+  team_list_source: null
+  link_to_objectives:
+    method: null                # one of: tag_or_field_in_tracker | parent_child | set_during_onboarding | edited_in_tool | not_possible_yet
+    who_may_change_links_role: null
+    approval_required_for_changes: null
+  effort_unit: null             # default "fte"; alternatives: points | person_days | none
+  effort_source: null
+  confidence_scale: null        # default "low | medium | validated"; record client variants
+  assumptions: []
+
+# ---------------------------------------------------------------------------
+# 6. People and roles: owners, approvers, decision makers
+# ---------------------------------------------------------------------------
+people_and_roles:
+  status: not_started
+  # One entry per tier or information area.
+  ownership: []
+  # - area: null                # a tier, a metric set, or a source
+  #   owner_role: null          # accountable for the content being right
+  #   approver_role: null       # approves suggested changes
+  #   decision_maker_role: null # answers open questions
+  #   confirmed_by: null        # null until the person themselves confirms
+  admin_roles: []               # who manages users and permissions in the tool
+  viewers: null                 # who may see the page
+  editors: null                 # who may suggest changes or answer questions
+  unresolved_ownership: []      # areas where nobody will accept ownership
+
+# ---------------------------------------------------------------------------
+# 7. Privacy, security and the language model
+# ---------------------------------------------------------------------------
+privacy_and_security:
+  status: not_started
+  data_must_stay_on_network: null
+  model_provider_allowed: null  # which providers the client has approved
+  model_hosting: null           # one of: vendor_api | private_cloud_endpoint | self_hosted | none_allowed
+  data_residency: null
+  personal_data_in_sources: null
+  transcript_consent_confirmed: null
+  anonymity_threshold_for_survey_data: null   # minimum group size before results are shown
+  query_logging: null           # are user questions to the chatbot stored, and for how long
+  security_review_required: null
+  security_review_owner_role: null
+  assumptions: []
+
+# ---------------------------------------------------------------------------
+# 8. Updating the knowledge base: refresh, corrections, approvals
+# ---------------------------------------------------------------------------
+update_workflow:
+  status: not_started
+  refresh_method: null          # one of: manual_upload | scheduled_scan | event_driven | mixed
+  scan_schedule: null
+  correction_route: null        # how a person flags wrong information
+  approval_sla: null            # how long approvers have before a change is escalated
+  notification_channel: null    # email, chat tool, none
+  change_log_visible_to: null
+
+# ---------------------------------------------------------------------------
+# 9. Readiness and hand-off
+# ---------------------------------------------------------------------------
+readiness:
+  can_build_first_version: null          # true only when hosting, data_store and at least one
+                                         # strategy source plus one "done" source are complete
+  blockers: []                           # { item, owner_role, needed_by }
+  first_version_scope: null              # what will be in the first build
+  deferred_to_later: []
+  next_review_date: null
+
+# ---------------------------------------------------------------------------
+# 10. Template feedback: what this client needed that the template lacked
+#     Used later to improve the generic package. Keep entries non-identifying.
+# ---------------------------------------------------------------------------
+template_feedback:
+  missing_fields: []
+  confusing_fields: []
+  fields_never_used: []
+  client_specific_items_to_exclude_from_generic: []
