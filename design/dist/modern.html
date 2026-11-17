@@ -178,8 +178,6 @@ button.tile:hover{background:var(--surface2)}
 .grp.zero{border-color:var(--bad)} .grp.zero b,.grp.zero small{color:var(--bad)}
 .grp .btn{margin-top:4px}
 .hint{font-size:12.5px;color:var(--muted);margin:12px 0}
-details.dstack{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
-details.dstack summary{cursor:pointer;font-weight:500;font-size:15px}
 table{border-collapse:collapse;width:100%;font-size:12.5px}
 th{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;font-weight:600;padding:6px 10px 6px 0;vertical-align:bottom}
 td{padding:8px 10px 8px 0;border-top:1px solid var(--line);vertical-align:top}
@@ -647,13 +645,8 @@ function vStrategy(){
      <div class="rows">${rows}</div>
      <svg class="wires" id="wires" aria-hidden="true"></svg>
    </div></div>
-   <p class="hint">Ask “how?” left to right and “why?” right to left. Click a box to trace its links; click a name to open the record. Success criteria are outcome measures only with the date their target names. Capability, coverage and delivery measures are outputs, so they’re not shown as success. Initiative counts can overlap while opportunity links are proposed.</p>
-   <details class="dstack"><summary>The Decision Stack in detail: what the record says, what the work shows, what people understand</summary>${dstackTable()}</details></div>`;
+   <p class="hint">Ask “how?” left to right and “why?” right to left. Click a box to trace its links; click a name to open the record. Success criteria are outcome measures only with the date their target names. Capability, coverage and delivery measures are outputs, so they’re not shown as success. Initiative counts can overlap while opportunity links are proposed.</p></div>`;
   return html.replace(/class="box ([^"]*)" data-node="([^"]+)"/g,(m,c,n)=>`class="box ${c}${c.includes(" dim")||c.includes(" sel")?"":cls(n)}" data-node="${n}"`);
-}
-function dstackTable(){
-  const L=[["North Star","Org vision"],["Org objectives",plural(OBJECTIVES.length,"objective")],["Team role","Team charter"],["Team strategies",plural(STRATS.length,"strategy","strategies")],["Team goals",plural(GOALS.length,"goal")],["Work","Initiatives in "+T.source]];
-  return `<div class="scroll" style="margin-top:12px"><table><thead><tr><th>Level</th><th>Said (record)</th><th>Done (work and data)</th><th>Understood (people)</th></tr></thead><tbody>${L.map(([k,s])=>`<tr><td><b>${k}</b><br><span class="muted">${s}</span></td><td>Indicative statement from the record.</td><td>Indicative evidence from work and data.</td><td class="muted">Not yet gathered</td></tr>`).join("")}</tbody></table></div>`;
 }
 function drawWires(){
   const svg=$("#wires"), board=$("#board"); if(!svg||!board)return;
