@@ -483,7 +483,7 @@ function renderHeader(){
   $("#sampleNote").innerHTML=META.sample?`All figures are synthetic sample data (<span class="mono">model built ${esc(META.built||META.snapshot)}</span>).`:"";
   document.documentElement.style.setProperty("--nq",Math.max(1,Q.length));
   if(SK.tagline){$("#tagline").textContent=SK.tagline;$("#tagline").hidden=false}
-  $("#hdrSub").innerHTML=`${esc(META.org)} · ${esc(META.teamFull)} · ${esc(T.source)} snapshot <span class="mono">${esc(META.snapshot)}</span> · ${META.sources} sources, ${META.claims} claims`;
+  $("#hdrSub").innerHTML=`${esc(META.org)} · ${(META.teamFull&&!META.teamFull.toLowerCase().includes(String(META.org).replace(/\s*\(.*$/,"").toLowerCase()))?esc(META.teamFull)+" · ":""}${esc(T.source)} snapshot <span class="mono">${esc(META.snapshot)}</span> · ${META.sources} sources, ${META.claims} claims`;
   $("#tabs").innerHTML=VIEWS.map(([id,l,n])=>`<a href="#${id}" ${state.view===id?'aria-current="page"':""}>${l}${n?` <span class="n">${n()}</span>`:""}</a>`).join("");
 }
 

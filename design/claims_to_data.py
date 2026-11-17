@@ -59,6 +59,15 @@ def norm_split(sp):
     return {k: round(v / 100, 4) for k, v in vals.items()} if sum(vals.values()) > 1.5 else vals
 
 
+def short_name(alias):
+    """'Tesco PLC (public sources)' -> 'Tesco'. Used in page copy: 'how Tesco contributes', 'Tesco's work'."""
+    if not alias:
+        return None
+    n = re.sub(r"\s*\([^)]*\)", "", str(alias)).strip()
+    n = re.sub(r"[ ,]+(plc|ltd|limited|inc\.?|llc)$", "", n, flags=re.I).strip()
+    return n or None
+
+
 def main():
     args = sys.argv[1:]
     if not args or args[0].startswith("--"):
@@ -230,7 +239,7 @@ def main():
     meta_in = prof.get("meta") or {}
     sc = next((c for c in by_field.get("scope.description", [])), None)
     d = {"schema": "starling-data/1",
-         "meta": clean({"org": meta_in.get("client_alias") or "Client", "team": meta_in.get("scope_unit") or "Team", "teamFull": (sc.get("value") if sc and isinstance(sc.get("value"), str) else None) or meta_in.get("client_alias") or "Team",
+         "meta": clean({"org": meta_in.get("client_alias") or "Client", "team": meta_in.get("team") or short_name(meta_in.get("client_alias")) or "Team", "teamFull": (sc.get("value") if sc and isinstance(sc.get("value"), str) else None) or meta_in.get("client_alias") or "Team",
                         "snapshot": (lambda t: f"{t.day} {t.strftime('%b %Y')}")(datetime.date.fromisoformat(today)), "sources": len(claimdocs), "claims": len(claims), "built": today}),
          "text": clean({"source": STORE.get(ds.get("chosen")) or ds.get("chosen")}),
          "quarters": quarters, "horizon": horizon,
