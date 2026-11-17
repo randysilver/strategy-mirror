@@ -44,3 +44,7 @@ Open: how to show reviewed items differently from unreviewed ones without markin
 - Done: focus stays on the control you used when a view redraws; the drawer is a modal dialog (focus moves in, is trapped, returns to the opener, and the page behind it is inert); view changes are announced; roadmap bars and target diamonds have text labels; the flock has a Pause motion button and stays still when the system asks for reduced motion.
 - Board boxes are focusable groups with a text label and `aria-current` when selected. Tracing a box with the keyboard works (Enter or Space), but a screen-reader-first alternative to the wires, such as a list of linked items in the drawer, is still to do.
 - Not yet checked with a real screen reader or in a browser's accessibility tools; testing so far used a scripted DOM only.
+
+## Data checks roll up
+
+When more than 5 items fail the same data check (currently: initiative with no FTE), the Review tab shows one row ("N initiatives have no FTE...") with a list. Five or fewer stay as single rows. Threshold: `DC_ROLLUP` in `design/src/base.html`.

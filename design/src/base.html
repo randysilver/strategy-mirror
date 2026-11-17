@@ -383,6 +383,9 @@ function validate(){
   return w;
 }
 const DATACHECKS=validate();
+const DC_ROLLUP=5; /* same kind of check on more than this many items rolls up into one row */
+const dataRows=()=>{const out=[],fte=[];DATACHECKS.forEach(m=>{const mm=/^(.+) has no FTE in the quarters shown\.$/.exec(m),ini=mm&&INITS.find(i=>i.name===mm[1]);if(ini)fte.push(ini);else out.push({msg:m,items:null})});
+  if(fte.length>DC_ROLLUP)out.push({msg:`${fte.length} initiatives have no FTE in the quarters shown.`,items:fte,n:"fte"});else fte.forEach(i=>out.push({msg:`${i.name} has no FTE in the quarters shown.`,items:[i]}));return out};
 /* Best guesses are shown as they are. Items the import could not be sure of carry conf ("high|medium|low"),
    flags (conflict|low_confidence|single_source|stale|no_owner|unclear) and alternatives [{value,source}]. */
 const FLAG_LABEL={needs_edit:"Challenge accepted, edit pending",challenged:"Challenged by a reader",conflict:"Sources conflict",low_confidence:"Low confidence",single_source:"Single source",stale:"Source may be stale",no_owner:"No owner",unclear:"Unclear"};
@@ -448,7 +451,7 @@ function recordReview(rid,act,role,note,value){
   }
   return `<div id="rvwrap" class="callout" tabindex="-1" style="margin-top:12px">${h}</div>`;
 }
-const reviewCount=()=>CHANGES.length+CLAIMDOCS.length+modelRules().length+MODELCHECKS.length+DATACHECKS.length+flaggedNow().length;
+const reviewCount=()=>CHANGES.length+CLAIMDOCS.length+modelRules().length+MODELCHECKS.length+dataRows().length+flaggedNow().length;
 const decisionCount=()=>1+OTHER_DECISIONS.length;
 const outcomeMeasures=g=>g.measures.filter(m=>m.kind==="outcome");
 function goalTarget(g){const ys=outcomeMeasures(g).map(m=>m.by).filter(Boolean).map(Number).filter(Number.isFinite);if(!ys.length||!QS.length)return null;const y=Math.min(...ys);if(y>QS[QS.length-1].year)return "later";let idx=0;QS.forEach((q,k)=>{if(q.year<=y)idx=k});return idx}
@@ -759,7 +762,7 @@ function rvRows(){
   CLAIMDOCS.forEach(d=>rows.push({k:"Claims",s:`source document ${d.id} ${d.kind} claims`,h:`<div class="qitem"><div><div class="m"><span class="pill"><i class="dot"></i>Claims</span><span>${esc(d.kind)}</span></div><b>Source document ${esc(d.id)} (indicative)</b><div class="muted" style="font-size:12.5px">${d.n} claims Proposed${d.conflicts?`, <span class="red">${d.conflicts} conflict with the record</span>`:""}</div></div><button class="btn sm" type="button" data-claims="${esc(d.id)}">See claims</button></div>`}));
   const item=(r,flagged)=>{const od=overdueOf(r.x);return {od:od.length>0,k:r.kind,s:(r.x.name+" "+r.x.id+" "+r.kind+" "+flagsOf(r.x).map(f=>FLAG_LABEL[f]||f).join(" ")).toLowerCase(),h:`<div class="qitem"><div><div class="m">${flagged?`<span class="pill amber"><i class="dot"></i>${esc(r.kind)}</span>`:`<span class="pill dash">${esc(r.kind)}</span>`}<span>${r.x.conf?esc(r.x.conf)+" confidence":""}</span><span>${flagged?flagsOf(r.x).map(k=>esc(FLAG_LABEL[k]||k)).join(", "):"Not flagged by the import"}</span>${od.length?`<span class="pill box">Challenge overdue ${od[0].d} days</span><span>${esc(escLine(r.rid))}</span>`:""}</div><b>${esc(r.x.name)}</b>${(r.x.alternatives||[]).length?`<div class="muted" style="font-size:12.5px">Other values found: ${(r.x.alternatives||[]).map(a=>esc(a.value)+(a.source?" ("+esc(a.source)+")":"")).join("; ")}</div>`:""}</div><button class="btn sm" type="button" data-rec="${esc(r.rid)}">Open and review</button></div>`}};
   flaggedNow().sort((a,b)=>overdueOf(b.x).length-overdueOf(a.x).length).forEach(r=>rows.push(item(r,true)));
-  DATACHECKS.forEach(m=>{const mm=/^Initiative (.+?)(?::| is )/.exec(m),ini=mm&&INITS.find(i=>i.name==="Initiative "+mm[1]);rows.push({k:"Data check",s:"data check "+String(m).toLowerCase(),h:`<div class="qitem mc"><b>Data check</b><span>${esc(m)}</span><span>${ini?`<button class="btn sm" type="button" data-rec="i:${esc(ini.id)}">Open</button>`:""}</span><span class="muted" style="font-size:12.5px">Found by the page while reading the data. Fix it in the data store.</span></div>`})});
+  dataRows().forEach(d=>{const one=d.items&&d.items.length===1?d.items[0]:null;rows.push({k:"Data check",s:"data check "+String(d.msg).toLowerCase()+(d.items?" "+d.items.map(i=>i.name.toLowerCase()).join(" "):""),h:`<div class="qitem mc"><b>Data check</b><span>${esc(d.msg)}</span><span>${one?`<button class="btn sm" type="button" data-rec="i:${esc(one.id)}">Open</button>`:d.n?`<button class="btn sm" type="button" data-dcheck="${d.n}">See ${d.items.length}</button>`:""}</span><span class="muted" style="font-size:12.5px">Found by the page while reading the data. Fix it in the data store.</span></div>`})});
   modelRules().forEach(r=>rows.push({k:"Model check",s:"model check should not occur "+r.t,h:`<div class="qitem mc"><b>Model check</b><span>${r.items.length} ${esc(r.t)}</span><span><button class="btn sm" type="button" data-mcheck="${r.n}">See ${r.items.length}</button></span><span class="muted" style="font-size:12.5px">This should not occur. Link each one, or remove it, in the data store.</span></div>`}));
   MODELCHECKS.forEach(m=>rows.push({k:"Model check",s:"model check "+(m.title||m.n),h:`<div class="qitem mc"><b>Model check</b><span>${esc(m.title||"Model check "+m.n)}</span><span></span><span class="muted" style="font-size:12.5px">${esc(m.detail||"Supplied with the data.")}</span></div>`}));
   if(state.rv.all)unflaggedNow().forEach(r=>rows.push(item(r,false)));
@@ -884,6 +887,7 @@ document.addEventListener("click",e=>{
   if(t.closest("#themeBtn")){const r=document.documentElement;const dark=r.dataset.theme==="dark";r.dataset.theme=dark?"light":"dark";if(state.view==="strategy")drawWires();return}
   const ra=t.closest("[data-rvact]"); if(ra)return doReview(ra);
   const rk=t.closest("[data-rvkind]"); if(rk){state.rv.kind=rk.dataset.rvkind;return render(true)}
+  const dc=t.closest("[data-dcheck]"); if(dc){const r=dataRows().find(z=>z.n===dc.dataset.dcheck);if(r)openDrawer("Data check",r.msg,"Fix these in the data store, then reload.",r.items.map(i=>`<div class="li"><button class="lnk" type="button" data-rec="i:${esc(i.id)}" data-push="1">${esc(i.name)}</button>${reviewPill(i)}</div>`).join(""));return}
   const mc=t.closest("[data-mcheck]"); if(mc){const r=modelRules().find(z=>z.n===Number(mc.dataset.mcheck));if(r)openDrawer("Model check",`${r.items.length} ${r.t}`,"These should not occur. Fix them in the data store, then reload.",r.items.map(i=>`<div class="li"><button class="lnk" type="button" data-rec="${esc(i.rid)}" data-push="1">${esc(i.x.name)}</button>${i.kind?`<small>${esc(i.kind)}</small>`:""}</div>`).join(""));return}
   const gt=t.closest("[data-goto]"); if(gt){location.hash=gt.dataset.goto;return}
   if(t.closest("#askTop")||t.closest("#chatFab"))return openChat(true,t.closest("button"));
