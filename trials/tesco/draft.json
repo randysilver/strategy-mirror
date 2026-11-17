@@ -1,0 +1,1516 @@
+{
+ "schema": "starling-data/1",
+ "meta": {
+  "org": "Tesco PLC (public sources)",
+  "team": "group",
+  "teamFull": "Tesco PLC, group level (public documents only)",
+  "snapshot": "17 Nov 2026",
+  "sources": 9,
+  "claims": 61,
+  "built": "2026-11-17"
+ },
+ "text": {},
+ "quarters": [
+  {
+   "label": "Q1 ’26-27",
+   "year": 2026
+  },
+  {
+   "label": "Q2 ’26-27",
+   "year": 2026
+  },
+  {
+   "label": "Q3 ’26-27",
+   "year": 2026
+  },
+  {
+   "label": "Q4 ’26-27",
+   "year": 2027
+  }
+ ],
+ "horizon": {
+  "label": "FY 2026/27 (to Feb 2027)",
+  "from": 0,
+  "to": 3
+ },
+ "vision": "Tesco was built to be a champion for customers, serving them every day with affordable, healthy and sustainable food.",
+ "objectives": [
+  {
+   "id": "OBJ-1",
+   "name": "Grow profit and free cash flow",
+   "conf": "medium",
+   "flags": [
+    "conflict",
+    "unclear"
+   ],
+   "alternatives": [
+    {
+     "value": "Guidance was £3.0bn to £3.3bn for 2026/27 in April 2026",
+     "source": "S1, Outlook"
+    }
+   ],
+   "sources": [
+    {
+     "source": "S2",
+     "locator": "Guidance",
+     "quote": "Adjusted operating profit: now £3.15bn–£3.30bn"
+    }
+   ]
+  },
+  {
+   "id": "OBJ-2",
+   "name": "Return cash to shareholders",
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "Dividend and buyback",
+     "quote": "paying “broadly 50% of earnings.”"
+    },
+    {
+     "source": "S2",
+     "locator": "Guidance",
+     "quote": "Share buyback: increased to £950m"
+    }
+   ]
+  },
+  {
+   "id": "OBJ-3",
+   "name": "Lift customer satisfaction",
+   "conf": "medium",
+   "flags": [
+    "unclear",
+    "stale"
+   ],
+   "sources": [
+    {
+     "source": "S9",
+     "locator": "FY24/25 results call",
+     "quote": "Customer satisfaction is the most important metric we measure at Tesco"
+    }
+   ]
+  }
+ ],
+ "strategies": [
+  {
+   "id": "ST1",
+   "name": "Winning in food",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-1",
+    "OBJ-3"
+   ],
+   "goals": [
+    {
+     "id": "ST1-1",
+     "name": "Hold the highest UK market share in a decade",
+     "strat": "ST1",
+     "measured": true,
+     "measures": [
+      {
+       "m": "UK market share",
+       "t": "28.5% in FY26 (+24bps); 27.8% in H1 FY27 (-24bps year on year). No target",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "conflict"
+     ],
+     "alternatives": [
+      {
+       "value": "The two figures cover different periods and may not be comparable",
+       "source": "S2, Progress and KPIs"
+      }
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "Performance highlights"
+      }
+     ]
+    },
+    {
+     "id": "ST1-2",
+     "name": "Be cheapest on price",
+     "strat": "ST1",
+     "measured": false,
+     "measures": [
+      {
+       "m": "Everyday Low Prices lines",
+       "t": "3,000 lines (tripled)",
+       "kind": "output",
+       "by": null
+      },
+      {
+       "m": "Clubcard Prices",
+       "t": "over 10,000",
+       "kind": "output",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "Evolving our strategic ambitions"
+      }
+     ]
+    },
+    {
+     "id": "ST1-3",
+     "name": "Grow Finest",
+     "strat": "ST1",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Finest sales",
+       "t": "£3bn (up 15%). Aim: well beyond £3 billion",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S3",
+       "locator": "Strategy"
+      }
+     ]
+    },
+    {
+     "id": "ST1-4",
+     "name": "Grow online",
+     "strat": "ST1",
+     "measured": true,
+     "measures": [
+      {
+       "m": "UK online sales growth",
+       "t": "up 11% in FY26; up 8% in H1 FY27. No target",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "Evolving our strategic ambitions"
+      }
+     ]
+    }
+   ],
+   "opps": [
+    {
+     "id": "ST1-a",
+     "name": "UK share fell in H1 FY27 against last year",
+     "goal": "ST1-1",
+     "strat": "ST1",
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S2",
+       "locator": "Progress and KPIs",
+       "quote": "UK share of 27.8%, down 24bps year-on-year"
+      }
+     ]
+    }
+   ],
+   "conf": "high",
+   "flags": [
+    "no_owner",
+    "stale"
+   ],
+   "alternatives": [
+    {
+     "value": "Strategic priorities were great value, quality and convenience whilst rewarding loyalty",
+     "source": "S7, Strategic priorities"
+    }
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    },
+    {
+     "source": "S2",
+     "locator": "Strategic ambitions",
+     "quote": "Tesco's strategy rests on five ambitions"
+    }
+   ]
+  },
+  {
+   "id": "ST2",
+   "name": "Meeting more everyday customer needs",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-1"
+   ],
+   "goals": [
+    {
+     "id": "ST2-1",
+     "name": "Grow Tesco Whoosh",
+     "strat": "ST2",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Whoosh sales",
+       "t": "over £400m in FY26 (up 51%). H1 FY27: on track for over £500m",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S2",
+       "locator": "Progress and KPIs"
+      }
+     ]
+    },
+    {
+     "id": "ST2-2",
+     "name": "Grow clothing, insurance and Marketplace",
+     "strat": "ST2",
+     "measured": true,
+     "measures": [
+      {
+       "m": "F&F clothing sales",
+       "t": "over £1.2bn (up 5.1%)",
+       "kind": "outcome",
+       "by": null
+      },
+      {
+       "m": "Insurance policies in force",
+       "t": "over 2.5m",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "Evolving our strategic ambitions"
+      }
+     ]
+    }
+   ],
+   "opps": [
+    {
+     "id": "ST2-a",
+     "name": "Roll Whoosh out in Ireland",
+     "goal": "ST2-1",
+     "strat": "ST2",
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S3",
+       "locator": "Strategy",
+       "quote": "Whoosh (rolling out in Ireland)"
+      }
+     ]
+    }
+   ],
+   "conf": "high",
+   "flags": [
+    "no_owner"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    },
+    {
+     "source": "S2",
+     "locator": "Strategic ambitions",
+     "quote": "Tesco's strategy rests on five ambitions"
+    }
+   ]
+  },
+  {
+   "id": "ST3",
+   "name": "Being the most strategic partner for suppliers",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-1"
+   ],
+   "goals": [
+    {
+     "id": "ST3-1",
+     "name": "Grow Tesco Media",
+     "strat": "ST3",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Brands using Tesco Media",
+       "t": "over 800",
+       "kind": "outcome",
+       "by": null
+      },
+      {
+       "m": "Active advertisers",
+       "t": "up 17% in H1 FY27",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "Evolving our strategic ambitions"
+      }
+     ]
+    }
+   ],
+   "opps": [],
+   "conf": "high",
+   "flags": [
+    "no_owner"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    },
+    {
+     "source": "S2",
+     "locator": "Strategic ambitions",
+     "quote": "Tesco's strategy rests on five ambitions"
+    }
+   ]
+  },
+  {
+   "id": "ST4",
+   "name": "Being connected, personalised and loved by customers",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-1",
+    "OBJ-3"
+   ],
+   "goals": [
+    {
+     "id": "ST4-1",
+     "name": "Personalise every Clubcard journey",
+     "strat": "ST4",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Active Clubcard grocery journeys personalised one-to-one",
+       "t": "100%",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "Evolving our strategic ambitions"
+      }
+     ]
+    },
+    {
+     "id": "ST4-2",
+     "name": "Raise customer satisfaction",
+     "strat": "ST4",
+     "measured": true,
+     "measures": [
+      {
+       "m": "UK net promoter score",
+       "t": "33 (up 3) in H1 FY27. No target",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S2",
+       "locator": "Progress and KPIs"
+      }
+     ]
+    }
+   ],
+   "opps": [
+    {
+     "id": "ST4-a",
+     "name": "Take the AI meal-planning assistant from colleagues to customers",
+     "goal": "ST4-1",
+     "strat": "ST4",
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S2",
+       "locator": "Colleague metrics",
+       "quote": "c.280,000 colleagues trialled the AI meal planning assistant"
+      }
+     ]
+    }
+   ],
+   "conf": "high",
+   "flags": [
+    "no_owner"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    },
+    {
+     "source": "S2",
+     "locator": "Strategic ambitions",
+     "quote": "Tesco's strategy rests on five ambitions"
+    }
+   ]
+  },
+  {
+   "id": "ST5",
+   "name": "Long-term business sustainability",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-1"
+   ],
+   "goals": [
+    {
+     "id": "ST5-1",
+     "name": "Deliver Save to Invest savings",
+     "strat": "ST5",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Save to Invest savings",
+       "t": "£500m target for FY27. £251m delivered in H1",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S2",
+       "locator": "Progress and KPIs"
+      }
+     ]
+    },
+    {
+     "id": "ST5-2",
+     "name": "Cut emissions to net zero",
+     "strat": "ST5",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Scope 1 and 2 emissions",
+       "t": "68% down vs FY15/16, ahead of 60% target. Net zero own operations by 2035",
+       "by": "2035",
+       "kind": "outcome"
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "conflict"
+     ],
+     "alternatives": [
+      {
+       "value": "Net zero across value chain by 2050 and own operations by 2035",
+       "source": "S5, Summary"
+      }
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "Long-term business sustainability"
+      }
+     ]
+    },
+    {
+     "id": "ST5-3",
+     "name": "Sell healthier products",
+     "strat": "ST5",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Products sold classed as healthy",
+       "t": "at least 65% by volume. Achieved",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "Long-term business sustainability"
+      }
+     ]
+    },
+    {
+     "id": "ST5-4",
+     "name": "Colleagues who would recommend Tesco as a place to work",
+     "strat": "ST5",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Would recommend Tesco as a great place to work",
+       "t": "85% in April 2025. No FY26 figure found",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "unclear",
+      "stale"
+     ],
+     "sources": [
+      {
+       "source": "S6",
+       "locator": "FY25 results call"
+      }
+     ]
+    }
+   ],
+   "opps": [
+    {
+     "id": "ST5-a",
+     "name": "Report colleague recommend scores as numbers, not narrative",
+     "goal": "ST5-4",
+     "strat": "ST5",
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S8",
+       "locator": "AGM question",
+       "quote": "reporting remains largely narrative-based"
+      }
+     ]
+    }
+   ],
+   "conf": "medium",
+   "flags": [
+    "no_owner",
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    },
+    {
+     "source": "S2",
+     "locator": "Strategic ambitions",
+     "quote": "Tesco's strategy rests on five ambitions"
+    }
+   ]
+  }
+ ],
+ "initiatives": [
+  {
+   "id": "I01",
+   "name": "Everyday Low Prices expansion",
+   "strat": "ST1",
+   "goal": "ST1-2",
+   "links": [
+    {
+     "strat": "ST1",
+     "goal": "ST1-2",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    }
+   ]
+  },
+  {
+   "id": "I02",
+   "name": "Clubcard Prices and Aldi Price Match",
+   "strat": "ST1",
+   "goal": "ST1-2",
+   "links": [
+    {
+     "strat": "ST1",
+     "goal": "ST1-2",
+     "opp": null
+    },
+    {
+     "strat": "ST4",
+     "goal": "ST4-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear",
+    "conflict"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "Strategy"
+    }
+   ]
+  },
+  {
+   "id": "I03",
+   "name": "Finest range growth (Gut Sense, high protein, Chef's Collection)",
+   "strat": "ST1",
+   "goal": "ST1-3",
+   "links": [
+    {
+     "strat": "ST1",
+     "goal": "ST1-3",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "Strategy"
+    }
+   ]
+  },
+  {
+   "id": "I04",
+   "name": "AI ranging tools with dunnhumby",
+   "strat": "ST1",
+   "links": [
+    {
+     "strat": "ST1",
+     "goal": null,
+     "opp": null
+    },
+    {
+     "strat": "ST3",
+     "goal": "ST3-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear",
+    "conflict"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "Strategy"
+    }
+   ]
+  },
+  {
+   "id": "I05",
+   "name": "Tesco Whoosh",
+   "strat": "ST2",
+   "goal": "ST2-1",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": "ST2-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    }
+   ]
+  },
+  {
+   "id": "I06",
+   "name": "F&F clothing",
+   "strat": "ST2",
+   "goal": "ST2-2",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": "ST2-2",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    }
+   ]
+  },
+  {
+   "id": "I07",
+   "name": "Tesco Marketplace",
+   "strat": "ST2",
+   "goal": "ST2-2",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": "ST2-2",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "Strategy"
+    }
+   ]
+  },
+  {
+   "id": "I08",
+   "name": "Insurance and money services",
+   "strat": "ST2",
+   "goal": "ST2-2",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": "ST2-2",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "Strategy"
+    }
+   ]
+  },
+  {
+   "id": "I09",
+   "name": "In-store pharmacies and Tesco Mobile",
+   "strat": "ST2",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "Strategy"
+    }
+   ]
+  },
+  {
+   "id": "I10",
+   "name": "Booker retail partners and Scoot",
+   "strat": "ST2",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Named initiatives"
+    }
+   ]
+  },
+  {
+   "id": "I11",
+   "name": "Tesco Media",
+   "strat": "ST3",
+   "goal": "ST3-1",
+   "links": [
+    {
+     "strat": "ST3",
+     "goal": "ST3-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    }
+   ]
+  },
+  {
+   "id": "I12",
+   "name": "dunnhumby",
+   "strat": "ST3",
+   "goal": "ST3-1",
+   "links": [
+    {
+     "strat": "ST3",
+     "goal": "ST3-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    }
+   ]
+  },
+  {
+   "id": "I13",
+   "name": "Clubcard personalisation",
+   "strat": "ST4",
+   "goal": "ST4-1",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": "ST4-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    }
+   ]
+  },
+  {
+   "id": "I14",
+   "name": "AI meal-planning assistant",
+   "strat": "ST4",
+   "goal": "ST4-1",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": "ST4-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S2",
+     "locator": "Colleague metrics"
+    }
+   ]
+  },
+  {
+   "id": "I15",
+   "name": "Most Helpful Shopping Trip colleague training",
+   "strat": "ST4",
+   "goal": "ST4-2",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": "ST4-2",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S2",
+     "locator": "Colleague metrics"
+    }
+   ]
+  },
+  {
+   "id": "I16",
+   "name": "Save to Invest",
+   "strat": "ST5",
+   "goal": "ST5-1",
+   "links": [
+    {
+     "strat": "ST5",
+     "goal": "ST5-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Named initiatives"
+    }
+   ]
+  },
+  {
+   "id": "I17",
+   "name": "Net zero programme",
+   "strat": "ST5",
+   "goal": "ST5-2",
+   "links": [
+    {
+     "strat": "ST5",
+     "goal": "ST5-2",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Long-term business sustainability"
+    }
+   ]
+  },
+  {
+   "id": "I18",
+   "name": "UK store colleague pay and performance award",
+   "strat": "ST5",
+   "goal": "ST5-4",
+   "links": [
+    {
+     "strat": "ST5",
+     "goal": "ST5-4",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Named initiatives"
+    }
+   ]
+  },
+  {
+   "id": "I19",
+   "name": "Technology hiring (over 6,000 technology experts)",
+   "strat": "ST5",
+   "links": [
+    {
+     "strat": "ST5",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Evolving our strategic ambitions"
+    }
+   ]
+  },
+  {
+   "id": "I20",
+   "name": "Store openings (93 across the Group in FY26)",
+   "strat": "ST1",
+   "links": [
+    {
+     "strat": "ST1",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "Named initiatives"
+    }
+   ]
+  },
+  {
+   "id": "I21",
+   "name": "Work experience and apprenticeships by 2027",
+   "strat": "ST5",
+   "links": [
+    {
+     "strat": "ST5",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S2",
+     "locator": "Colleague metrics"
+    }
+   ]
+  }
+ ],
+ "pilot": [],
+ "questions": [
+  {
+   "id": "Q1",
+   "cat": "No owner",
+   "t": "Who owns each of the five ambitions and the profit objective?",
+   "why": "Flagged: no_owner",
+   "dm": "CEO"
+  },
+  {
+   "id": "Q2",
+   "cat": "Unclear",
+   "t": "Why do Save to Invest, technology hiring and emissions sit under long-term sustainability?",
+   "why": "Flagged: unclear",
+   "dm": "CFO"
+  },
+  {
+   "id": "Q3",
+   "cat": "Unclear",
+   "t": "Which ambition covers colleagues, and what is the current recommend score?",
+   "why": "Flagged: unclear",
+   "dm": "Chief People Officer"
+  },
+  {
+   "id": "Q4",
+   "cat": "Unclear",
+   "t": "Is customer satisfaction still an objective, and does it sit with ambition 1 or 4?",
+   "why": "Flagged: unclear",
+   "dm": "Chief Customer Officer"
+  }
+ ],
+ "changes": [],
+ "claimDocs": [
+  {
+   "id": "S1",
+   "kind": "Preliminary results statement 2025/26 (16 Apr 2026), first 100,000 characters of 170,000",
+   "n": 26,
+   "conflicts": 2
+  },
+  {
+   "id": "S2",
+   "kind": "Interim results 2026/27 (8 Oct 2026), read through a summary extract",
+   "n": 15,
+   "conflicts": 1
+  },
+  {
+   "id": "S3",
+   "kind": "Full-year results call highlights, MarketBeat (16 Apr 2026)",
+   "n": 9,
+   "conflicts": 2
+  },
+  {
+   "id": "S4",
+   "kind": "Annual report 2026 opening pages (search extract only)",
+   "n": 2,
+   "conflicts": 0
+  },
+  {
+   "id": "S5",
+   "kind": "Sustainability report 2026, summary page only",
+   "n": 0,
+   "conflicts": 0
+  },
+  {
+   "id": "S6",
+   "kind": "Full-year 2024/25 results call transcript (10 Apr 2025), search extract",
+   "n": 2,
+   "conflicts": 0
+  },
+  {
+   "id": "S7",
+   "kind": "Preliminary results 2024/25 (10 Apr 2025), search extract",
+   "n": 0,
+   "conflicts": 0
+  },
+  {
+   "id": "S8",
+   "kind": "Railpen AGM question, 4 Jun 2026 (investor, not company)",
+   "n": 2,
+   "conflicts": 0
+  },
+  {
+   "id": "S9",
+   "kind": "Full-year 2024/25 results call, MarketBeat (10 Apr 2025), search extract",
+   "n": 1,
+   "conflicts": 0
+  }
+ ],
+ "modelChecks": [],
+ "otherDecisions": []
+}

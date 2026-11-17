@@ -1,0 +1,1128 @@
+meta:
+  template_version: 0.2.0
+  client_alias: Tesco PLC (public sources)
+  started: '2026-11-17'
+  interviewer: consultant
+  overall_status: in_progress
+  scope_unit: group
+technical:
+  assumptions:
+  - text: Stand-in trial using public documents only. No technical questions were asked.
+    check_with_role: consultant
+claims:
+- id: C001
+  field: sources.inventory
+  value:
+    id: S1
+    kind: Preliminary results statement 2025/26 (16 Apr 2026), first 100,000 characters of 170,000
+    evidence_role: said+done
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C002
+  field: sources.inventory
+  value:
+    id: S2
+    kind: Interim results 2026/27 (8 Oct 2026), read through a summary extract
+    evidence_role: said+done
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C003
+  field: sources.inventory
+  value:
+    id: S3
+    kind: Full-year results call highlights, MarketBeat (16 Apr 2026)
+    evidence_role: said
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C004
+  field: sources.inventory
+  value:
+    id: S4
+    kind: Annual report 2026 opening pages (search extract only)
+    evidence_role: said
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C005
+  field: sources.inventory
+  value:
+    id: S5
+    kind: Sustainability report 2026, summary page only
+    evidence_role: done
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C006
+  field: sources.inventory
+  value:
+    id: S6
+    kind: Full-year 2024/25 results call transcript (10 Apr 2025), search extract
+    evidence_role: understood
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C007
+  field: sources.inventory
+  value:
+    id: S7
+    kind: Preliminary results 2024/25 (10 Apr 2025), search extract
+    evidence_role: said
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C008
+  field: sources.inventory
+  value:
+    id: S8
+    kind: Railpen AGM question, 4 Jun 2026 (investor, not company)
+    evidence_role: understood
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C009
+  field: scope.description
+  value: Tesco PLC, group level (public documents only)
+  origin: stated
+  confidence: high
+  status: unreviewed
+- id: C010
+  field: model.vision
+  value: Tesco was built to be a champion for customers, serving them every day with affordable, healthy and sustainable food.
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: Welcome
+    quote: a champion for customers, serving them every day
+  flags:
+  - single_source
+  status: unreviewed
+  note: Annual report welcome text. Also uses the tagline Value. Quality. Service. and Every Little Helps.
+- id: C011
+  field: model.objectives
+  value:
+    id: OBJ-1
+    name: Grow profit and free cash flow
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Guidance
+    quote: 'Adjusted operating profit: now £3.15bn–£3.30bn'
+  flags:
+  - conflict
+  - unclear
+  alternatives:
+  - value: Guidance was £3.0bn to £3.3bn for 2026/27 in April 2026
+    source_id: S1
+    locator: Outlook
+    quote: 'Adjusted operating profit: £3.0bn to £3.3bn'
+  status: unreviewed
+  note: Guidance, not a stated objective. October 2026 guidance supersedes April's, so the April figure is stale.
+- id: C012
+  field: model.objectives
+  value:
+    id: OBJ-2
+    name: Return cash to shareholders
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Dividend and buyback
+    quote: paying “broadly 50% of earnings.”
+  - source_id: S2
+    locator: Guidance
+    quote: 'Share buyback: increased to £950m'
+  flags:
+  - unclear
+  status: unreviewed
+  note: Capital allocation policy. No ambition or initiative serves it.
+- id: C013
+  field: model.objectives
+  value:
+    id: OBJ-3
+    name: Lift customer satisfaction
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S9
+    locator: FY24/25 results call
+    quote: Customer satisfaction is the most important metric we measure at Tesco
+  flags:
+  - unclear
+  - stale
+  status: unreviewed
+  note: Stated in April 2025. Not found in the 2026 material read, so may have been restated.
+- id: C014
+  field: model.strategies
+  value:
+    id: ST1
+    name: Winning in food
+    status: not_assessed
+    objectives:
+    - OBJ-1
+    - OBJ-3
+  origin: derived
+  confidence: high
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  - source_id: S2
+    locator: Strategic ambitions
+    quote: Tesco's strategy rests on five ambitions
+  flags:
+  - no_owner
+  - stale
+  alternatives:
+  - value: Strategic priorities were great value, quality and convenience whilst rewarding loyalty
+    source_id: S7
+    locator: Strategic priorities
+    quote: Our strategic priorities ensure that we focus on offering great value
+  status: unreviewed
+  note: April 2026 results say the ambitions were evolved from the earlier priorities. The CEO says the strategy starts and ends with core food.
+- id: C015
+  field: model.strategies
+  value:
+    id: ST2
+    name: Meeting more everyday customer needs
+    status: not_assessed
+    objectives:
+    - OBJ-1
+  origin: derived
+  confidence: high
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  - source_id: S2
+    locator: Strategic ambitions
+    quote: Tesco's strategy rests on five ambitions
+  flags:
+  - no_owner
+  status: unreviewed
+  note: The sources name no owner for this ambition.
+- id: C016
+  field: model.strategies
+  value:
+    id: ST3
+    name: Being the most strategic partner for suppliers
+    status: not_assessed
+    objectives:
+    - OBJ-1
+  origin: derived
+  confidence: high
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  - source_id: S2
+    locator: Strategic ambitions
+    quote: Tesco's strategy rests on five ambitions
+  flags:
+  - no_owner
+  status: unreviewed
+  note: The sources name no owner for this ambition.
+- id: C017
+  field: model.strategies
+  value:
+    id: ST4
+    name: Being connected, personalised and loved by customers
+    status: not_assessed
+    objectives:
+    - OBJ-1
+    - OBJ-3
+  origin: derived
+  confidence: high
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  - source_id: S2
+    locator: Strategic ambitions
+    quote: Tesco's strategy rests on five ambitions
+  flags:
+  - no_owner
+  status: unreviewed
+  note: The sources name no owner for this ambition.
+- id: C018
+  field: model.strategies
+  value:
+    id: ST5
+    name: Long-term business sustainability
+    status: not_assessed
+    objectives:
+    - OBJ-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  - source_id: S2
+    locator: Strategic ambitions
+    quote: Tesco's strategy rests on five ambitions
+  flags:
+  - no_owner
+  - unclear
+  status: unreviewed
+  note: The sustainability ambition holds Save to Invest cost savings, 6,000 technology experts and emissions together. The grouping looks mixed
+    and the sources do not explain it.
+- id: C019
+  field: model.goals
+  value:
+    id: ST1-1
+    name: Hold the highest UK market share in a decade
+    strategy: ST1
+    measured: true
+    measures:
+    - name: UK market share
+      kind: outcome
+      target: 28.5% in FY26 (+24bps); 27.8% in H1 FY27 (-24bps year on year). No target
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Performance highlights
+  flags:
+  - single_source
+  - conflict
+  alternatives:
+  - value: The two figures cover different periods and may not be comparable
+    source_id: S2
+    locator: Progress and KPIs
+  status: unreviewed
+- id: C020
+  field: model.goals
+  value:
+    id: ST1-2
+    name: Be cheapest on price
+    strategy: ST1
+    measured: false
+    measures:
+    - name: Everyday Low Prices lines
+      kind: output
+      target: 3,000 lines (tripled)
+    - name: Clubcard Prices
+      kind: output
+      target: over 10,000
+  origin: inferred
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - single_source
+  status: unreviewed
+  note: 'Outputs only: no outcome measure of price position was found in the text read.'
+- id: C021
+  field: model.goals
+  value:
+    id: ST1-3
+    name: Grow Finest
+    strategy: ST1
+    measured: true
+    measures:
+    - name: Finest sales
+      kind: outcome
+      target: '£3bn (up 15%). Aim: well beyond £3 billion'
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Strategy
+  flags:
+  - single_source
+  status: unreviewed
+- id: C022
+  field: model.goals
+  value:
+    id: ST1-4
+    name: Grow online
+    strategy: ST1
+    measured: true
+    measures:
+    - name: UK online sales growth
+      kind: outcome
+      target: up 11% in FY26; up 8% in H1 FY27. No target
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - single_source
+  status: unreviewed
+- id: C023
+  field: model.goals
+  value:
+    id: ST2-1
+    name: Grow Tesco Whoosh
+    strategy: ST2
+    measured: true
+    measures:
+    - name: Whoosh sales
+      kind: outcome
+      target: 'over £400m in FY26 (up 51%). H1 FY27: on track for over £500m'
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Progress and KPIs
+  flags:
+  - single_source
+  status: unreviewed
+- id: C024
+  field: model.goals
+  value:
+    id: ST2-2
+    name: Grow clothing, insurance and Marketplace
+    strategy: ST2
+    measured: true
+    measures:
+    - name: F&F clothing sales
+      kind: outcome
+      target: over £1.2bn (up 5.1%)
+      current: 'yes'
+    - name: Insurance policies in force
+      kind: outcome
+      target: over 2.5m
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - single_source
+  status: unreviewed
+- id: C025
+  field: model.goals
+  value:
+    id: ST3-1
+    name: Grow Tesco Media
+    strategy: ST3
+    measured: true
+    measures:
+    - name: Brands using Tesco Media
+      kind: outcome
+      target: over 800
+      current: 'yes'
+    - name: Active advertisers
+      kind: outcome
+      target: up 17% in H1 FY27
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - single_source
+  status: unreviewed
+- id: C026
+  field: model.goals
+  value:
+    id: ST4-1
+    name: Personalise every Clubcard journey
+    strategy: ST4
+    measured: true
+    measures:
+    - name: Active Clubcard grocery journeys personalised one-to-one
+      kind: outcome
+      target: 100%
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - single_source
+  status: unreviewed
+- id: C027
+  field: model.goals
+  value:
+    id: ST4-2
+    name: Raise customer satisfaction
+    strategy: ST4
+    measured: true
+    measures:
+    - name: UK net promoter score
+      kind: outcome
+      target: 33 (up 3) in H1 FY27. No target
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Progress and KPIs
+  flags:
+  - single_source
+  status: unreviewed
+- id: C028
+  field: model.goals
+  value:
+    id: ST5-1
+    name: Deliver Save to Invest savings
+    strategy: ST5
+    measured: true
+    measures:
+    - name: Save to Invest savings
+      kind: outcome
+      target: £500m target for FY27. £251m delivered in H1
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Progress and KPIs
+  flags:
+  - single_source
+  status: unreviewed
+- id: C029
+  field: model.goals
+  value:
+    id: ST5-2
+    name: Cut emissions to net zero
+    strategy: ST5
+    measured: true
+    measures:
+    - name: Scope 1 and 2 emissions
+      kind: outcome
+      target: 68% down vs FY15/16, ahead of 60% target. Net zero own operations by 2035
+      target_year: 2035
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Long-term business sustainability
+  flags:
+  - single_source
+  - conflict
+  alternatives:
+  - value: Net zero across value chain by 2050 and own operations by 2035
+    source_id: S5
+    locator: Summary
+  status: unreviewed
+- id: C030
+  field: model.goals
+  value:
+    id: ST5-3
+    name: Sell healthier products
+    strategy: ST5
+    measured: true
+    measures:
+    - name: Products sold classed as healthy
+      kind: outcome
+      target: at least 65% by volume. Achieved
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Long-term business sustainability
+  flags:
+  - single_source
+  status: unreviewed
+- id: C031
+  field: model.goals
+  value:
+    id: ST5-4
+    name: Colleagues who would recommend Tesco as a place to work
+    strategy: ST5
+    measured: true
+    measures:
+    - name: Would recommend Tesco as a great place to work
+      kind: outcome
+      target: 85% in April 2025. No FY26 figure found
+      current: 'yes'
+  origin: inferred
+  confidence: medium
+  sources:
+  - source_id: S6
+    locator: FY25 results call
+  flags:
+  - single_source
+  - unclear
+  - stale
+  status: unreviewed
+  note: No ambition covers colleagues, yet pay and training are among the largest items reported. Placed under ST5 as the nearest fit. The only
+    score found is a year old.
+- id: C032
+  field: model.opportunities
+  value:
+    id: ST1-a
+    name: UK share fell in H1 FY27 against last year
+    strategy: ST1
+    goal: ST1-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Progress and KPIs
+    quote: UK share of 27.8%, down 24bps year-on-year
+  flags:
+  - single_source
+  status: unreviewed
+- id: C033
+  field: model.opportunities
+  value:
+    id: ST2-a
+    name: Roll Whoosh out in Ireland
+    strategy: ST2
+    goal: ST2-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Strategy
+    quote: Whoosh (rolling out in Ireland)
+  flags:
+  - single_source
+  status: unreviewed
+- id: C034
+  field: model.opportunities
+  value:
+    id: ST4-a
+    name: Take the AI meal-planning assistant from colleagues to customers
+    strategy: ST4
+    goal: ST4-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Colleague metrics
+    quote: c.280,000 colleagues trialled the AI meal planning assistant
+  flags:
+  - single_source
+  status: unreviewed
+- id: C035
+  field: model.opportunities
+  value:
+    id: ST5-a
+    name: Report colleague recommend scores as numbers, not narrative
+    strategy: ST5
+    goal: ST5-4
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S8
+    locator: AGM question
+    quote: reporting remains largely narrative-based
+  flags:
+  - single_source
+  status: unreviewed
+- id: C036
+  field: work.initiatives
+  value:
+    id: I01
+    name: Everyday Low Prices expansion
+    links:
+    - strategy: ST1
+      goal: ST1-2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funding assumed; FTE not published. Group has over 340,000 colleagues.
+- id: C037
+  field: work.initiatives
+  value:
+    id: I02
+    name: Clubcard Prices and Aldi Price Match
+    links:
+    - strategy: ST1
+      goal: ST1-2
+    - strategy: ST4
+      goal: ST4-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Strategy
+  flags:
+  - unclear
+  - conflict
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C038
+  field: work.initiatives
+  value:
+    id: I03
+    name: Finest range growth (Gut Sense, high protein, Chef's Collection)
+    links:
+    - strategy: ST1
+      goal: ST1-3
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Strategy
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C039
+  field: work.initiatives
+  value:
+    id: I04
+    name: AI ranging tools with dunnhumby
+    links:
+    - strategy: ST1
+    - strategy: ST3
+      goal: ST3-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Strategy
+  flags:
+  - unclear
+  - conflict
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C040
+  field: work.initiatives
+  value:
+    id: I05
+    name: Tesco Whoosh
+    links:
+    - strategy: ST2
+      goal: ST2-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C041
+  field: work.initiatives
+  value:
+    id: I06
+    name: F&F clothing
+    links:
+    - strategy: ST2
+      goal: ST2-2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C042
+  field: work.initiatives
+  value:
+    id: I07
+    name: Tesco Marketplace
+    links:
+    - strategy: ST2
+      goal: ST2-2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Strategy
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C043
+  field: work.initiatives
+  value:
+    id: I08
+    name: Insurance and money services
+    links:
+    - strategy: ST2
+      goal: ST2-2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Strategy
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C044
+  field: work.initiatives
+  value:
+    id: I09
+    name: In-store pharmacies and Tesco Mobile
+    links:
+    - strategy: ST2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: Strategy
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C045
+  field: work.initiatives
+  value:
+    id: I10
+    name: Booker retail partners and Scoot
+    links:
+    - strategy: ST2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Named initiatives
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C046
+  field: work.initiatives
+  value:
+    id: I11
+    name: Tesco Media
+    links:
+    - strategy: ST3
+      goal: ST3-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C047
+  field: work.initiatives
+  value:
+    id: I12
+    name: dunnhumby
+    links:
+    - strategy: ST3
+      goal: ST3-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C048
+  field: work.initiatives
+  value:
+    id: I13
+    name: Clubcard personalisation
+    links:
+    - strategy: ST4
+      goal: ST4-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C049
+  field: work.initiatives
+  value:
+    id: I14
+    name: AI meal-planning assistant
+    links:
+    - strategy: ST4
+      goal: ST4-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Colleague metrics
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C050
+  field: work.initiatives
+  value:
+    id: I15
+    name: Most Helpful Shopping Trip colleague training
+    links:
+    - strategy: ST4
+      goal: ST4-2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Colleague metrics
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C051
+  field: work.initiatives
+  value:
+    id: I16
+    name: Save to Invest
+    links:
+    - strategy: ST5
+      goal: ST5-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Named initiatives
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C052
+  field: work.initiatives
+  value:
+    id: I17
+    name: Net zero programme
+    links:
+    - strategy: ST5
+      goal: ST5-2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Long-term business sustainability
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C053
+  field: work.initiatives
+  value:
+    id: I18
+    name: UK store colleague pay and performance award
+    links:
+    - strategy: ST5
+      goal: ST5-4
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Named initiatives
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C054
+  field: work.initiatives
+  value:
+    id: I19
+    name: Technology hiring (over 6,000 technology experts)
+    links:
+    - strategy: ST5
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Evolving our strategic ambitions
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C055
+  field: work.initiatives
+  value:
+    id: I20
+    name: Store openings (93 across the Group in FY26)
+    links:
+    - strategy: ST1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Named initiatives
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C056
+  field: work.initiatives
+  value:
+    id: I21
+    name: Work experience and apprenticeships by 2027
+    links:
+    - strategy: ST5
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Colleague metrics
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE not published.
+- id: C057
+  field: cadence.horizon
+  value:
+    quarters:
+    - label: Q1 ’26-27
+      year: 2026
+    - label: Q2 ’26-27
+      year: 2026
+    - label: Q3 ’26-27
+      year: 2026
+    - label: Q4 ’26-27
+      year: 2027
+    horizon:
+      label: FY 2026/27 (to Feb 2027)
+      from: 0
+      to: 3
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: Outlook
+  flags:
+  - unclear
+  status: unreviewed
+  note: Guidance runs to the end of February 2027. FY25/26 was a 53-week year, so year-on-year comparisons use a 52-week basis.
+- id: C058
+  field: evidence.understood
+  value:
+    measure: Colleagues who would recommend Tesco as a great place to work
+    value: 85% in April 2025, 10% above the global retail benchmark. No FY26 figure found
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S6
+    locator: Call
+    quote: 85% would recommend Tesco as a great place to work
+  flags:
+  - stale
+  - single_source
+  status: unreviewed
+  note: Says how colleagues feel, not whether they understand the strategy.
+- id: C059
+  field: evidence.understood
+  value:
+    measure: Investor view of workforce reporting
+    value: Colleague metrics such as the recommend score are reported largely as narrative
+  origin: derived
+  confidence: low
+  sources:
+  - source_id: S8
+    locator: AGM question
+    quote: reporting remains largely narrative-based
+  flags:
+  - single_source
+  status: unreviewed
+  note: From an investor, not the company.
+- id: C060
+  field: evidence.done
+  value:
+    measure: Colleagues
+    value: over 340,000
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: Welcome
+    quote: over 340,000 colleagues
+  flags:
+  - single_source
+  status: unreviewed
+  note: Group total. No split by ambition or initiative.
+- id: C061
+  field: sources.inventory
+  value:
+    id: S9
+    kind: Full-year 2024/25 results call, MarketBeat (10 Apr 2025), search extract
+    evidence_role: said
+  origin: derived
+  confidence: high
+  status: unreviewed
+coverage_gaps:
+- tier: Initiatives
+  gap: no_fte_evidence
+- tier: Strategies
+  gap: owner_unknown
+- tier: Org objectives
+  gap: no_understood_evidence
+open_items:
+- claim_id: C009
+  flags:
+  - no_owner
+  question: Who owns each of the five ambitions and the profit objective?
+  reviewer_role: CEO
+  needed_by: '2026-12-01'
+- claim_id: C010
+  flags:
+  - unclear
+  question: Why do Save to Invest, technology hiring and emissions sit under long-term sustainability?
+  reviewer_role: CFO
+  needed_by: '2026-12-01'
+- claim_id: C011
+  flags:
+  - unclear
+  question: Which ambition covers colleagues, and what is the current recommend score?
+  reviewer_role: Chief People Officer
+  needed_by: '2026-12-15'
+- claim_id: C012
+  flags:
+  - unclear
+  question: Is customer satisfaction still an objective, and does it sit with ambition 1 or 4?
+  reviewer_role: Chief Customer Officer
+  needed_by: '2026-12-15'

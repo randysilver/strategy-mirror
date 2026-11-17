@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Starling</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: header with wordmark and tabs; six views (Overview, Strategy, Work, Decisions, Open questions, Review);
+   one side drawer for records and initiative lists. Every colour comes from the skin's tokens. */
+/* Brand colours: Sunflower Gold F9AE21, Gunmetal 434343, Sweet Peony E36397, Icy Blue A3D9FF, plus black.
+   Status colours (ok, warn, bad) sit outside the brand palette because they carry meaning.
+   Violet marks unfunded work. The three column tints separate goals, opportunities and initiatives on the strategy board. */
+:root{
+  --bg:#fafafa; --surface:#ffffff; --surface2:#f2f2f2; --fg:#111111; --muted:#5a5a5a; --line:#e3e3e3;
+  --accent:#111111; --accent-fg:#ffffff; --accent-soft:#fdf1d6;
+  --star:#F9AE21; --ink:#111111; --note-a:#F9AE21; --note-b:#E36397; --note-c:#A3D9FF;
+  --ok:#0f8a4f; --ok-soft:#dff5e9; --warn:#b97f00; --warn-line:#F5B82E; --warn-soft:#fdf0d0; --bad:#d12e2e; --bad-soft:#fde4e2;
+  --hyp:#434343; --hyp-soft:#ececec;
+  --violet:#6a4fd6; --violet-soft:#ece8fb;
+  --col-goal:#e7eaee; --col-opp:#ebe9f1; --col-init:#e5ede7;
+  --bar-dark:#111111; --bar-dark-fg:#ffffff; --track:#e4e4e4;
+  --g-goal:#F9AE21; --g-res:#434343; --g-disc:#E36397; --g-delay:#A3D9FF;
+  --wire:#c9c9c9; --wire-on:#111111;
+  --font-display:"Geist",system-ui,sans-serif; --font-body:"Geist",system-ui,sans-serif; --font-mono:"Geist Mono",ui-monospace,monospace; --font-hand:"Caveat","Comic Sans MS",cursive;
+}
+:root[data-theme="dark"]{
+  --bg:#0d0d0d; --surface:#161616; --surface2:#1e1e1e; --fg:#f5f5f5; --muted:#a3a3a3; --line:#2a2a2a;
+  --accent:#F9AE21; --accent-fg:#111111; --accent-soft:#2f2610;
+  --ok:#4ade80; --ok-soft:#10301d; --warn:#fbbf24; --warn-line:#d99a12; --warn-soft:#352706; --bad:#f87171; --bad-soft:#3a1717; --hyp:#c9c9c9; --hyp-soft:#2a2a2a;
+  --violet:#a994ff; --violet-soft:#241d40;
+  --col-goal:#1b1e22; --col-opp:#1e1c24; --col-init:#1a211c;
+  --bar-dark:#f0f0f0; --bar-dark-fg:#111111; --track:#2a2a2a;
+  --g-res:#7a7a7a; --wire:#3a3a3a; --wire-on:#f5f5f5; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+.wrap{max-width:1210px;margin:0 auto}
+h1,h2,h3,h4{font-family:var(--font-display);margin:0;text-wrap:balance;font-weight:600}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,select:focus-visible,a:focus-visible,[tabindex]:focus-visible,summary:focus-visible{outline:2px solid var(--star);outline-offset:2px}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.muted{color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);padding:7px 14px;border-radius:10px;font-weight:500}
+.btn:hover{background:var(--surface2)}
+.btn.sm{padding:3px 10px;font-size:12.5px}
+.btn[aria-pressed="true"]{background:var(--bar-dark);color:var(--bar-dark-fg);border-color:var(--bar-dark)}
+.lnk{background:none;border:0;padding:0;text-align:left;color:inherit;font-weight:inherit}
+.lnk:hover{text-decoration:underline}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:1px 8px;border-radius:99px;white-space:nowrap;background:var(--surface2);color:var(--fg)}
+.pill.amber{background:var(--warn-line);color:#111}
+.pill.soft{background:var(--accent-soft);color:var(--fg)}
+.pill.out{background:transparent;border:1px solid var(--fg)}
+.pill.dash{background:transparent;border:1px dashed var(--muted);color:var(--muted);border-radius:4px}
+.pill.box{background:transparent;border:1px solid var(--bad);color:var(--fg);border-radius:4px}
+.pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.amb{color:var(--warn)} .red{color:var(--bad)} .vio{color:var(--violet)} .grn{color:var(--ok)}
+
+/* header */
+header.top{padding:20px 0 14px;border-bottom:1px solid var(--line)}
+.top-row{display:flex;gap:16px 28px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:4px;min-width:0}
+.brand h1{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.proto{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:0;background:var(--accent-soft);border:1px solid var(--warn-line);padding:0 8px;border-radius:99px}
+.sub{color:var(--muted);font-size:12.5px}
+.hdr-actions{display:flex;gap:8px;margin-top:12px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:2px;margin-top:14px}
+nav.tabs a{padding:8px 12px;color:var(--fg);text-decoration:none;font-weight:500;border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px}
+nav.tabs a:hover{background:var(--surface2);border-radius:8px 8px 0 0}
+nav.tabs a[aria-current="page"]{border-bottom-color:var(--fg);font-weight:600}
+nav.tabs .n{font-family:var(--font-mono);font-size:10.5px;background:var(--surface2);padding:0 6px;border-radius:4px;font-weight:600}
+
+.view{padding-top:26px}
+.view>h2{font-size:26px;margin-bottom:6px}
+.lede{color:var(--muted);max-width:66ch;margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;min-width:0}
+.card+.card{margin-top:14px}
+.card-h{display:flex;align-items:center;gap:10px}
+.card-h h3{font-size:16px}
+.num{width:22px;height:22px;border-radius:50%;background:var(--bar-dark);color:var(--bar-dark-fg);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.card-sub{color:var(--muted);font-size:12.5px;margin:2px 0 12px 32px}
+.finding{padding:11px 14px;border-radius:12px;background:var(--warn-soft);border:1px solid var(--line);display:flex;gap:10px;flex-wrap:wrap}
+.finding.bad{background:var(--bad-soft)}
+.finding b{white-space:nowrap}
+.findings{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.scroll{overflow-x:auto}
+
+/* overview */
+.banner{background:var(--warn-soft);border-top:1px solid var(--warn-line);border-bottom:1px solid var(--warn-line);padding:14px 0;margin:18px 0 0}
+.banner-in{display:flex;gap:12px;max-width:1210px;margin:0 auto}
+.banner p{max-width:96ch;font-size:13px}
+.banner svg{flex:none;width:18px;height:18px;margin-top:2px;color:var(--warn)}
+.hero{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:28px;overflow:hidden}
+.hero-text{padding:34px 34px 30px;display:flex;flex-direction:column;gap:14px}
+.hero-text h2{font-size:clamp(28px,4vw,42px);line-height:1.05;letter-spacing:-.03em}
+.hero-text p{color:var(--muted);max-width:110ch}
+.northstar{display:flex;gap:12px;align-items:flex-start;background:var(--surface2);border:1px solid var(--line);border-radius:16px;padding:12px 16px}
+.northstar svg{flex:none;width:20px;height:20px;color:var(--star);margin-top:2px}
+.northstar b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.northstar span{font-weight:500}
+.sky{position:relative;height:280px;background:radial-gradient(55% 70% at 88% 18%,color-mix(in srgb,var(--star) 24%,transparent),transparent 70%),var(--surface2)}
+.sky canvas{position:absolute;inset:0;width:100%;height:100%}
+.starbig{position:absolute;right:48px;top:14px;width:86px;height:86px;color:var(--star);filter:drop-shadow(0 0 26px var(--star))}
+.skycap{position:absolute;left:22px;top:14px;font-size:11.5px;color:var(--muted)}
+.flockctl{position:absolute;left:22px;bottom:12px}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.ragkey{position:absolute;left:22px;bottom:14px;display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--muted)}
+.ragkey i{display:block;width:120px;height:7px;border-radius:99px;background:linear-gradient(90deg,hsl(142 55% 40%),hsl(43 95% 52%),hsl(3 78% 50%))}
+.levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 22px;padding:18px 32px 26px}
+.lvl{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit;min-width:0}
+.lvl .bar{height:7px;border-radius:99px;background:var(--rag,var(--track))}
+.lvl b{font-size:14.5px}
+.lvl small{color:var(--muted);font-size:12.5px}
+.lvl:hover b{text-decoration:underline}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:18px}
+.tile{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--line);border-radius:16px;padding:12px 14px;text-align:left;font:inherit;color:inherit}
+.tile.att{border-top-color:var(--warn-line)}
+.tile b{display:block;font-family:var(--font-display);font-size:26px;line-height:1.15}
+.tile span{color:var(--muted);font-size:12.5px}
+button.tile:hover{background:var(--surface2)}
+
+/* strategy: north star bar, legend, five-column board */
+.nsbar{background:var(--bar-dark);color:var(--bar-dark-fg);border-radius:14px;padding:11px 16px;display:flex;gap:14px;flex-wrap:wrap;align-items:baseline}
+.nsbar .label{color:inherit;opacity:.8}
+.nsbar .lnk{text-decoration:underline;font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:12px;color:var(--muted);margin:10px 0}
+.legend .sp{flex:1}
+.lg{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;border:1.5px solid var(--muted)}
+.sw.on{border-color:var(--ok)} .sw.risk{border-color:var(--warn-line)} .sw.na{border-style:dashed}
+.sw.dot{width:8px;height:8px;border-radius:50%;border:0;background:var(--ok)}
+.sw.opp{border:1.5px dashed var(--fg);border-radius:3px}
+.sw.ng{border:1px solid var(--line);border-radius:50%;background:var(--surface2)}
+.by{font-family:var(--font-mono);font-size:10px;font-weight:600;background:var(--accent-soft);padding:0 5px;border-radius:4px;white-space:nowrap;color:var(--fg)}
+.by.none{background:var(--warn-soft);color:var(--warn)}
+.boardwrap{overflow-x:auto;border-radius:18px}
+.board{position:relative;min-width:1080px;display:grid;grid-template-columns:180px 1fr;background:var(--surface2);border:1px solid var(--line);border-radius:18px;padding:0 12px 12px 12px}
+.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
+.wires path{fill:none;stroke:var(--wire);stroke-width:1}
+.wires path.on{stroke:var(--wire-on);stroke-width:1.6}
+.ocol{display:flex;flex-direction:column;gap:8px;padding-right:22px}
+.colh{padding:12px 10px 10px;min-height:48px}
+.colh b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.colh small{font-size:10.5px;color:var(--muted)}
+.rows{display:grid;grid-template-columns:minmax(230px,1.15fr) minmax(230px,1.2fr) minmax(220px,1.1fr) minmax(130px,.62fr);column-gap:0}
+.rows>.c-goal{background:var(--col-goal)} .rows>.c-opp{background:var(--col-opp)} .rows>.c-init{background:var(--col-init)}
+.rows>.c-strat{padding:10px 22px 10px 0}
+.rows>.c-goal,.rows>.c-opp,.rows>.c-init{padding:10px 12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px;justify-content:center}
+.rows>.c-goal.colh,.rows>.c-opp.colh,.rows>.c-init.colh{border-top:0;border-radius:12px 12px 0 0;justify-content:flex-start}
+.rows>.c-strat.sblock{display:flex;align-items:center}
+.box{position:relative;z-index:2;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer;min-width:0;transition:opacity .15s}
+.box:hover{border-color:var(--muted)}
+.box.sel{border-color:var(--fg);box-shadow:0 0 0 1px var(--fg)}
+.box.dim{opacity:.32}
+.obj b{display:block;font-weight:500;font-size:13px}
+.obj small{color:var(--muted);font-size:11px}
+.strat{width:100%;border-width:2px}
+.strat.unl{border-style:dashed;border-color:var(--warn-line);background:var(--warn-soft)}
+.strat.on{border-color:var(--ok)} .strat.risk{border-color:var(--warn-line)} .strat.na{border-style:dashed;border-color:var(--muted)}
+.strat-t{display:flex;align-items:center;gap:8px;font-weight:500}
+.chev{width:24px;height:24px;border:1px solid var(--line);border-radius:6px;background:var(--surface);display:grid;place-items:center;flex:none;padding:0}
+.chev svg{width:12px;height:12px;transition:transform .15s}
+.chev[aria-expanded="true"] svg{transform:rotate(90deg)}
+.strat small,.goal small,.oppc small,.grp small{display:block;color:var(--muted);font-size:11.5px}
+.meas{display:flex;gap:6px;align-items:baseline;font-size:11.5px;color:var(--muted);margin-top:4px}
+.meas strong{color:var(--fg);font-weight:500}
+.sumc{font-size:13px;color:var(--muted)} .sumc b{color:var(--fg)}
+.goal-t{display:flex;gap:6px;align-items:center;font-weight:500;font-size:13px}
+.gdot{width:7px;height:7px;border-radius:50%;background:var(--track);flex:none}
+.gdot.m{background:var(--ok)}
+.goal.nog{background:transparent;border-style:dashed}
+.oppc{border:1.5px dashed var(--fg);background:var(--surface)}
+.oppc.selc{background:var(--accent-soft)}
+.oppc b{font-weight:500;font-size:12.5px;display:block}
+.grp b{font-size:14px}
+.grp.zero{border-color:var(--bad)} .grp.zero b,.grp.zero small{color:var(--bad)}
+.grp .btn{margin-top:4px}
+.hint{font-size:12.5px;color:var(--muted);margin:12px 0}
+details.dstack{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+details.dstack summary{cursor:pointer;font-weight:500;font-size:15px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;font-weight:600;padding:6px 10px 6px 0;vertical-align:bottom}
+td{padding:8px 10px 8px 0;border-top:1px solid var(--line);vertical-align:top}
+
+/* work: quarter grid */
+.ctrls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-bottom:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:transparent;padding:8px 14px;font-weight:500}
+.seg.sm button{padding:5px 11px;font-size:12.5px}
+.seg button[aria-pressed="true"]{background:var(--bar-dark);color:var(--bar-dark-fg)}
+.ctrls .meta{margin-left:auto;font-size:12px;color:var(--muted)}
+.rg{min-width:900px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.rr{display:grid;grid-template-columns:220px repeat(var(--nq,5),minmax(0,1fr));border-top:1px solid var(--line);position:relative}
+.rr.hd{border-top:0;background:var(--surface2);font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.rr.hd>div{padding:10px;text-align:center}
+.rr.hd>div:first-child{text-align:left}
+.rr.srow{background:var(--accent-soft)}
+.rr .rl{padding:10px 12px;font-size:12px;color:var(--muted);min-width:0;grid-column:1}
+.rr .rl b{color:var(--fg);font-size:14px;font-weight:600}
+.rr .rl .t{display:flex;gap:8px;align-items:center;margin-bottom:2px}
+.rr.srow .qc{display:flex;flex-direction:column;align-items:center;justify-content:center;border-left:1px solid color-mix(in srgb,var(--fg) 6%,transparent);padding:10px 4px;position:relative}
+.qc b{font-size:19px;display:flex;gap:6px;align-items:center}
+.qc b .vio{font-size:15px}
+.qc span{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.dia{display:inline-block;width:11px;height:11px;background:var(--fg);transform:rotate(45deg)}
+.later{position:absolute;right:8px;bottom:6px;font-size:10.5px;color:var(--muted)}
+.rr.grow .rl{padding-left:34px}
+.rr.irow .rl{padding-left:46px;font-size:11.5px}
+.rr.irow .rl b{font-size:12.5px;font-weight:500}
+.bars{grid-column:2/-1;display:grid;grid-template-columns:repeat(var(--nq,5),minmax(0,1fr));align-items:center;row-gap:4px;padding:8px 0}
+.gb{height:24px;border-radius:3px;background:var(--g-goal);color:#111;font-size:11.5px;font-weight:600;display:flex;align-items:center;justify-content:space-between;padding:0 8px;margin:0 4px;min-width:0;overflow:hidden;white-space:nowrap}
+.gb .dia{background:#111}
+.mini{height:10px;border-radius:2px;margin:0 4px}
+.mini.r{background:var(--g-res)} .mini.d{background:var(--g-disc)} .mini.e{background:var(--g-delay)}
+.ib{height:18px;border-radius:3px;margin:0 4px;background:var(--bar-dark)}
+.ib.unf{background:var(--violet-soft);border:1.5px solid var(--violet)}
+.ib.nr{background:transparent;border:1.5px dashed var(--muted)}
+.lgrow{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12px;color:var(--muted);margin-bottom:8px;align-items:center}
+.lgrow .k{display:inline-block;width:20px;height:10px;border-radius:2px;vertical-align:middle;margin-right:6px}
+table.ft td.n,table.ft th.n{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+table.ft tr.grp-r td{font-weight:600;background:var(--surface2)}
+table.ft tr.grp-r td:first-child{padding-left:8px}
+
+/* decisions */
+.callout{border-left:3px solid var(--warn-line);background:var(--warn-soft);padding:10px 14px;border-radius:0 10px 10px 0;margin-bottom:14px;font-size:13px}
+.pq{font-weight:600;font-size:15px;max-width:72ch;margin:4px 0 8px}
+.pbar{display:grid;grid-template-columns:150px 1fr 48px;gap:10px;align-items:center;font-size:12.5px;padding:3px 0}
+.pbar .tr{height:10px;border-radius:99px;background:var(--track);position:relative;overflow:hidden}
+.pbar .tr i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--muted)}
+.pbar.hl b{font-weight:600}
+.pbar.hl .tr i{background:var(--bar-dark)}
+.pbar .v{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.below{border-top:2px dashed var(--muted);margin-top:10px;padding:10px 12px;background:var(--surface2);border-radius:0 0 10px 10px;display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12.5px}
+.twocol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.scol{border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+.scol h4{font-size:16px}
+.proxy{border:1.5px dashed var(--warn-line);border-radius:10px;padding:10px 12px;margin:12px 0;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+.proxy small{display:block;color:var(--muted)}
+.ogh{margin-top:14px;padding-top:4px}
+.ogh .label{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ogh b{display:block;font-size:13.5px;margin-top:2px}
+.ini{border-top:1px solid var(--line);padding:9px 0;display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:12px}
+.ini .nm{font-weight:600;font-size:13px}
+.ini .ln{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;color:var(--muted)}
+.ini select{font:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:3px 6px;background:var(--surface);color:var(--fg)}
+.ini.changed{background:color-mix(in srgb,var(--warn-line) 12%,transparent);border-radius:8px;padding-inline:8px}
+.impact{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.impact .tile{border-top-color:var(--line)}
+.olist .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;border-top:1px solid var(--line);padding:9px 0;font-size:13px}
+
+/* open questions */
+.notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.note{padding:18px 20px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.note .k{font-family:var(--font-mono);font-size:11.5px;display:flex;gap:10px}
+.note h3{font-size:18px;letter-spacing:-.01em}
+.note small{font-size:12.5px}
+
+/* review */
+.qitem{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:11px 14px;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.qitem+.qitem{margin-top:8px}
+.qitem[hidden]{display:none}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.rvbox{margin-top:12px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--surface)}
+.rvbox label{display:block;font-size:12.5px;color:var(--muted);margin-top:8px}
+.rvbox input,.rvbox textarea,.rvtools input[type=search]{width:100%;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.rvbox .legend{margin-top:10px}
+.alt{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:6px}
+.rvmsg{color:var(--bad);font-size:12.5px;min-height:1em;margin-top:6px}
+.rvtools{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:10px 0}
+.rvtools input[type=search]{width:260px;max-width:100%}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:20;box-shadow:0 4px 16px rgba(0,0,0,.25);border-radius:99px;padding:10px 18px}
+.chat{position:fixed;top:0;bottom:0;right:0;width:min(420px,100%);z-index:25;background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;box-shadow:-8px 0 24px rgba(0,0,0,.18)}
+.chat[hidden]{display:none}
+.chat-head{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.chat-head small{display:block;color:var(--muted)}
+.msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:92%;padding:9px 12px;border-radius:10px;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:var(--accent);color:var(--accent-fg)}
+.msg.a{align-self:flex-start;background:var(--surface2)}
+.msg .cites{margin-top:6px;display:flex;gap:4px 10px;flex-wrap:wrap}
+.msg .basis{margin-top:6px;font-size:12px;color:var(--muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:99px;padding:3px 10px;font-size:12px}
+.chip:hover{background:var(--surface2)}
+.composer{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.composer input{flex:1;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.chat .notice{font-size:12px;color:var(--muted);padding:8px 14px;border-top:1px solid var(--line);background:var(--warn-soft)}
+.qitem>div{min-width:0}
+.qitem .m{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--muted)}
+.qitem b{display:block;font-size:14.5px;margin:3px 0 2px}
+.diff{font-size:12.5px}
+.diff del{color:var(--bad)} .diff ins{color:var(--ok);text-decoration:none}
+.qitem.mc{background:var(--warn-soft);display:grid;grid-template-columns:auto 1fr;gap:2px 12px}
+.qitem.mc b{margin:0}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:30}
+.drawer{position:fixed;top:0;bottom:0;right:0;width:min(560px,100%);z-index:31;background:var(--surface);border-left:1px solid var(--line);box-shadow:-12px 0 32px rgba(0,0,0,.18);display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) 0}
+.dr-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:22px 22px 6px}
+.dr-h h3{font-size:20px;margin-top:4px}
+.dr-b{overflow-y:auto;padding:4px 22px 22px;flex:1}
+.xbtn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface2);flex:none}
+.li{border-bottom:1px solid var(--line);padding:10px 0}
+.li .lnk{color:var(--violet);font-weight:500}
+.li small{display:block;color:var(--muted);font-size:12px}
+dl.rec{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:13px;margin:12px 0}
+dl.rec dt{color:var(--muted)} dl.rec dd{margin:0}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(20px,env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:10px;z-index:50;max-width:calc(100% - 32px)}
+
+footer.credits{margin-top:44px;padding:20px 0 10px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px}
+footer.credits a{color:inherit}
+
+@media (max-width:800px){
+  .levels{grid-template-columns:1fr 1fr;padding:16px 20px 22px}
+  .twocol{grid-template-columns:1fr}
+  .notes{grid-template-columns:1fr}
+  .hero-text{padding:24px 20px}
+  .starbig{right:20px;width:64px;height:64px}
+  .pbar{grid-template-columns:110px 1fr 44px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+/* Modern skin: neutral canvas, brand gold as the emphasis, large tight type, post-it open questions,
+   star-dotted wordmark with a tagline, soft tonal-wash background. */
+body{font-size:14.5px;letter-spacing:-.005em}
+h1,h2,h3{font-family:var(--font-display);font-weight:600;letter-spacing:-.025em}
+.brand h1{font-size:34px;line-height:1.05;font-weight:700;letter-spacing:-.045em}
+.card,.tile,.board,.rg,.qitem{box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.hero{box-shadow:0 1px 2px rgba(0,0,0,.04),0 24px 48px -24px rgba(0,0,0,.18)}
+
+/* post-it notes for open questions: the note colours stay the same in both themes, so their text uses --ink */
+.note{background:var(--note-a);color:var(--ink);box-shadow:0 8px 16px rgba(0,0,0,.18);border-radius:3px}
+.note:nth-child(3n+1){transform:rotate(-.6deg)}
+.note:nth-child(3n+2){background:var(--note-b);transform:rotate(.5deg)}
+.note:nth-child(3n){background:var(--note-c);transform:rotate(-.3deg)}
+
+/* wordmark: dotless i topped with the North Star */
+.wm{display:inline-block;font-weight:700;letter-spacing:-.03em}
+.wm-i{position:relative;display:inline-block}
+.wm-star{position:absolute;left:50%;top:.06em;width:.4em;height:.4em;transform:translateX(-50%);color:var(--star);filter:drop-shadow(0 0 .12em color-mix(in srgb,var(--star) 55%,transparent))}
+.tag{font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:10px}
+.tag::before{content:"";width:22px;height:2px;border-radius:2px;background:var(--star)}
+
+/* background: soft tonal wash, no pattern */
+html body{background-attachment:fixed;background-image:linear-gradient(135deg,rgba(255,255,255,.8),rgba(0,0,0,.025) 55%,rgba(0,0,0,.045))}
+html[data-theme="dark"] body{background-image:linear-gradient(135deg,rgba(255,255,255,.045),rgba(255,255,255,0) 50%,rgba(0,0,0,.35))}
+
+/* Out of Owls credit: small chip above the wordmark (white chip keeps the logo legible in dark theme) */
+.bty{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.bty span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.oo-logo{height:36px;width:auto;background:#fff;border:1px solid var(--line);border-radius:8px;padding:3px 6px}
+
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="top-row">
+    <div class="brand"><div class="bty"><span>Brought to you by</span><img class="oo-logo" alt="Out of Owls" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAhAAAAHDCAYAAAB1QiOVAAAWfmNhQlgAABZ+anVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAFlhqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOmUyMjRiZDY0LTIzZDgtNDhjMi05MTVlLWM2YjEyODI2M2Y0NwAAAAOTanVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAAuGp1bWIAAABEanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5pbmdyZWRpZW50LnYzAAAAABhjMnNo9l7G+rktECW11Hpd9uy+tAAAAGxjYm9yo2lkYzpmb3JtYXRpaW1hZ2UvcG5namluc3RhbmNlSUR4LHhtcDppaWQ6YzZhNzJkMGMtMWViZS00OGFlLTg4ZjYtYTNhMmZhYWM4ZGRjbHJlbGF0aW9uc2hpcGhwYXJlbnRPZgAAAeJqdW1iAAAAQWp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuYWN0aW9ucy52MgAAAAAYYzJzaKs0Rjk9NefCHIOq/HBJ1VsAAAGZY2JvcqJnYWN0aW9uc4KiZmFjdGlvbmtjMnBhLm9wZW5lZGpwYXJhbWV0ZXJzoWtpbmdyZWRpZW50c4GiY3VybHgtc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5pbmdyZWRpZW50LnYzZGhhc2hYIDO1xOFjdB21BfxuTa1tDx9MBnF+GklkbcIm0ynpQJwHpGZhY3Rpb254HWNvbS5hbnRocm9waWMuY2xhdWRlLnByb3ZpZGVkanBhcmFtZXRlcnOheB9jb20uYW50aHJvcGljLm9yaWdpbi1jb25maWRlbmNlZ3Vua25vd25rZGVzY3JpcHRpb254ZkNsYXVkZSBwcm92aWRlZCB0aGlzIGZpbGUgYXQgdGhlIHJlcXVlc3Qgb2YgYSB1c2VyIGFuZCBtYXkgaGF2ZSBjcmVhdGVkIG9yIG1vZGlmaWVkIHRoZSBmaWxlIGNvbnRlbnRzLm1zb2Z0d2FyZUFnZW50oWRuYW1lZkNsYXVkZXJhbGxBY3Rpb25zSW5jbHVkZWT1AAAAyGp1bWIAAABAanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5oYXNoLmRhdGEAAAAAGGMyc2g8Heuy7sNEy5A4fkNFDVl3AAAAgGNib3KlY2FsZ2ZzaGEyNTZjcGFkTQAAAAAAAAAAAAAAAABkaGFzaFggdMlh5OcqlN4IUsfycoLcavPWHEVjxGJUyNwl3cj9vtBkbmFtZW5qdW1iZiBtYW5pZmVzdGpleGNsdXNpb25zgaJlc3RhcnQYIWZsZW5ndGgZFooAAAI+anVtYgAAACdqdW1kYzJjbAARABCAAACqADibcQNjMnBhLmNsYWltLnYyAAAAAg9jYm9ypWNhbGdmc2hhMjU2aXNpZ25hdHVyZXhNc2VsZiNqdW1iZj0vYzJwYS91cm46YzJwYTplMjI0YmQ2NC0yM2Q4LTQ4YzItOTE1ZS1jNmIxMjgyNjNmNDcvYzJwYS5zaWduYXR1cmVqaW5zdGFuY2VJRHgseG1wOmlpZDpjYzM5ZTEzNS0yNTQxLTQ3YzgtYTFmYS1mNGQ4NTgxNWYzZTByY3JlYXRlZF9hc3NlcnRpb25zg6JjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggM7XE4WN0HbUF/G5NrW0PH0wGcX4aSWRtwibTKelAnAeiY3VybHgqc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5hY3Rpb25zLnYyZGhhc2hYIAQucD172/85iNLitmTy5I/1kublG5UOS2jogXPrxdUcomN1cmx4KXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaGFzaC5kYXRhZGhhc2hYILxb/YIOvl+3US0eWbITyE8yKRF2OTd/t4+GABdTuNx/dGNsYWltX2dlbmVyYXRvcl9pbmZvo2RuYW1lb0FudGhyb3BpYyBGaWxlc2d2ZXJzaW9uZTEuMC4wa3NwZWNWZXJzaW9uZTIuNC4wAAAQOGp1bWIAAAAoanVtZGMyY3MAEQAQgAAAqgA4m3EDYzJwYS5zaWduYXR1cmUAAAAQCGNib3LShFkCEqIBJhghWQIKMIICBjCCAY2gAwIBAgIUQOWgCu7COdC+uIP6BkIFPWdVEwAwCgYIKoZIzj0EAwMwSTEXMBUGA1UEChMOQW50aHJvcGljLCBQQkMxLjAsBgNVBAMTJUFudGhyb3BpYyBDb250ZW50IENyZWRlbnRpYWxzIFJvb3QgQ0EwHhcNMjYwODA3MTg0MzU2WhcNMjgwODA2MTk0MzU2WjBEMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEpMCcGA1UEAxMgQW50aHJvcGljIENsYXVkZSBDb250ZW50IFNpZ25pbmcwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAASYegpry1AYBRTVNL1CpTlbROnY3dey+UrsF9C3phYrATN3ZHf93Mo8RQN0KOUuOn19P4oWNFWe5n2/She9N7eTo1gwVjAOBgNVHQ8BAf8EBAMCB4AwFQYDVR0lBA4wDAYKKwYBBAGD6F4CATAMBgNVHRMBAf8EAjAAMB8GA1UdIwQYMBaAFM5R4gSBTmRbI/jjxM+aPpzB11zCMAoGCCqGSM49BAMDA2cAMGQCMDFzHRSeAXrSy1WOzkbhPZ6Km2wGTmZ/2gK18k8BQGXyqz88Rdrz6CTX9flAnYNVxgIwcF9c3fVhqmJKpi+UhasNUMko69cyX6STPfta3Q8EjyzDjzoyrol46FP6VFHhvUcJoWNwYWRZDZ4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD2WEBw+diWyNS6ypc2X3RemK/8Yfcxdul/U4bPSCp/S/Wtc2VDCtdjV51FyDaLGGa2FXJCR1QuRvRPM9mbhXc9ZiR/PiMp8gAAOrBJREFUeNrt3XecFPXBx/HvzO7e7t1tOeDovQiCgAVFVFQUsbeo2DUxyRN7otE8T4qkx5jYYmJJYkxsQb0zigp2xYIiCNKUJkUQ6eV2r22f5w/QAB6wvX7er1f+CXLs/WZ39jMzv/mNBOykXbt2oxkFALvr3LlzNaMAoE1er/cin88X9vl8JzIaAHaOB5/PN9Xn893HaABoKx6sHf8jIgDsHg9f7h+ICEiSbAwBvF7vRYZhTNztfXGhy+WaEQqFljNCQPnGQzAYnCxpzE7/92Eul6tTKBR6kREiIEA8TNzDe4OIAIiHMW38MREBAoJ4aDMeiAiAeNhTPBARICCIh73GAxEBEA/7QkQQECAeiAiAeEgqHogIAgLEAxEBEA8pxQMRQUCAeCAiAOIhpXggIggIEA9EBEA8pIWIICBAPBARAPFARICAIB6y894hIgDigYggIEA8EBEA8UBEgIAgHrIbD0QEQDwQEQQEiAciAiAeiAgQEMRDft5LRARAPBARBASIByICIB6ICBAQxAMRARAP+UVEEBAgHogIgHggIggIEA9EBEA8EBEgIIgHIgIgHgo0HogIAgLEAxEBEA9EBAEB4oGIAIgHIgIEBPFARADEAxEBAgLFHA9EBEA8EBEEBIgHIgIgHogIAgLEAxEBEA9EBAgI4oGIAIgHIgIEBPEwscTff0QEQDwQEQQEiAciAiAeiAgCAsQDEQEQD0QECAjigYgAiAciAgQE8UBEAMQDEQECgngo63ggIgDigYggIEA8EBEA8UBEEBAgHogIgHggIkBAEA9EBEA8EBEgIIgHIgIgHogIEBDEA4gIEA8gIggIEA9EBEA8EBEEBIgHIgIgHogIdsggHogIgHggIkBAEA9EBEA8EBFEBAFBPICIAPEAIoKAIB5ARIB4IB6ICAICxAMRARAPRAQBAeKBiACIByICBATxQEQAxAOICAKCeAARAeIBRAQBQTyAiADxACKCgCAeQEQAxAMRQUCAeCAiAOKBiAABQTwQEQDxACKCgCAeQESAeAARQUAQDyAiQDyAiCAgiAcQESAeQEQQECAeiAiAeCAiQEAQD0QEEQHiAUQEAUE8gIgA8QAigoAgHkBEgHgAEUFAEA8gIkA8gIggIIgHEBEgHogHIoKAAPHA54CIAPEAIoKAIB5ARIB4ABFBQBAPICJAPICIICCIBxARIB5ARBAQxAOICBAPICIICOIBICJAPICIICCIBxARIB5ARBAQxAOICBAPICIICOIBRASIBxARBATxACICxAOICAKCeACICOIBICLKOCCIBxARIB5ARBAQxAOICBAPICIICOIBRASIBxARBATxACICxAOIiJKOCBvxABARxANARBAQxAOICBAPICIICOIBRASIBxARBATxACICxAOICAKCeACICOIBKMeIsBEPABFBPABERNkFBPEAIgLEA4gIAoJ4ABEB4gFEBAFBPICIICKIB6AUI8JGPABEBPEAEBElHxDEA4gIEA8gIggI4gFEBIgHoAgjwkY8AEQE8QAQEckyiIcy29n6TA3uZtOAzjb1qjXVxWeo1m3KU2moquK//11zyFKg1dLmRkvrGuJatSWuT9fHtPCLmLY1Wwxk+iKSTvf7/a8yFMRDITBNaWgPmwZ1tatPraEe7W3q6DFUU2XIV7XrV8XWZkvbmi2t98e1ZmtcKzbGtGTd9n0EMuJ+v99/LQFBPORVt3amjhts11EDHRrZ365eHcy0f+ayDTHNXB7TtKURTV0Y1ZamOANNRBAPRejYwQ4dM8iuUQPsOqSPXbY0dw+BVkuzVkY1/dOo3l4c1dxVUQa5hCPCIB5KT0evqW+McOiMQyp0eH971v+9txdF9MKciP7zYVjNIc5OEBHEQyEbe4BDZ42o0KkHOuStzO5XwKrNcU2ZG9Gk2WFiogQjwiAeSseoAXZdPtqp80ZW5OXfj1vSv98L6dFpIc1bzalMIoJ4KBS+KkPfPNqpS490qk9HMy+vYebyqB5/L6QnPwizQUokIgziofgdN8Shq8Y6ddxgR8G8pilzI3rgjaBmLueog4ggHvKl1mPqmhOcum6cq2Be08ZAXPe8EtKDU4NsoCKPCIN4KF7De9p082mVOnm4o2BfY/2MkO58KaQVGzkjQUQQD7n0w1MqdcPJTrkchXmiefmGmO56OaT6GSE2VpFGhEE8FKcJZ1fq+hNdRfN6b32+VX96mSMOIoJ4yLaThzt0y9mVGtilOO7Sf/3jiH4zqVWL1nKQUWwRYSMeisvRg+x6/Gq3Tjuooshet0PH7O/Qwi9i2uBnoiXrRBAPGX/jmNIfLqjSr86tUge3WTSvu18nm644xqmmoKVZK4kIFdE6ETbioXjccLJL936zWrUesyhff4/2pi4f7dTmRktzV7GjICKIh0wZ0deuf1/j1rhhDhXzXK4h3e16Z3FEwQjbtBgiwkY8FMeRxf3fqtaVx7tK4vcZN9ShDm5Tr3/CXoKIIB7SdcGoCv37Grc6es2i/10GdrHptIMcmrc6prXbWF+m0CPCRjwUti4+QxOv9WjcUEdJ/V4H97HrwF52vTgvrCj7CSKCeEjJjSe7dOv5VSX1O7WrNnXhKKeWrItp6Xp2DoUcETbioXAN6GzTf37g0QE9bCX5+/XvbNOYIQ69NC+q1jDzIogI4iEZvzinUj88pbIkfzfTkM4aUaEvtsa1YA2XOws1ImzEQ2Har4tNT1zrVu9as6R/z641po4aaCciiAjiIQm/Oa9KV491lfzvefKBFVrXYGn+50REIUaEjXgozC/Vp7/vKfl42D0inp4Z4XJGGUcE8ZCYn51VqWvHucrm9z1puEMrNsW16AsiotAiwkY8FBa7zdAT17o1pLtN5RZNQ3rY9Owslrktx4ggHhJz1fFO/eTMyrL7vU8/qEIzV8S0ajNHGIUUETbiobA8cEW1xh7gULnO+WhXbeiNT1j+upwignhIzKkHOnTP5dVl+/sfP8SuKfMiamjhUmehRISNeCgcN51aqe+OcZb1GBzSx65NAUtzeRhXWUQE8ZCYvh1NTbzGU7DLUudCldPQ0J52PTmds5SFEhE24qEwjBns0D2XVTEQksYNc+jl+RFtDHCkUcoRQTwk7sHvVmtQV1vZj0PP9qbcTlNvLWINmUKICBvxUBgLRT1+tbuolp/NtkFdbXqCI42SjQjiQUmtQHvZUU4G4stvxn52zV0V04qNzIfId0TYiIf8++U5VTppuIOB0K7LXoci0gweB15yEUE8JG5Id5se+h83A7GbYT1s+uc7PMUz3xFhIx6U9zXs/3Qply7aMnqQQ3UzwvK3cimjVCKCeEjOXZdWaUBnLl3sroPHlGlI7y3lACOfEWESD/l10ykuBmEvq9HdfFolA5EYh6TJPp/vROKhNJxxsEMnDatgIPYy6bxc1srJgGt8Pt99BR0QxENyThzm0AlDuXSxNxeOqtAhfewMRJFHBPGQvO+fRDzvc4xO5AAsnxFhEg/5c/UJvPkTcdVYJpAVc0QQD8k7d2SFDuzFpYt9uWy0k0s8eYwIk3jIj2P3d+io/TiyTsTZIyq0fzd2EsUYEcRDaq48jmhO1LeP5TJPviLCJB7y4/LRvOmTGq+jGK9iiwjiITXH7O/QQb05uEh8X+qU22UwEHmICJN4yL3u7UydcQhfiMm4dLRLdhs7iWKJCOJBac37QeIq7IYuHMUZm3xEhEk85N45h7GDSJbLIZ1zKONWDBFBPKTO4zJ03kje50nvUw9lMno+IsIkHpSX27PAuJViRBAP6Tmd93hKDu1n18AuzJPKdUSYxENu9e9k4/pmik4a7lAlB2cFGxHEQybe47zBlcZt8chtRJjEQ26NGcKbPB3HMX4FGRHEgzL0yGre3+wbiiciTOIht0YP5OxDOrj1tfAignjI0Ht7oF0uvgPT2rdW2JloncuIMIkH5fhJclynS8fh/dnDFlJEEA+ZM7I/cZwOw2D/muuIMImH3OlTa6qTl7Xb0zG8l01OB0cZhRARxENmHdSLgGAMiysiTOIhdwZ3p44zMo6sSpn3iCAelJVHdyPdMeQALZcRYRIPubMfa7YzjiUQEcSDsrLOCU+WzMC+gVs5cxoRJvGQO73YQTCORR4RxEN29K7liy8j+4YOjGMuI8IkHnKnq48vvoyMYw1zIPIREcRD9nSpYd+QCe3dBney5DAiTOIhdzp4+OLLyDi62dnmOiKIh+yqdbNvyNhYetg/5CoiTOIhd7yV7CQYx+KLCOIh+zy8pzP6PBHkJiJM4iF33C7KOBOqefBeziKCeFDOJlEiMyorCIhcRYTd4/GcQTygmFgMQa4i4oVgMDhP0mEMR3bZDL70MsXkOC0nEVFTUxM3GxsbX7As6yLGA8WCXW1OhCWd5vF4jpX0JsORXbE4WZwp8ThjkP1VP417GxoarjclKRAIPElEZF9TkHd2JjSHGINcxIPf7399zZo1rR6P53QiIruCUcYgU1rDxFgu4kHaaRIlEZF9gVbe2Ixj8cTDl/8HEZF9jbynMzeWQcYyF/Hwtds4iYjs2tLIGzsj49jEmZxcxQMRkRubm9g3ZGwsG9k/5CIe2lxIiojInnV+3tgZGccGdra5jAciIvvWN7BvyIStzZaCEcYhF/Gwx6WsiYjsWLWZnUQmrGYccx4PRES29w0xBiEj+wbGMVfxsNeHaRERmbdsA2/uTPiUccxLPBAR2ROMcICRkX3DevYNuYqHfT7Om4jIrIVf8ObOhEWMY97igYhg/1DYY0iE5Soe9hkQRIQyfgljY4A3eDrmr44pFGUORD7jgYjIjrmruJcz7TFczRjmKh4SCggiIrNmruAoIx0zljNDqhDigYjIxr6BL790WJb0IfvXnMVDwgFBRGTOe0v5Akxv/NjJFko8EBGZf29zB0Hqpi2NKszZyZzFQ1IBQURkxtSFfAGmNX6L2MMWUjwQEZn15kLe36nvWxm7XMZD0gFBRKRvxcYY1zpT9PL8iFrDjEOhxQMRkcn3OG/wVL2ygIDIZTykFBBERPpemMMbPRWTGbeCjQcigvd4Ps1aEeUWzhzHQ8oBQUSk55kPOcpQ0g/IkZ6ZxbgVcjwQEcrAA/cs1c/kaXFJ71NnEV65joe0AoKISN0X2+J6/iO+DJPx+HtBRWNMkCr0eCAi0vfUB+wbkhGKWnryA6Ir1/GQdkAQEal7dBo7iWQ8xngVTTwQEel5Z3FUc5gnlbBH3g2piSdw5jweMhIQRESqO4kItyQm6NlZYS1ex/XNYooHIiI9f3+TI+pE/fNtDi7yEQ8ZCwgiIjUPvMFOIhF/ZZyKMh6IiNT958Mwd2sl4OF3QlqxkYOLfMRDRgOCiEjeqwvCeu1jJv/szRPTw5zOLeJ4ICJS9+dXggyC9r7y5J9fZYzyFQ8ZDwgiInl3vsgHYE9icemOF1sZiCKPByIiNZPnRljbYC9ufzGoNVt5tlC+4iErAUFEJOejz6K6/3VO0bfl1udb9fkWdhClEA9ERIqfgecI6LYsXhvTHVMYm3zGgyTZsvWiQ6HQx06nc4lhGOexCbXPCZVnHlKhDh6Twdhh+rKobny8hYEooXjY6QAj2rFjx/pwOHyEpL5swj3b3GgpHJWO2d/BYOzkukdatHITBxf5jIesnYHgTERy4pb0s3pq+kuWpJ/WEQ+lGA+ciUjePa8E9RbPgPnKva8FeWZIAcRDVs9AcCYiOas2xxWNS0cP4kjjRxNb9DqTS0s2HjgToZQe9T1+pFOVFYbK/Yml1zzczBuiAOIhJwFBRCTug2VR9e9k0+DutrIdgwenBnX3y0wsLfV4ICKS42+xtGxDTN84tKJsx2CDP67L/tokfyuLRhVCPOQsIIiIxL00P6JjBjnUvb1Zlk/bvP5RLl2USzwQEclZtiEuf4ul4w8oz7OU3/pbk+Z/zpoPhRIPOQ0IIkIJ39v85sKITjmwQjXVRlndjXLxfc2KMS+qrOKBiEjO7M9istsMHTHAXla/91X/atbL87msWUjxkPOAICIS0xSS3lwU1QkHOMoiIj76LKqL7mtSU4hTk+UYD0REcqYticrjMnVov/KIiBseb1bdDJarLrR4yEtAEBGJ2dZs6c2FpR8R2888NGlbM/FQzvFARCRn6qKIKisMjexf2hHx/Ueb9cR04qEQ4yFvAUFEJB4Rz88Ja0Rfu3qU4JyIVxZEdPH9zTxJj3ggIlLw9uKoIrHSvHMrErP03X8069lZXLYo1HjIa0AQEYlpDklPfhBWv442DSmhuzMeeiuoax9pYc4D8UBEKL07tz7bHNdpB5XO3RnLN8R02V+b9fZinoFTyPGQ94AgIhI3ZW6kZI42/u/JFt3BM0CIByIiIxZ+EdPrn0R1SG+7OnmL+0zlC3PCuuyvzawyWQTxUBABQUQkd7TxwbKoDurtUK2n+OZFzFge1bf+3qRXmE1NPBARGbW+Ia5Hp4XUwW3q4D7FOS9iwtMt+vl/WhVi91AU8VAwAUFEJG71lrj+9U6o6CZQ3fp8q37wWIs2+JnvQDwQEdny+icRzVsd05DuNtUWybN1Xl0Q2X5gsYBLFsUUD5JUcIexXq/3QsMwnuCtsm/De9l086mVOnl44V7WqJ8Z0p0vhrRiIwvAEA/p6dGjR2VjY+NkScczGvt2w8ku3XhKpSoLdPfw6fqY7no5qP/M5C6LYoyHggwIIiJ5xw1x6KrjnTpuiKOg5mw88EZQM5dzVEE8EBH50t5t6JoTXLp+nEtGgezt1/vjuufloB56O8QGKuJ4KNiAICJSc3h/uy4bXaHzD3fm5d+Pxiz9+/2wHpsWYslZ4oGIKKT9aaWhbx7t1CVHVqhfJ1ve5kA9Ni3EolAlEg8FHRBEROo6uE2dc1iFTj/YkZMlb6cujOiFORE982FILewbiAcioqAdP8ShM0dU6NQDHaqpyu5XwMpNcU2ZG9ak2WHNX81BRSnFQ8EHBBGRvi4+Q8cNceiogXaN7OdQn47pT6xaui6mmSuiem9pVG8ujLCKJPFARBSpowfZdcz+2w80Du5jk8OW3ldCQ4ulWSuimr4sqrcXR4iGEo6HoggIIiKzOnpMDe5uakBnm3p1sKlLjaFatyFPpaGqCmOnBawsBVotbW60tK4hrlWb4/p0Q0yLvoipoYVgIB6IiJL7wpJ0QA+bBnW1qW9Hm7q3N9TRY6imypRvtzMVW5stbWu2tKEhrs+3xrViY0xL1sW1nMnSZRMPRRMQRASIBxARIB4Ki1lE94I/aVnWRby9QDxgZ2vWrGn1eDynS3qT0QDxQEAQESAeQESAeCAgiAgQD8QDEQGUSjwUZUAQESAeQESAeCAgiAgQDyAiQDwQEEQEQDwQEUCpx0PRBwQRAeIBRASIBwKCiADxACICxAMBQUSAeAARAZRiPJRUQBARIB5ARIB4ICCICBAPICJAPBAQRASIBxARIB4ICCICIB6ICKBs46GkA4KIAPEAIgLEAwFBRIB4ABEB4oGAICJAPICIAPFAQBARIB5ARIB4KJt4KKuAICJAPICIAPFAQBARIB5ARIB4ICCICBAPICJAPBAQRASIBxARIB4ICCICxAOICIB4ICCICBAPCQlN7DuciCAiQDwQEEQEiIck4qF3vSxrMhFBRIB4ICCICBAPScSDcZ6knkQEEQHigYAgIkA8JBMPXyIiiAjigXggIIgIEA9JxQMRQUQQD8QDAUFEgHhIKR6ICCKCeAABQUSAeEgpHogIIoJ4AAFBRIB4SCkeiAgigngAAUFEEA/EQ0rxQEQQEcQDCAgignggHlKKByKCiCAeQEAQEcQD8ZAWIoKIIB4ICBARxAPxQEQQEcQDCAgiAsRD9uOBiCAiiAcCAkQE8UA8EBFEBPEAAoKIAPGQu3ggIogI4oGAABFBPBAPRAQRQTyAgCAiiAfiIfeICCKCeCAgQEQQD8QDEUFEEA8gIIgI4oF4ICKICOIBBAQRAeKhQOPhvxEhIoKIIB4ICBARxAPxkCyLiCAiiAcCAkQE8UA8EBFEBPFAQDAERATxQDwQEUQE8QACgoggHogHIoKIIB6IBwKCiADxUELxQEQQEcQDAQEignggHtKNCMuKTyEiiAjigYAAEUE8EA/J7exl9CAiiAjigYAAEUE8EA9EBBFBPBAQICKIB+KBiCAiiAcQEEQE8UA8EBFEBPEAAoKIIB6IByKCiCAeiAcCgogA8VDW8UBEEBHEAwEBIoJ4IB6ICCKCeCAgQEQQD8QDEUFEEA8gIIgI4oF4ICKICOIBBAQRQTwQD0QEEUE8gIAgIso1IogH4oGIICKIBwICRATxQDwQEUQE8UBAgIggHogHIoKIIB5AQBARxAPxQEQQEcQDCAgignggHogIIoJ4AAGBko8I4oF4ICKICOKBgAARQTwQD0QEEUE8EBAgIoiHXHz0nmMMMjeWzotXzi/nESiFiCAeCAgQEcRDApwXr3xchnEZI5EeS8Z9rktWXsdIFHdEEA8EBIgI4oGIIB6ICOKBgAARQTwQEcQDEUE8gIAgIogHIoJ4ICKIBxAQKPCIIB6ICOKBiCAeCAgQEcQDEUE8EBHEAwgIIoJ4ICKIByKCeAABgQKJCOKBiCAeiAjigYAAEUE8EBHEAxFBPICAICKIByKCeCAichwRxAMBASKCeCAiiAcigngAAUFEEA9EBPFARGQvIogHAgJEBPFARBAPRATxAAKCiCAeiAjiAdmLCOKBgAARQTwQEcQDEUE8gIBARiKCeCAiiAcigngAAUFEEA9EBPGA9COCeCAgQEQQD0QE8UBEJBURxAMBASKCeCAiiAckFRHEAwEBIoJ4ICJyFw8W8VAKEUE8gIAgIvYUEcQDEZGdeLiUeCj2iCAeQEBgTxFBPBARxAPajAjiAV+9FxgCfMnr9V5oGMYjxENxC03se6ks6zHiAZnSo0ePysbGxsmGYSwkHkBAoE0ej+fIxsbG9xkJIoJ4wO4RsWbNmlZGAgQEQETkYAdj3FtxyUqOWAExBwKAmBNBPAAgIAAigngAQEAAyG9EEA8AAQGAiCAeADCJEhATK7M2sdKQdW/FJauIB0CcgQAgzkQQDwAICAAZjwjiASAgABARxAMAAgJA9iKCeAAICABEBPEAgIAAkL2IIB4AEBAAkooI4gEAAQEgqYggHgAQEACSigjiAQABASCpiCAeAACAkln2Ovzv3n9hJAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICSZez+f7jd7iGmadYZhnEAwwMAACzL+kUgEPj1XgNiR0QMttlsdZKGMmwAAJS1mN/vt+/+f5pt/ZdNTU2L4vH4eEkLGDcAAMraLUrkEsbOPB7PINM06yQNZ/wAACg7rX6/v6qtPzD39rcaGxuX7DgTMY8xBACgvBiGMSHhSZRt8Xq9+xmGUSfpIIYTAICyEPD7/b49/aGZ0E8IBD61LGu8pDmMJwAAKoc7L25RMrdx7o3P5+svqU7SIQwtAAAla7Pf7++4t//ATOan+f3+5ZLGS5rN2AIAoLK680KpnoHQf89E9NX2MxGHMsYAAKiULl2sDQQC3ff135mp/HC/37/SMIzxkj5kqAEAKB2mad6iVJayTkZNTU1vy7LqJI1kyAEAKHqf+f3+vgmFRjr/SkNDwyrTNMdLmsGYAwCgYr98MUGpPkwrFe3bt+8Zi8XqJI1i+AEAKEpL/X7/oET/YzMT/+LWrVs/t9ls4yVNZ/wBAChKE5TO47zT0aFDh+6xWKzOsqwj2Q5A8ereztTpBzs09gCHBnaxqVu7XY81Nvgtfbo+pmUbY3p/aVSTZocZNEBFfenik0AgMDRvASFJtbW13aLRaJ1lWUexSYDicvwBDv3gJJeOGGBP6u9d/0iznppBRJSDYT1tKf/dBZ/HGEAV7DMvvtHQ0DApmb9jz/SL2Lx589qqqqrxdru9zjCM0WwWoPD1rjX11yuqNaJvaruEzU0Wg1gmOnlNPXGtO+m/950HmwiIwjUn2XjISkBIUktLy7rq6urxNputzjCMo9k2qauqkA7t59CBvWxyOXb9s+aQNHdVVB99FlUwwlghNZ19pp670fO1yxTJ2FJAAVFTZWhkf4cO6GHKvtuv1NBiac5nMc1aGWXDA0rsmRc5DQhJam5uXl9dXT3ebrfXSTqGTZSY4T1tOnekU4f3t6lXB1O1nsR26hv9ca3aEte0JVHVzQxr+QZKH/vmckiTbnCnFQ+StDEQz9vvcMQAu845rEKH9bOrWztTNVWJXZld17D9M/Pagoj+82FYa7fFeUOgHM0IBAIvFlRA7IiIDW63e7zNZquTdCzbqW3tqg1dfKRTF46q0KCuqV1f7OQz1cln6rB+dt14ikvzP49p4vshPTk9pBYuTWMPfnpmlfp3tqX9czYFcnsGomuNqctHV+j8w53q2cFM+Wd0rTE1qr9dE86u1HtLo3piekh1zOWAuPNC+ZhE2Ra3291xR0SMYVvt6voTXfrBSS55K7OzKTY3xnXHi0H98+0Qg41d7N/VpncmeNP+OYFWSwNuasjJa/ZWGrr51EpdNdaZtX9j9Za4fv1sq57/iJBoy9gDHCnPgXhhDtdaVViXLt4NBAIpXyEwc/Eim5qaNsXj8fGSprLJthvQ2aapP/NqwtmVWYsHSar1mLrtgiq9cJNHnX0mA4+vXHuiK2ORmguH9rXrnVu8WY0HSerVwdQ/vlutR650Z/WzCSj/z7yYkM7ft+fqhTY2Nm72eDzjTdOsk3R8OW+00w5y6IEr3F+bFJlNh/ffvvO94u9Nev/T0plA9uB3qtXRm1wYnX13Y9nvODwuQ2cfkpk34KbG7F+++N5xTv3ynErZbbn7Qj/lQIfevsWri+9r0qK1zClCyXmjoaHh7aIIiB0RscXr9Y43DKNO0thy3GJXjXXq1+dWKV9zLSbd6NGPnmjRI++WxiWNkf3t6lqTXEBUOqTWMj+TOnqQXU6HkaEzENkNiDsurtLlo53K14Jab9/i1aUPNOvVBVzSQOmIx+MT0v0Z9ly/6EAgsNXn842XVCfphHLaYFcck7942NntF1WpNWwxWayMHdAj9Y/+6x9HNGfV9rNYHdymmkPZC4hfn5u/eNjZ41dX65x7tt/lBJSAlxsbG6cXXUBIkt/v31ZTUzN+x6PAx5XD1jpxWIV+f0FVwbyeey6r1pqt8ZK6nIHEDeqS2nyYax5u1tMzcxOe/3OcM+vzHZLxyJVujbutUSs2cjkDKts7L5TrSZRq+1HgDTseBf6qymCVvwe/Wy2zgOZj2Uzp4Svd6sTEyrLUpSb57T59WTRn8XB4f7t+N75KhTZv5Ilrq3nzQEV+58Xzfr9/VlEHhCRt27bNv+Mpnq+U8gb78+XVqnQU3uuqqTJ06/hKPlFlKNHFlnY2f3VujrztNkP3XFZVkOPWt6NNE87mM4PiZbPZJmTss5rvX2br1q2B2tra8ZFIpE7SySrBe6aTfTBRLp15SIWG9wxqPmvU51z7akOjBtg1sr9dB/W2q9ZtqL3bUK3HVFPI0rYmS1ubLa3aHNP7n0Y1c3lUH6/JzHaqdiYfEBv8ubld8/LRFerXyVaw2+3qsU79fWooZ+NRzgZ3s+nEYQ717WRTtxpD3duZ6t7eJtOQtjXHta3Z0sZAXLNXRjVnVUwfrohqWzPPZdmLp7dt2zY/Uz+sYE6qd+zY0R0Oh+sknVJKW+u5H3oKOiCk7ZPiLr6/qc0/m3SjR0ful9zrf+itoH5S1/q1///GU1z6yRnJHb0t2xDTkb8KSNr+zIYFv/dlbRyemB7WDx5rVnafeCeNG+rQd451asxghwwj+S/xR6eF9a93Qgmtv9DBbWrRH31Z/Z123kbpMg3pw1/7Ul5dMld2f4+neqfIo9NCunliyx7//OEr3Tr1wOROX97wWLMmTt/zpaZX/s+jg3sn95mesTyqM+5szNlCUicPd+iWsyo1MIWVeWcsj+qpD8J6dlY4qxN8VZx3XgxubGxcXDJnIL60adOmps6dO48PBoN1kk4thY01qKuZkXj4bFNcT88M6a3FUS36Iianw9B+nU2dOMyh80Y61dmXXgeeMNShvh1tWrmJsxDZNKKvXQ98q1p9OpppPfjqR6e59KPTXPr71JBuqW8pqTE6YagjI/Gw8IuYnp4Z1ntLo1q8NipvlaHB3ew6ebhD546skC/NBaIuOcql30xq/WqZ+EmzwykFxL72D6nsP47Z37HHgHA5DB3YK/mfOWl2JGdn5f58eZVOHFahdObPHN7frlvPr9LE90O6++UgZ4u2m5jJeMj7HIivHV1t2NBcXV093jCMKaWwtS49Kv2V/n5a36qRv/Drj1OCmrk8qsagpc2NcU1fFtWvnm3VYT9v0O1TWtP+dy4cVcHHK4u+faxTz93oTise1MbiSi//r6ekJsJeelR6d100Bi1976FmjfldQPe+FtScVVG1RqQNfktvLYrox0+16LAJ/r0eoSvBh5CdPeK/n5n3lka1KYUHiu3XxaZ21W3HzJDue/6zvRk7dM9nLA7tZ0t6MrdlKSfLeu/f1abXf+JNKx5230bfPtapBb/36bYLqtgJZejOi4INCElau3Zti9vtHm8YxuRi31qnHJjezMkz7mzUP6YG9/rfBCPS7VOC+vaDTem91oMcfLyy5LYLqnTbBVWqsGf+iuEhfex666eelB/CpoJ6Mqihk4en/j7c1mzppD80atLsvX/ZNbRYuuGxZv3+hdY0PzMVu3zJpvqchz1dIjxqYGpj4as0dED3tt8PowYk/zOnpRhHyejXyaYpP/KoR/vsfCVtbrLK/c6Lh/1+/4qSDwhJWrNmTWtDQ8N4y7JeKNYN1sVnqFcap2JvntiiGcsTX6Nh8pxIWmci9u9qS/u0Lr7ul+dU6tvHZnctg1qPqWdvcKt3bXGfiTioV3oR9L1/NmtZEo+xv/ulYFq3pR7ad9fXO2lWOMWAcCQVFkroMkbbf/fwfsmP8bOzwjm5Pdbjys7+Z9LssO7IwFnaYma323+ejZ9byHucYCAQGG9Z1vPFuMEO65f6kdSn62N6dFryS03fPiWY1pHCgb3tQuZcebxT15zgysm/VesxNelGT1FH4Ih+qb//3vgkorcXJX8G4FfPpv7F0sFt7nKQMGNFakfqo/YwzyGdgDh2f0ebE1QPT3JORSwuTZ6T3YC46VSX+nbMzhm0eatj+v6jzeW+K3pw69atn5dbQEhSaEdEPFdsW6x/59SH9l/vpv6BTSU8vnrNnVhUKlO6tTN1y1mVOX9uw4RvVBb1E2pT9VCKj6vf4I+rfkYorVPv2ukyxjOzIiksK2772m21g7ulNv9BX13+sH/twWPDetrkSvL5J29+ElFDi5XVBe0uPzo7Z+g2+OO69IEmBcv8uTfRaHRCtn52MXxjhAOBwHhJk1RUq0+mvjN8a2Hq7/h3FkfTeowxMuPW86sy9rCqZFx2lDPpW/QKRZ80LsG8vzT1z8y7aTzfYvfXvK/5F3u6dXX3sxBHDUpvTpLTYWjkbpcrRvZP4e6Lj7L77Tu8p11uZ+Y/J6GIpYvuayr7uy8Mw7ivubl5QzkHhCRF/H7/eEnPqmgel6wUJ7soqeu4u1uyLvW/W1NNQGTCoX3tSd+7n8l1Jn5xTnGehXCneA182YbYV7dTpvaZiafxmdn1Nc9eGdXabfG0b+c8MgO3f+9+GWNUkj8zGLH0QpbvvhjQJfkDrbtfCursuxv1nQebdeeLrXppXkT+1l3Pklz7SEvGFl1TcU+enJDNn19MhypRv98/3ufz1Uk6RwU/ozy1v5fubOetaazC5nEV9pg2Ba2vTRS94hinaj3Jhc+fXg4qEvv6OC3I0GqcVxyT31tij9zPrkFdbVqyLqaWULzNybVXjXUlPWlt6sKIZq2MtvGey9xdGKnYkuYM+81NqX/mvG3MOXlmVljXjXOlNQ/iqIEZCIjBdv3+hdTv6njt44iCkezevVCV5Edl8brYLnfPvDDnv3921ogK/f78Sv3rnVBObjstgni4OxAIbCMg/iu2U0ScW9AvNJ7aztBZkd7pvHRuFYwX+J1OzSFLt08J7rYUt1O1nmSPYFrVmsUzszvf3qckJ3z97c2g1m6Ly2ZKF4yq0JmHOFOK0ROGOrRkXUytO27zVRvrLSQbEG8ujOhvb4ay+JlJ7Q1YmeZnxpXGpaZYG+0xKYWAOKTP9vkJwYil/bumN//hSwf3tquqQmoJb3+GR/skf2a2776QpECrlfTdYj87q1JvfBzRvNXRXT7Hz80O693FkbQOokpJZWXlhEAgkNV/oxjPWcd3XM54upBfZEvYSvke7nS0q07nC5oPXboO6G5L6ZruzRNbNO62gJ6eGdb7n0b17pKornukRSMm+LU8hUtaowYU3zyIVD8z7dP8su2Qxt9vCn79Nc//PJb0ZQy7zdAhfWwZmf+gnS5njRns2LE6oy3pWH9lfjTr2zyVOQo/OMml52/yaNU97fTaj7365TmVGrVjfgfx8JU/bNiwIeu3nxTrRW9rR0TUF+oL9Kcxc/nQvva0jjpS1dDMcq/p2r+bLaVJfHu6e2ZTIK6L709+PzCgCO+oSfUz06O9mfRlLO1y+7It46/5qQ+SP3o/csclhiP3y9wtjcfsmAdxeJILSL04N9zmZb5Me//T7avrprztetl0zQnbg2LaBK8uOoIVdSXJ7/f/PBf/DrPmsiSd50qMG+pI61kCqVqxkYBIV/cUVtLb1/MsVm6K6T8fhpO8jbj4Vqb8LI3PzNgh9rx83pZvjO1x8SKlOJFy9MDMTcAdM9ie0hmIbN99sbP6GZm5VDKwq033XFatub/zadwwRznfefEbSWECYi9j5PP56iWNL9QXuDyNL+NvHpPade+OXjOlB/p8ael6Zi0rx5PC/K2WFq2NJTD/IFryY7dsY+pHotedmNoM4GE9bV8dpadi8R7u4Fi0NqZPk/w8HdbPnvD6D4k+ZbJfJ5uG9bQltcaGv9XSawtyFxC3TwkmPRdC+1iD5d9Xu3O+DkuhaGho+Hmu/q1iDAhzRzycV8gv8v2lEVlW6k+k+0UKCwL96ZKqNK4/q80Z9lCSC+Mkdz19fYOVtdP72VoaOJufGaX85Ftb0qt+OmyG7v1mdVqPMd/bXVPJLirlcmxflTERtz4fTPjnJvtF+tzs3N7BsKUpru/8I/OX679/kktXj3WW3T7I5/PdQUDsYf+8Ix7OVcFPCJNmrkj9C/k7Y1y6PomjqtsuqErrtN27SyJtzihPaSPZjKxMEC0GreFkj5aMBBcmM1N6MmUxWbQ2pg1+K63njpxzWEXCd148+N1qDe6W+qWefZ0VeubD5L+Izzxk369/vd/Sg1ODCd9JdNwQR8HdfbG7txdFdOF9TRl/z/7q3KqsLZNdwG6qqqrqSkDsyr4jHs4plhc8aXZ6pwEnnF2p+75Z9bVlbrXbevx117vTfmBTJheMaVdl7GGly8L4IGfza7WhJZ70WYLjD9j3Dv6cQx1JXxopRpPSPPr96xXV+vk+zt716Whq8s2etBf7mryPz8zKTTEt/CLzlwVfmhf+6ks30zYF4nr/0/yciXzzk4iO/W0g6fk+iZyJKDcOh+MOAmKn8dgRD98opo2YiVOB4w936t0JXv3vaS6N7G+Xx2Wo1mPqiAF2/eIblXp3guerW7XS8eLctndG8RTOSoxo4y4Sb6WR1gRPZXSegpHFybPJD9jdl1Spo3fPH8XrxrnaHNO9Wb6hOOezZOLL47pxLr07wafrxrl0cG+7Kh1SZ5+hMYMduu2CKk39qVfDe6YXs+v9lj5I4Gm5k7JwOeD1T7Z/Vl/NwjyF52aHU770mglrtsZ19b+aNewnDfrlM6366LP0Y+b0g8tyQuXFPp/vkKwf1RfBQFR4vd46SWcV2xbc3BhX3YyQzj88vbMDPdqbuvm0St18WnZe56PTQmraw6SslnA8pdd71yVV+uG//3t3wR8vrEp5dc5MG97LrrcWZWeSWCqrWXatMTXpBre+/WDz15Yi/8FJLv0shclgc1cVZ0DMXRXVjOVRHd4/vV3ToK7mPs9EpOPBqYnNQaibEdZPz8zc6whHLb29KLrjTEREd12S4TNAH+X/yVM1VYY2+C3d/3pQ978eVLtqQyP62jV6oF3nH16R9C27vkpDXXyG1vvLbo2IOyQdX84B4fR6vXWGYZxZrFvwL6+mHxDZf43BvawUl9rPvPQop84+tELL1sc0qNv2o0AVyOqFPzzVpY8+i2Z05vfO0bh4XUz7d03uCHe/Lja9O8Grj9fEFGi1ZBjbF6Xypjhv5O3FxfsIwnteCWriNe6CfX0NLZb+meDTP9dui2vuqqgOytADzqYtiSoctb6afDhvdUwH9srMpcG12+KauTy/E6l/fIZL40c6ddH9TVq6I6a3NVt6/eOIXv84ontfC+meS5Of79W1xqb1/rKbJH6c1+s9LRAITFEZXsJweb3e+mKOB2n7w63++XbhLvH4p5eDWrV5z2cZPt+S+sxKt9PQQb2zFw+SFEhh0tWo/nZ9fFuNHrvarV+fW6VnfuDRyrtr0lrSeGd/eyOY8t8d2sOmI/ez64gB9pTj4Yttcb32cfHuLF//OKKpCws3gH71TEvCt1FmYi7ULmOz28TNVxdk7hJJPiZP7uyiIyr0w1Mq1bODqWkTvHrgiuqvnYna3BjXXS8HU1im3yrXNSHuKLs5ED169KisqampNwzjjFLYiL+Z1JrSE/qybdmGmG59fu+nGJYU+NoQDSkuXetySCcNc+iqsU6NHmTfMVE1MzuZJz8IZ2XyXKJufT6oaKy4d5g3TWzJ6vNKlMajv//9fjinE0N39tpuwZDJUMxnQBw72KF7Ltv1ltpzD6vQCzd5tPyuGj11nVu/HV+ln55ZqYe+W53SnJUytb/P5/tu2QREt27dqpqamuotyzq9VLZgc8jSd/7RXFAPqwpGLF3x96Z9/nfvLS3sU+GfFmDgxOLSjY+35OXfnrk8qvoZxf9QkzVb47p5YktBvaYtTXFd/XBzSpcGPlyR/hf98g2xr50tnLsqqi1N8QysAhrX/M/z81ka0t2mR69y7/VOpeOGOPS945y64WSXurUzk46HVJ65UUJuL4uA6Ny5c3Vzc3O9ZVmnldoWnL0yqh8+3lwwr+eqfzZrybp4Ag+7sfTJF4V7FmL6ssI8VT9nVVRPfpD7I7obHm8pmc9M/YyQ7nyxtSBeS2PQ0uV/bdbGFL+IMnEW4vVP2n6vv5yBh149PTM/0dnZZ+qp69xZvcw5+aOyf0pgjdfrvaWkA6Jjx47uYDBYL+nUUt2KE6eHdcG9TVmZvJfMUdQZdzbqxXmJn1mo+6BwP4DvLYlkcPGZzN7e+b9PNOf0Usa3H2zSsg2ltRz5HyYHdf0j+Q3vz7fEdfIfG9M6izBpdiTt2yNf+7jtz2wm5kHUzQznZdn3uuvd6uzL7tfQw9PCKnc7no9RUZIBUVtb6wmHw/WSTin1DTl1YUTH3xrQ4nW539F/uCKqMb8LaEaSM63/9U445SOvbGuNSI9NCxXkElPBiHT+vU05Gbs/Tglq8pxISX5mnpoR1ol/aMzLPKJXF0Q05neBtC+VbQrEE1o3Ym/v8z1dTnxrYeSrOzNSsfCLmD7bFM/xku/So1e501oJNBH3vhb86m6Ocufz+e4uuYBo3769NxKJ1Es6uVw25OotcY27rTFnd2fE4tKdL7bqzLsaU1oqOBix9KMn0z81/n9PtmTtVtnM7CQyv8DURn9cZ/+pSR+viWVx0mSr7pjSWtKfmbmrojrmtwG9NC+SozlC0o+fatGlD2RueeV0FpZ7e9Gel5rfHhfRopo82clryunI7tL2L86L6NfPlvbnIknX1NTU9CmZgGjXrp0vFovVSzqp3LZkKGLpx0+16JTbGzU7iw+xenVBWMf+LqA/TA6m9ayLl+ZFdHuKX1LBiHTpA016M0u35m1piuvMuxozMlFNWbrb5aQ/NOrul4IZe96IJC1ZF9fRv/HrTy8Hy+IzE2i19M2/NenSB5qzdgYvbm1f/GnUL/0ZD/xnPgynvP1f/3jvn51X07gboz4Ply/WNWy/lPq9h5qzcmbpH1OD+nYCk8TLjWVZd5VEQNTU1NTE4/F6SSeW8wadvTKqU25v1AX3NmX0C/CtRRGd+IdGXfpAc8ZO4d0+Jahv/a0pqZ+3ZF1cx/zWr1cXRGRk8YBja7Ol0+5o1L2vFeaXaSRm6fcvtOro3wTSXi748y1x3fh4s467NZDQRNhS8+qCsMb8NqAr//n1lTvTCYdJs8Ma/euArnskO19qDS1Wys+Z2Nc8h8lzUoudjz6L5vUW80mzwzroZ35d90hzRiZrL10X0zf/1qSf1rcW1F1vBeQbHo/nCBXkrDElfC2mnaQ6SSewPXc1vKdN54106vghdg1McjXDhV/E9OqCiOpnhrN+e+NZIyp0wlCHhnSzaVgbzxV4b2lUD78b2uW0bU2Vof85zplkGEgPvZVcFFQ7DZ1xsENHD7JreC+7Bu1lHFvC0qIvonppfkR/fiV38TGoq02Xj67QUQMdGtLdllAgfbgiqlfmR/T4e+kfGV95vDPphaqmLowW5CPfR/W3a/yoCh0/xKHuSd7iN2dVVC/OjejpmWF9kYMv0lH97Tp6f3vSd4D89Y19b/NrTnCpOslFbz9YFtW7S5LbpmMPcKT0hMsN/phe2Mc8nUP72nXWiAod1NumYT3tqqpI7MFxk+dE9NzscNaWqC8xH/j9/iOKMiC8Xm97wzDqJI1lO+5du2pDw3vZ1aOdoc4+m2ymtdtRrbS+Ia7Pt8Y1f3Usr49v3q/L9mWXNwbiaa1emS1da0x19Bhyu4yvLqus3hLX5sb8v1a309DwXjZ19JpqX22oXbWp5lBcDc2WtrVIqzbHMnakXeo6+UwN7WFTz/amOnpNGbtNjA1Gtq8LsHpzTPNWxxSMcJhayAZ1talHe1M1VYZ8VYa8lYYcti8vXVqatSKat/Uritx5fr//P0UVEB6Pp4NpmnXK8gM+AADAHq3y+/190v0hNuUuHmpN06wnHgAAyKsap9O5JRQKzVShn4Fwu90dbTZbnaQxbDcAAPIu7Pf7nQV9BsLtdney2Wz1xAMAAAXD5nK5nKFQ6A0V4hmI6urqzna7vU7SMWwrAAAKi8Ph8G7evLlRhbQORHV1dZcdZx6IBwAAClA4HP6zCukMRFVVVVe73V5nGMZoNg8AAIUrHo8PamxsXKp8n4Gora3tVlFRUU88AABQ+EzTvEf5PgPRoUOH7rFYrM6yrCPZJAAAqFge+X1cQ0PDW3k5A9G+ffse0Wi0nngAAEDF9qCtPykft3G2b9++546nah7BZgAAoOh0cTqdS0Oh0MfK1SWMdu3a9YrH43WSDmf8AQAoWhv9fn9n5eIMRE1NTW/LsuqJBwAAil51ZWVlUzAYnK5snoGoqanpY1lWnaTDGHMAAEqD3+83snYGwufz9ZVUTzwAAFBaXC6XJxQKvapMn4Hw+Xz9JNVJGsEwAwCgUlxcqraxsXGLMnUbp8/n66/tZx6IBwAAVLKLS/1FmToD4fV6BxiGUSfpYIYWAICSj4jh27ZtW5DWGQiv17ufYRj1xAMAACqXyxh/TmsSpcfjGWiaZr2kgxhOAADKRh+XyzU9FAotV7JnIDwez6Ad8XAg4wgAQNn5S9JnIDwez/474mE44wcAQFnqUFlZuSoYDM5VIpMo3W73YJvNVidpKGMHAEBZa/T7/V7t6wyE2+0eYppmvWEYxAMAAHC6XK5wKBSatvP/+f9bRwX6yNY/UwAAAABJRU5ErkJggg=="></div>
+      <h1><span class="wm" id="wm">Starling</span> <span class="proto">Prototype</span></h1>
+      <div class="tag" id="tagline" hidden></div>
+      <div class="sub" id="hdrSub"></div>
+      <div class="hdr-actions"><button class="btn primary" id="askTop" type="button" aria-controls="chat" aria-expanded="false">Ask Starling</button><button class="btn" id="themeBtn" type="button">Theme</button></div>
+    </div>
+    <nav class="tabs" id="tabs" aria-label="Views"></nav>
+  </div>
+</div></header>
+
+<main id="main"></main>
+
+<footer class="credits"><div class="wrap">Built on the <a href="https://www.mindtheproduct.com/the-product-decision-stack-martin-eriksson/" target="_blank" rel="noopener">Decision Stack</a> by Martin Eriksson and the <a href="https://itamargilad.com/outcome-roadmaps/" target="_blank" rel="noopener">outcome roadmap</a> template by Itamar Gilad. Packaged by <a href="https://outofowls.com" target="_blank" rel="noopener">Out of Owls</a>. <span id="sampleNote"></span></div></footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="sr" id="live" role="status" aria-live="polite"></div>
+<button class="btn primary fab" id="chatFab" type="button" aria-expanded="false" aria-controls="chat"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" style="vertical-align:-3px;margin-right:6px"><path d="M4 6a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-6l-5 4v-4H7a3 3 0 0 1-3-3z" fill="currentColor"/></svg>Ask Starling</button>
+<aside class="chat" id="chat" hidden aria-label="Ask Starling">
+  <div class="chat-head"><div><strong>Ask Starling</strong><small>Answers cite records and say how much is unreviewed</small></div><button class="btn sm" id="chatClose" type="button">Close</button></div>
+  <div class="msgs" id="chatMsgs" aria-live="polite"></div>
+  <div class="chips" id="chatChips"></div>
+  <div class="notice">Sample: answers are worked out from the data on this page. A live build sends your question to a model hosted inside your network, with the same citations.</div>
+  <form class="composer" id="chatForm"><label for="chatIn" class="sr">Question</label><input type="text" id="chatIn" placeholder="Ask about gaps, owners, review, unlinked work…" autocomplete="off"><button class="btn primary" type="submit">Send</button></form>
+</aside>
+<aside class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="drTitle">
+  <div class="dr-h"><div><div class="label" id="drKicker"></div><h3 id="drTitle"></h3><div class="sub" id="drSub"></div></div><button class="xbtn" id="drClose" type="button" aria-label="Close">×</button></div>
+  <div class="dr-b" id="drBody"></div>
+</aside>
+
+<script>window.SKIN={"title_tag": "Starling", "logo": true, "broughtBy": "Brought to you by", "birds": "chevron", "dotR": 2, "trails": false, "trailFade": 0.3, "alpha": 0.9, "colorVar": "--fg", "starLabel": "North Star \u00b7 Org vision", "wordmark": true, "tagline": "Enabling strategic alignment"};window.STARLING_DATA={"schema": "starling-data/1", "meta": {"org": "Tesco PLC (public sources)", "team": "group", "teamFull": "Tesco PLC, group level (public documents only)", "snapshot": "17 Nov 2026", "sources": 9, "claims": 61, "built": "2026-11-17"}, "text": {}, "quarters": [{"label": "Q1 ’26-27", "year": 2026}, {"label": "Q2 ’26-27", "year": 2026}, {"label": "Q3 ’26-27", "year": 2026}, {"label": "Q4 ’26-27", "year": 2027}], "horizon": {"label": "FY 2026/27 (to Feb 2027)", "from": 0, "to": 3}, "vision": "Tesco was built to be a champion for customers, serving them every day with affordable, healthy and sustainable food.", "objectives": [{"id": "OBJ-1", "name": "Grow profit and free cash flow", "conf": "medium", "flags": ["conflict", "unclear"], "alternatives": [{"value": "Guidance was £3.0bn to £3.3bn for 2026/27 in April 2026", "source": "S1, Outlook"}], "sources": [{"source": "S2", "locator": "Guidance", "quote": "Adjusted operating profit: now £3.15bn–£3.30bn"}]}, {"id": "OBJ-2", "name": "Return cash to shareholders", "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S3", "locator": "Dividend and buyback", "quote": "paying “broadly 50% of earnings.”"}, {"source": "S2", "locator": "Guidance", "quote": "Share buyback: increased to £950m"}]}, {"id": "OBJ-3", "name": "Lift customer satisfaction", "conf": "medium", "flags": ["unclear", "stale"], "sources": [{"source": "S9", "locator": "FY24/25 results call", "quote": "Customer satisfaction is the most important metric we measure at Tesco"}]}], "strategies": [{"id": "ST1", "name": "Winning in food", "status": "na", "stated": 0, "objs": ["OBJ-1", "OBJ-3"], "goals": [{"id": "ST1-1", "name": "Hold the highest UK market share in a decade", "strat": "ST1", "measured": true, "measures": [{"m": "UK market share", "t": "28.5% in FY26 (+24bps); 27.8% in H1 FY27 (-24bps year on year). No target", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source", "conflict"], "alternatives": [{"value": "The two figures cover different periods and may not be comparable", "source": "S2, Progress and KPIs"}], "sources": [{"source": "S1", "locator": "Performance highlights"}]}, {"id": "ST1-2", "name": "Be cheapest on price", "strat": "ST1", "measured": false, "measures": [{"m": "Everyday Low Prices lines", "t": "3,000 lines (tripled)", "kind": "output", "by": null}, {"m": "Clubcard Prices", "t": "over 10,000", "kind": "output", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "ST1-3", "name": "Grow Finest", "strat": "ST1", "measured": true, "measures": [{"m": "Finest sales", "t": "£3bn (up 15%). Aim: well beyond £3 billion", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S3", "locator": "Strategy"}]}, {"id": "ST1-4", "name": "Grow online", "strat": "ST1", "measured": true, "measures": [{"m": "UK online sales growth", "t": "up 11% in FY26; up 8% in H1 FY27. No target", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}], "opps": [{"id": "ST1-a", "name": "UK share fell in H1 FY27 against last year", "goal": "ST1-1", "strat": "ST1", "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S2", "locator": "Progress and KPIs", "quote": "UK share of 27.8%, down 24bps year-on-year"}]}], "conf": "high", "flags": ["no_owner", "stale"], "alternatives": [{"value": "Strategic priorities were great value, quality and convenience whilst rewarding loyalty", "source": "S7, Strategic priorities"}], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}, {"source": "S2", "locator": "Strategic ambitions", "quote": "Tesco's strategy rests on five ambitions"}]}, {"id": "ST2", "name": "Meeting more everyday customer needs", "status": "na", "stated": 0, "objs": ["OBJ-1"], "goals": [{"id": "ST2-1", "name": "Grow Tesco Whoosh", "strat": "ST2", "measured": true, "measures": [{"m": "Whoosh sales", "t": "over £400m in FY26 (up 51%). H1 FY27: on track for over £500m", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S2", "locator": "Progress and KPIs"}]}, {"id": "ST2-2", "name": "Grow clothing, insurance and Marketplace", "strat": "ST2", "measured": true, "measures": [{"m": "F&F clothing sales", "t": "over £1.2bn (up 5.1%)", "kind": "outcome", "by": null}, {"m": "Insurance policies in force", "t": "over 2.5m", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}], "opps": [{"id": "ST2-a", "name": "Roll Whoosh out in Ireland", "goal": "ST2-1", "strat": "ST2", "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S3", "locator": "Strategy", "quote": "Whoosh (rolling out in Ireland)"}]}], "conf": "high", "flags": ["no_owner"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}, {"source": "S2", "locator": "Strategic ambitions", "quote": "Tesco's strategy rests on five ambitions"}]}, {"id": "ST3", "name": "Being the most strategic partner for suppliers", "status": "na", "stated": 0, "objs": ["OBJ-1"], "goals": [{"id": "ST3-1", "name": "Grow Tesco Media", "strat": "ST3", "measured": true, "measures": [{"m": "Brands using Tesco Media", "t": "over 800", "kind": "outcome", "by": null}, {"m": "Active advertisers", "t": "up 17% in H1 FY27", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}], "opps": [], "conf": "high", "flags": ["no_owner"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}, {"source": "S2", "locator": "Strategic ambitions", "quote": "Tesco's strategy rests on five ambitions"}]}, {"id": "ST4", "name": "Being connected, personalised and loved by customers", "status": "na", "stated": 0, "objs": ["OBJ-1", "OBJ-3"], "goals": [{"id": "ST4-1", "name": "Personalise every Clubcard journey", "strat": "ST4", "measured": true, "measures": [{"m": "Active Clubcard grocery journeys personalised one-to-one", "t": "100%", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "ST4-2", "name": "Raise customer satisfaction", "strat": "ST4", "measured": true, "measures": [{"m": "UK net promoter score", "t": "33 (up 3) in H1 FY27. No target", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S2", "locator": "Progress and KPIs"}]}], "opps": [{"id": "ST4-a", "name": "Take the AI meal-planning assistant from colleagues to customers", "goal": "ST4-1", "strat": "ST4", "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S2", "locator": "Colleague metrics", "quote": "c.280,000 colleagues trialled the AI meal planning assistant"}]}], "conf": "high", "flags": ["no_owner"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}, {"source": "S2", "locator": "Strategic ambitions", "quote": "Tesco's strategy rests on five ambitions"}]}, {"id": "ST5", "name": "Long-term business sustainability", "status": "na", "stated": 0, "objs": ["OBJ-1"], "goals": [{"id": "ST5-1", "name": "Deliver Save to Invest savings", "strat": "ST5", "measured": true, "measures": [{"m": "Save to Invest savings", "t": "£500m target for FY27. £251m delivered in H1", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S2", "locator": "Progress and KPIs"}]}, {"id": "ST5-2", "name": "Cut emissions to net zero", "strat": "ST5", "measured": true, "measures": [{"m": "Scope 1 and 2 emissions", "t": "68% down vs FY15/16, ahead of 60% target. Net zero own operations by 2035", "by": "2035", "kind": "outcome"}], "conf": "medium", "flags": ["single_source", "conflict"], "alternatives": [{"value": "Net zero across value chain by 2050 and own operations by 2035", "source": "S5, Summary"}], "sources": [{"source": "S1", "locator": "Long-term business sustainability"}]}, {"id": "ST5-3", "name": "Sell healthier products", "strat": "ST5", "measured": true, "measures": [{"m": "Products sold classed as healthy", "t": "at least 65% by volume. Achieved", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S1", "locator": "Long-term business sustainability"}]}, {"id": "ST5-4", "name": "Colleagues who would recommend Tesco as a place to work", "strat": "ST5", "measured": true, "measures": [{"m": "Would recommend Tesco as a great place to work", "t": "85% in April 2025. No FY26 figure found", "kind": "outcome", "by": null}], "conf": "medium", "flags": ["single_source", "unclear", "stale"], "sources": [{"source": "S6", "locator": "FY25 results call"}]}], "opps": [{"id": "ST5-a", "name": "Report colleague recommend scores as numbers, not narrative", "goal": "ST5-4", "strat": "ST5", "conf": "medium", "flags": ["single_source"], "sources": [{"source": "S8", "locator": "AGM question", "quote": "reporting remains largely narrative-based"}]}], "conf": "medium", "flags": ["no_owner", "unclear"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}, {"source": "S2", "locator": "Strategic ambitions", "quote": "Tesco's strategy rests on five ambitions"}]}], "initiatives": [{"id": "I01", "name": "Everyday Low Prices expansion", "strat": "ST1", "goal": "ST1-2", "links": [{"strat": "ST1", "goal": "ST1-2", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "I02", "name": "Clubcard Prices and Aldi Price Match", "strat": "ST1", "goal": "ST1-2", "links": [{"strat": "ST1", "goal": "ST1-2", "opp": null}, {"strat": "ST4", "goal": "ST4-1", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear", "conflict"], "sources": [{"source": "S3", "locator": "Strategy"}]}, {"id": "I03", "name": "Finest range growth (Gut Sense, high protein, Chef's Collection)", "strat": "ST1", "goal": "ST1-3", "links": [{"strat": "ST1", "goal": "ST1-3", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S3", "locator": "Strategy"}]}, {"id": "I04", "name": "AI ranging tools with dunnhumby", "strat": "ST1", "links": [{"strat": "ST1", "goal": null, "opp": null}, {"strat": "ST3", "goal": "ST3-1", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear", "conflict"], "sources": [{"source": "S3", "locator": "Strategy"}]}, {"id": "I05", "name": "Tesco Whoosh", "strat": "ST2", "goal": "ST2-1", "links": [{"strat": "ST2", "goal": "ST2-1", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "I06", "name": "F&F clothing", "strat": "ST2", "goal": "ST2-2", "links": [{"strat": "ST2", "goal": "ST2-2", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "I07", "name": "Tesco Marketplace", "strat": "ST2", "goal": "ST2-2", "links": [{"strat": "ST2", "goal": "ST2-2", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S3", "locator": "Strategy"}]}, {"id": "I08", "name": "Insurance and money services", "strat": "ST2", "goal": "ST2-2", "links": [{"strat": "ST2", "goal": "ST2-2", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S3", "locator": "Strategy"}]}, {"id": "I09", "name": "In-store pharmacies and Tesco Mobile", "strat": "ST2", "links": [{"strat": "ST2", "goal": null, "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S3", "locator": "Strategy"}]}, {"id": "I10", "name": "Booker retail partners and Scoot", "strat": "ST2", "links": [{"strat": "ST2", "goal": null, "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Named initiatives"}]}, {"id": "I11", "name": "Tesco Media", "strat": "ST3", "goal": "ST3-1", "links": [{"strat": "ST3", "goal": "ST3-1", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "I12", "name": "dunnhumby", "strat": "ST3", "goal": "ST3-1", "links": [{"strat": "ST3", "goal": "ST3-1", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "I13", "name": "Clubcard personalisation", "strat": "ST4", "goal": "ST4-1", "links": [{"strat": "ST4", "goal": "ST4-1", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "I14", "name": "AI meal-planning assistant", "strat": "ST4", "goal": "ST4-1", "links": [{"strat": "ST4", "goal": "ST4-1", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S2", "locator": "Colleague metrics"}]}, {"id": "I15", "name": "Most Helpful Shopping Trip colleague training", "strat": "ST4", "goal": "ST4-2", "links": [{"strat": "ST4", "goal": "ST4-2", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S2", "locator": "Colleague metrics"}]}, {"id": "I16", "name": "Save to Invest", "strat": "ST5", "goal": "ST5-1", "links": [{"strat": "ST5", "goal": "ST5-1", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Named initiatives"}]}, {"id": "I17", "name": "Net zero programme", "strat": "ST5", "goal": "ST5-2", "links": [{"strat": "ST5", "goal": "ST5-2", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Long-term business sustainability"}]}, {"id": "I18", "name": "UK store colleague pay and performance award", "strat": "ST5", "goal": "ST5-4", "links": [{"strat": "ST5", "goal": "ST5-4", "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Named initiatives"}]}, {"id": "I19", "name": "Technology hiring (over 6,000 technology experts)", "strat": "ST5", "links": [{"strat": "ST5", "goal": null, "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Evolving our strategic ambitions"}]}, {"id": "I20", "name": "Store openings (93 across the Group in FY26)", "strat": "ST1", "links": [{"strat": "ST1", "goal": null, "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S1", "locator": "Named initiatives"}]}, {"id": "I21", "name": "Work experience and apprenticeships by 2027", "strat": "ST5", "links": [{"strat": "ST5", "goal": null, "opp": null}], "fte": 0, "q": [0, 0, 0, 0], "funded": true, "disc": false, "benef": "Not recorded", "com": 0, "comRisk": 0, "capSens": false, "conf": "medium", "flags": ["unclear"], "sources": [{"source": "S2", "locator": "Colleague metrics"}]}], "pilot": [], "questions": [{"id": "Q1", "cat": "No owner", "t": "Who owns each of the five ambitions and the profit objective?", "why": "Flagged: no_owner", "dm": "CEO"}, {"id": "Q2", "cat": "Unclear", "t": "Why do Save to Invest, technology hiring and emissions sit under long-term sustainability?", "why": "Flagged: unclear", "dm": "CFO"}, {"id": "Q3", "cat": "Unclear", "t": "Which ambition covers colleagues, and what is the current recommend score?", "why": "Flagged: unclear", "dm": "Chief People Officer"}, {"id": "Q4", "cat": "Unclear", "t": "Is customer satisfaction still an objective, and does it sit with ambition 1 or 4?", "why": "Flagged: unclear", "dm": "Chief Customer Officer"}], "changes": [], "claimDocs": [{"id": "S1", "kind": "Preliminary results statement 2025/26 (16 Apr 2026), first 100,000 characters of 170,000", "n": 26, "conflicts": 2}, {"id": "S2", "kind": "Interim results 2026/27 (8 Oct 2026), read through a summary extract", "n": 15, "conflicts": 1}, {"id": "S3", "kind": "Full-year results call highlights, MarketBeat (16 Apr 2026)", "n": 9, "conflicts": 2}, {"id": "S4", "kind": "Annual report 2026 opening pages (search extract only)", "n": 2, "conflicts": 0}, {"id": "S5", "kind": "Sustainability report 2026, summary page only", "n": 0, "conflicts": 0}, {"id": "S6", "kind": "Full-year 2024/25 results call transcript (10 Apr 2025), search extract", "n": 2, "conflicts": 0}, {"id": "S7", "kind": "Preliminary results 2024/25 (10 Apr 2025), search extract", "n": 0, "conflicts": 0}, {"id": "S8", "kind": "Railpen AGM question, 4 Jun 2026 (investor, not company)", "n": 2, "conflicts": 0}, {"id": "S9", "kind": "Full-year 2024/25 results call, MarketBeat (10 Apr 2025), search extract", "n": 1, "conflicts": 0}], "modelChecks": [], "otherDecisions": []};</script>
+<script>
+/* =====================================================================
+   Data model: read from window.STARLING_DATA, which build.py inlines from a JSON file
+   (design/data/sample.json by default; see docs/DATA_MODEL.md). No client data lives in this file.
+   ===================================================================== */
+const D=window.STARLING_DATA||{};
+const META=D.meta||{}, T=Object.assign({source:"Data store",tracker:"Tracker",review:"Quarterly review",pilot:"Pilot",decision:"Decision",brief:"decision brief",discretionRule:"funding for keeping the lights on, maintenance work, a non-negotiable category, or a regulatory, client or dependency commitment",workstream:"Workstream"},D.text||{});
+const QS=D.quarters||[], Q=QS.map(q=>q.label), HZ=Object.assign({label:"",from:0,to:Math.max(0,QS.length-1)},D.horizon||{});
+const VISION=D.vision||"", OBJECTIVES=D.objectives||[];
+const ST_LABEL={on:"On Track",risk:"At Risk",na:"Not assessed"};
+const STRATS=D.strategies||[], INITS=D.initiatives||[];
+STRATS.forEach(s=>{s.objs=s.objs||[];s.goals=s.goals||[];s.opps=s.opps||[];s.goals.forEach(g=>{g.strat=s.id;g.measures=g.measures||[];g.measured=!!g.measured});s.opps.forEach(o=>{o.strat=s.id})});
+INITS.forEach(i=>{i.q=Q.map((_,k)=>(i.q||[])[k]||0)});
+const SBY=Object.fromEntries(STRATS.map(s=>[s.id,s]));
+const GOALS=STRATS.flatMap(s=>s.goals), GBY=Object.fromEntries(GOALS.map(g=>[g.id,g]));
+const OPPS=STRATS.flatMap(s=>s.opps), OBY=Object.fromEntries(OPPS.map(o=>[o.id,o]));
+const BENEF=[...new Set(INITS.map(i=>i.benef).filter(Boolean))].sort();
+/* An initiative can serve several strategies: links:[{strat,goal,opp}]. Legacy strat/goal/opp become one link.
+   i.strat/goal/opp stay as the first link (the primary). Optional split:{strategyId:share} divides FTE; default is equal. */
+INITS.forEach(i=>{if(!Array.isArray(i.links))i.links=i.strat?[{strat:i.strat,goal:i.goal||null,opp:i.opp||null}]:[];
+  i.links=i.links.filter(l=>l&&l.strat).map(l=>({strat:l.strat,goal:l.goal||null,opp:l.opp||null}));
+  const f=i.links[0]||{};i.strat=f.strat||null;i.goal=f.goal||null;i.opp=f.opp||null});
+const strOf=i=>[...new Set(i.links.map(l=>l.strat))];
+const linksIn=(i,sid)=>i.links.filter(l=>l.strat===sid);
+const inStrat=(i,sid)=>sid==null?!i.links.length:i.links.some(l=>l.strat===sid);
+const sh=(i,sid)=>{if(sid==null)return 1;const ss=strOf(i);if(!ss.includes(sid))return 0;if(i.split&&i.split[sid]!=null)return Number(i.split[sid])||0;return 1/ss.length};
+const avgS=(i,sid)=>avgH(i)*sh(i,sid);
+const QUESTIONS=D.questions||[], CHANGES=D.changes||[], CLAIMDOCS=D.claimDocs||[], MODELCHECKS=D.modelChecks||[], OTHER_DECISIONS=D.otherDecisions||[];
+const PILOT=(D.pilot||[]).filter(id=>SBY[id]);
+const avgH=i=>{let t=0,n=0;for(let k=HZ.from;k<=HZ.to;k++){t+=i.q[k]||0;n++}return n?t/n:0};
+const r1=x=>Math.round(x*10)/10;
+const fmt=x=>(Math.round(x*10)/10).toString();
+const state={view:"overview",sel:null,open:{},allOpen:false,work:{view:"roadmap",level:"strategies",open:{},research:false},showNonDisc:false,allQ:false,choice:{},drawerStack:[],rv:{kind:"All",all:false,q:""},role:""};
+
+/* ---------- derived figures ---------- */
+const initsOf=s=>INITS.filter(i=>inStrat(i,s));
+function coverage(){const stated=STRATS.reduce((a,s)=>a+(Number(s.stated)||0),0);const inRec=INITS.filter(i=>i.strat&&i.funded).reduce((a,i)=>a+avgH(i),0);return{stated,inRec:Math.round(inRec),pct:stated?Math.round(100*inRec/stated):null}}
+const goalsNoInit=()=>GOALS.filter(g=>!INITS.some(i=>i.links.some(l=>l.goal===g.id)));
+const unfunded=()=>INITS.filter(i=>!i.funded&&i.strat);
+const assessed=()=>STRATS.filter(s=>s.status!=="na");
+function validate(){
+  const w=[], seen=new Set(), ids=[...OBJECTIVES.map(o=>o.id),...STRATS.map(s=>s.id),...GOALS.map(g=>g.id),...OPPS.map(o=>o.id),...INITS.map(i=>i.id)];
+  ids.forEach(id=>{const x=String(id);if(/[:|]/.test(x)||x==="none")w.push(`The ID “${x}” contains “:” or “|” or is “none”. These are used to trace links, so rename it.`);if(seen.has(x))w.push(`The ID “${x}” is used more than once.`);seen.add(x)});
+  INITS.forEach(i=>{i.links.forEach(l=>{const s=SBY[l.strat];
+    if(!s){w.push(`${i.name} is linked to an unknown strategy “${l.strat}”.`);return}
+    if(l.goal&&!s.goals.some(g=>g.id===l.goal))w.push(`${i.name}: goal “${l.goal}” is not a goal of ${l.strat}.`);
+    if(l.opp){const o=s.opps.find(x=>x.id===l.opp);if(!o)w.push(`${i.name}: opportunity “${l.opp}” is not an opportunity of ${l.strat}.`);else if((o.goal||null)!==(l.goal||null))w.push(`${i.name}: it links goal ${l.goal||"(none)"} but its opportunity ${l.opp} sits under goal ${o.goal||"(none)"}.`)}});
+    if(i.split){const t=strOf(i).reduce((a,x)=>a+(Number(i.split[x])||0),0);if(Math.abs(t-1)>.01)w.push(`${i.name}: its FTE split adds up to ${Math.round(t*100)}%, not 100%.`)}
+    if(i.links.length&&!i.q.some(x=>x>0))w.push(`${i.name} has no FTE in the quarters shown.`)});
+  return w;
+}
+const DATACHECKS=validate();
+/* Best guesses are shown as they are. Items the import could not be sure of carry conf ("high|medium|low"),
+   flags (conflict|low_confidence|single_source|stale|no_owner|unclear) and alternatives [{value,source}]. */
+const FLAG_LABEL={needs_edit:"Challenge accepted, edit pending",challenged:"Challenged by a reader",conflict:"Sources conflict",low_confidence:"Low confidence",single_source:"Single source",stale:"Source may be stale",no_owner:"No owner",unclear:"Unclear"};
+const flagsOf=x=>{const f=[...((x&&x.flags)||[])];if(x&&x.conf==="low"&&!f.includes("low_confidence"))f.push("low_confidence");return f};
+const reviewPill=x=>!x||x.reviewed?"":flagsOf(x).length?` <span class="pill amber" title="${esc(flagsOf(x).map(f=>FLAG_LABEL[f]||f).join(", "))}">Review</span>`:` <span class="pill dash" title="Imported best guess, not yet reviewed by an owner">Review</span>`;
+const ITEMS=[["Strategy",x=>"s:"+x.id,STRATS],["Goal",x=>"g:"+x.strat+":"+x.id,GOALS],["Opportunity",x=>"p:"+x.id,OPPS],["Initiative",x=>"i:"+x.id,INITS]].flatMap(([k,rid,list])=>list.map(x=>({kind:k,rid:rid(x),x})));
+const flaggedNow=()=>ITEMS.filter(r=>!r.x.reviewed&&flagsOf(r.x).length), unflaggedNow=()=>ITEMS.filter(r=>!r.x.reviewed&&!flagsOf(r.x).length);
+const UNREVIEWED=()=>ITEMS.filter(r=>!r.x.reviewed).length;
+function respondChallenge(rid,idx,decision,role,reason){
+  const r=ITEMS.find(z=>z.rid===rid), c=r&&(r.x.challenges||[])[idx]; if(!c)return null;
+  const on=new Date().toISOString().slice(0,10); c.status=decision; c.response={by:role,on,reason:reason||null};
+  let fl=r.x.flags||[]; if(!(r.x.challenges||[]).some(z=>!z.status))fl=fl.filter(f=>f!=="challenged"); if(decision==="accepted"&&!fl.includes("needs_edit"))fl=[...fl,"needs_edit"]; r.x.flags=fl;
+  const ev={rid,kind:r.kind,id:r.x.id,action:"challenge_"+decision,by:role,on,note:reason||null,challengeIndex:idx,challengedBy:c.by};
+  EVENTS.push(ev); try{const h=window.STARLING_HOOKS;if(h&&h.onReview)h.onReview(ev)}catch(_){}
+  return r;
+}
+const PARENT=r=>{const x=r.x;if(r.kind==="Goal")return"s:"+x.strat;if(r.kind==="Opportunity")return x.goal?"g:"+x.strat+":"+x.goal:"s:"+x.strat;if(r.kind==="Initiative")return x.opp?"p:"+x.opp:x.goal&&x.strat?"g:"+x.strat+":"+x.goal:x.strat?"s:"+x.strat:null;return null};
+function ownerOf(rid){let cur=rid;for(let n=0;cur&&n<6;n++){const r=ITEMS.find(z=>z.rid===cur);if(!r)return null;if(r.x.owner)return{owner:r.x.owner,via:cur===rid?null:r.x.name};cur=PARENT(r)}return null}
+function ownerChain(rid){
+  const out=[];let cur=rid,last=null;
+  for(let n=0;cur&&n<6;n++){const r=ITEMS.find(z=>z.rid===cur);if(!r)break;last=r;if(r.x.owner&&!out.some(o=>o.owner===r.x.owner))out.push({owner:r.x.owner,via:cur===rid?null:r.x.name});cur=PARENT(r)}
+  if(last&&last.kind==="Strategy")(last.x.objs||[]).forEach(id=>{const o=OBJECTIVES.find(z=>z.id===id);if(o&&o.owner&&!out.some(z=>z.owner===o.owner))out.push({owner:o.owner,via:o.id+" "+o.name})});
+  return out;
+}
+const CH_DAYS=Number((D.meta||{}).challengeDays)||7;
+const overdueOf=x=>(x.challenges||[]).map((c,n)=>({c,n,d:Math.floor((Date.now()-Date.parse(c.on))/864e5)})).filter(o=>!o.c.status&&o.d>CH_DAYS);
+const escLine=rid=>{const e=ownerChain(rid)[1];return e?`Escalated to ${e.owner}${e.via?" (owner of "+e.via+")":""}.`:"No one above to escalate to."};
+function modelRules(){
+  const I=(k,x)=>ITEMS.find(r=>r.kind===k&&r.x===x), it=l=>l.map(x=>I("Initiative",x)).filter(Boolean), gl=l=>l.map(x=>I("Goal",x)).filter(Boolean), op=l=>l.map(x=>I("Opportunity",x)).filter(Boolean), st=l=>l.map(x=>I("Strategy",x)).filter(Boolean);
+  const obj=OBJECTIVES.filter(o=>!STRATS.some(s=>(s.objs||[]).includes(o.id))).map(o=>({rid:"o:"+o.id,x:{name:o.id+" "+o.name}}));
+  return [
+   ["work that is not linked to any strategy",it(INITS.filter(i=>!(i.links||[]).length))],
+   ["work linked to a strategy but to no goal or opportunity",it(INITS.filter(i=>(i.links||[]).length&&i.links.every(l=>!l.goal&&!l.opp)))],
+   ["goals with no initiative",gl(goalsNoInit())],
+   ["goals with no outcome measure",gl(GOALS.filter(g=>!outcomeMeasures(g).length))],
+   ["opportunities not under a goal",op(OPPS.filter(o=>!o.goal))],
+   ["strategies with no goals",st(STRATS.filter(s=>!(s.goals||[]).length))],
+   ["strategies that serve no Org objective",st(STRATS.filter(s=>!(s.objs||[]).length))],
+   ["Org objectives that no strategy serves",obj]
+  ].filter(r=>r[1].length).map(([t,items],n)=>({n,t,items}));
+}
+const EVENTS=[];
+function recordReview(rid,act,role,note,value){
+  const r=ITEMS.find(z=>z.rid===rid); if(!r)return null;
+  const on=new Date().toISOString().slice(0,10), ev={rid,kind:r.kind,id:r.x.id,action:act,by:role,on,note:note||null,value:value||null};
+  if(act==="challenge"){r.x.flags=[...(r.x.flags||[]).filter(f=>f!=="challenged"),"challenged"];r.x.challenges=[...(r.x.challenges||[]),{by:role,on,note}];delete r.x.reviewed}
+  else r.x.reviewed=Object.assign({by:role,on},value?{value}:{});
+  if(act==="challenge"){const o=ownerOf(rid);ev.notify=o?o.owner:null;ev.notifyVia=o&&o.via||null}
+  EVENTS.push(ev); try{const h=window.STARLING_HOOKS;if(h&&h.onReview)h.onReview(ev)}catch(_){}
+  return r;
+}function provHtml(x,rid){
+  if(!x)return "";
+  const f=flagsOf(x),alt=x.alternatives||[],R=x.reviewed;
+  const why=f.length?`<br>Flagged: ${f.map(k=>esc(FLAG_LABEL[k]||k)).join(", ")}`:"";
+  const ch=(x.challenges||[]).map((c,n)=>`<div class="alt" style="display:block"><b>Challenge ${n+1}</b> by ${esc(c.by)} on ${esc(c.on)}: ${esc(c.note)}${!c.status&&rid&&Math.floor((Date.now()-Date.parse(c.on))/864e5)>CH_DAYS?`<br><span class="red">Overdue: unanswered for ${Math.floor((Date.now()-Date.parse(c.on))/864e5)} days. ${esc(escLine(rid))}</span>`:""}${c.status?`<br><span class="muted">${c.status==="accepted"?"Accepted":"Rejected"} by ${esc(c.response.by)} on ${esc(c.response.on)}${c.response.reason?": "+esc(c.response.reason):""}</span>`:rid&&!R?`<div class="legend" style="margin-top:6px"><button class="btn sm" type="button" data-rvact="accept" data-rid="${esc(rid)}" data-ch="${n}">Accept challenge</button><button class="btn sm" type="button" data-rvact="reject" data-rid="${esc(rid)}" data-ch="${n}">Reject challenge</button></div>`:""}</div>`).join("");
+  let h;
+  if(R){
+    h=`<b>Reviewed</b>${R.by?` by ${esc(R.by)}`:""}${R.on?` on ${esc(R.on)}`:""}${R.value?`<br>Preferred value: ${esc(R.value)}`:""}${f.length?`<br><span class="muted">Was flagged: ${f.map(k=>esc(FLAG_LABEL[k]||k)).join(", ")}</span>`:""}`;
+  }else{
+    const alts=alt.length?`<br>Other values found:${alt.map((a,n)=>`<div class="alt"><span>${esc(a.value)}${a.source?` <span class="muted">(${esc(a.source)})</span>`:""}</span>${rid?`<button class="btn sm" type="button" data-rvact="prefer" data-rid="${esc(rid)}" data-val="${n}">Prefer this</button>`:""}</div>`).join("")}`:"";
+    h=`<b>Best guess${x.conf?` · ${esc(x.conf)} confidence`:""}</b>${why}${ch}${alts}${Array.isArray(x.sources)&&x.sources.length?`<br>Found in:${x.sources.map(z=>`<div class="alt" style="display:block">${esc(z.source||"")}${z.locator?", "+esc(z.locator):""}${z.quote?`: “${esc(z.quote)}”`:""}</div>`).join("")}`:""}<br><span class="muted">${(()=>{const o=rid&&ownerOf(rid);return o?`Owner: ${esc(o.owner)}${o.via?" (via "+esc(o.via)+")":""}. `:"No owner recorded up the chain. "})()}Imported from the sources. Not yet reviewed by an owner.</span>`
+      +(rid?`<div class="rvbox"><b>Review this item</b><label for="rvRole">Your role</label><input id="rvRole" type="text" autocomplete="off" placeholder="e.g. Strategy lead" value="${esc(state.role||"")}"><label for="rvNote">Note (needed to challenge, or to reject a challenge)</label><textarea id="rvNote" rows="2"></textarea><div class="rvmsg" id="rvMsg" role="alert"></div><div class="legend"><button class="btn sm" type="button" data-rvact="ok" data-rid="${esc(rid)}">Mark reviewed</button><button class="btn sm" type="button" data-rvact="challenge" data-rid="${esc(rid)}">Challenge</button></div><p class="hint" style="margin:8px 0 0">Sample: a review is kept in this page only. A live build writes it to your database.</p></div>`:"");
+  }
+  return `<div id="rvwrap" class="callout" tabindex="-1" style="margin-top:12px">${h}</div>`;
+}
+const reviewCount=()=>CHANGES.length+CLAIMDOCS.length+modelRules().length+MODELCHECKS.length+DATACHECKS.length+flaggedNow().length;
+const decisionCount=()=>1+OTHER_DECISIONS.length;
+const outcomeMeasures=g=>g.measures.filter(m=>m.kind==="outcome");
+function goalTarget(g){const ys=outcomeMeasures(g).map(m=>m.by).filter(Boolean).map(Number).filter(Number.isFinite);if(!ys.length||!QS.length)return null;const y=Math.min(...ys);if(y>QS[QS.length-1].year)return "later";let idx=0;QS.forEach((q,k)=>{if(q.year<=y)idx=k});return idx}
+function rag(x){const k=[[142,55,40],[43,95,52],[3,78,50]],u=Math.max(0,Math.min(1,x)),i=u<=.5?0:1,t=u<=.5?u/.5:(u-.5)/.5,a=k[i],b=k[i+1],m=j=>Math.round((a[j]+(b[j]-a[j])*t)*10)/10;return `hsl(${m(0)} ${m(1)}% ${m(2)}%)`}
+function levels(){
+  const c=coverage(), gm=GOALS.filter(g=>g.measured).length, on=assessed().filter(s=>s.status==="on").length, as=assessed().length;
+  const st=r=>r>=.8?"aligned":r>=.4?"drift":"conflict";
+  const none={status:null,note:"No measure yet"};
+  return [
+   {k:"Work",href:"#work",...(c.pct===null?none:{status:st(c.pct/100),sev:1-c.pct/100,note:`${c.pct}% of stated strategy FTE is in recorded initiatives`})},
+   {k:"Team goals",href:"#strategy",...(!GOALS.length?none:{status:st(gm/GOALS.length),sev:Math.min(1,1-gm/GOALS.length+.1),note:`${gm} of ${GOALS.length} goals have a metric with a current value`})},
+   {k:"Team strategies",href:"#strategy",...(!as?none:{status:st(on/as),sev:1-on/as,note:`${on} of ${as} assessed strategies On Track (${T.review})`})},
+   {k:"Team role",status:null,note:"No measure yet"},{k:"Org objectives",status:null,note:"No measure yet"},{k:"North Star",star:true,status:null,note:"No measure yet"}];
+}
+const SLAB={aligned:"Aligned",drift:"Drifting",conflict:"Conflict"};
+function flockScore(){const L=levels().filter(l=>l.status);if(!L.length)return .5;return L.reduce((a,l)=>a+({aligned:1,drift:.5,conflict:0}[l.status]),0)/L.length}
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const plural=(n,w,p)=>`${n} ${n===1?w:(p||w+"s")}`;
+const CHEV='<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4 2l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.2 5.7 20.9l1.5-7.1L1.8 8.9l7.2-.8z" fill="currentColor"/></svg>';
+function toast(m){const t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2800)}
+const measureLine=m=>`<div class="meas">${m.by?`<span class="by">by ${m.by}</span>`:`<span class="by none">no date</span>`}<span>${esc(m.m)}: <strong>${m.t?esc(m.t):"Indicative target"}${m.by?" by "+m.by:""}</strong></span></div>`;
+
+/* ---------- header and tabs ---------- */
+const VIEWS=[["overview","Overview"],["strategy","Strategy"],["work","Work"],["decisions","Decisions",decisionCount],["questions","Open questions",()=>QUESTIONS.length],["review","Review",reviewCount]];
+function renderHeader(){
+  const SK=window.SKIN||{};
+  if(SK.wordmark){$("#wm").innerHTML='Starl<span class="wm-i">ı<svg class="wm-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.2 5.7 20.9l1.5-7.1L1.8 8.9l7.2-.8z" fill="currentColor"/></svg></span>ng';$("#wm").setAttribute("aria-label","Starling")}
+  $("#sampleNote").innerHTML=META.sample?`All figures are synthetic sample data (<span class="mono">model built ${esc(META.built||META.snapshot)}</span>).`:"";
+  document.documentElement.style.setProperty("--nq",Math.max(1,Q.length));
+  if(SK.tagline){$("#tagline").textContent=SK.tagline;$("#tagline").hidden=false}
+  $("#hdrSub").innerHTML=`${esc(META.org)} · ${esc(META.teamFull)} · ${esc(T.source)} snapshot <span class="mono">${esc(META.snapshot)}</span> · ${META.sources} sources, ${META.claims} claims`;
+  $("#tabs").innerHTML=VIEWS.map(([id,l,n])=>`<a href="#${id}" ${state.view===id?'aria-current="page"':""}>${l}${n?` <span class="n">${n()}</span>`:""}</a>`).join("");
+}
+
+/* ---------- overview ---------- */
+function vOverview(){
+  const L=levels(), c=coverage(), risk=assessed().filter(s=>s.status==="risk").length, gni=goalsNoInit().length;
+  return `<div class="banner"><div class="banner-in"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l10 18H2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v5M12 18v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <p><b>Prototype: human judgement required.</b> This prototype represents the information made available to it. It may be incomplete, outdated, inconsistent or wrong. Use it to expose context, assumptions, evidence, ownership and consequences, not to replace leadership judgement. If something looks wrong, question it. If you can improve it, correct the source, record the change and make the reasoning visible.</p></div></div>
+  <div class="wrap">
+  <section class="hero" aria-label="Alignment overview">
+    <div class="hero-text">
+      <div class="label">The question</div>
+      <h2>Is Your Team flying toward the Org North Star?</h2>
+      <p>The star is the Org vision. The flock tightens as ${esc(META.team)}’s work, goals and strategies line up behind it. Tightness is computed from the levels that have a measure; the rest are shown as not assessed.</p>
+      <div class="northstar">${STAR}<div><b>${esc((window.SKIN||{}).starLabel||"North Star")}</b><span>${esc(VISION)}</span></div></div>
+    </div>
+    <div class="sky"><canvas id="flock" aria-hidden="true"></canvas>
+      <svg class="starbig" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5l3 6.6 7.2.8-5.4 4.9 1.5 7.1L12 17.2 5.7 20.9l1.5-7.1L1.8 8.9l7.2-.8z" fill="currentColor"/></svg>
+      <button class="btn sm flockctl" id="flockPause" type="button" aria-pressed="${!!state.flockPaused}">Pause motion</button>
+      <div class="skycap">Flock tightness ${Math.round(flockScore()*100)}% · from ${L.filter(l=>l.status).length} measured levels; ${L.filter(l=>!l.status).length} not assessed · illustrative</div>
+      <div class="ragkey" aria-hidden="true"><span>Aligned</span><i></i><span>Severe gap</span></div>
+    </div>
+    <div class="levels">${L.map(l=>{const tag=l.href?"a":"div";return `<${tag} class="lvl" ${l.href?`href="${l.href}"`:""} ${l.status?`style="--rag:${rag(l.sev)}"`:""}><span class="bar"></span><b>${l.star?'<span style="color:var(--star)">★</span> ':""}${l.k}</b><small>${l.status?SLAB[l.status]:"Not assessed"}</small><small>${esc(l.note)}</small></${tag}>`}).join("")}</div>
+  </section>
+  <div class="tiles">
+    <a class="tile att" href="#strategy" style="text-decoration:none"><b>${risk} of ${assessed().length}</b><span>assessed strategies At Risk (${T.review})</span></a>
+    <a class="tile att" href="#work" style="text-decoration:none"><b>${c.pct===null?"n/a":c.pct+"%"}</b><span>of stated FTE in funded initiatives linked to a strategy (${c.inRec} of ${c.stated})</span></a>
+    <a class="tile att" href="#work" style="text-decoration:none"><b>${gni}</b><span>goals with no initiative</span></a>
+    <a class="tile" href="#decisions" style="text-decoration:none"><b>${decisionCount()}</b><span>decisions waiting</span></a>
+    <a class="tile" href="#questions" style="text-decoration:none"><b>${QUESTIONS.length}</b><span>open questions</span></a>
+    <a class="tile" href="#review" style="text-decoration:none"><b>${reviewCount()}</b><span>items waiting for review</span></a>
+    <a class="tile" href="#review" style="text-decoration:none"><b>${UNREVIEWED()} of ${ITEMS.length}</b><span>strategies, goals, opportunities and initiatives not yet reviewed by an owner</span></a>
+  </div></div>`;
+}
+
+/* ---------- strategy board ---------- */
+const nid={o:id=>"o:"+id,s:id=>"s:"+id,g:(s,g)=>"g:"+s+":"+(g||"none"),p:id=>"p:"+id,q:(s,g,o)=>"q:"+s+":"+(g||"none")+":"+(o||"none")};
+function groupsOf(s){const m=new Map();INITS.forEach(i=>linksIn(i,s.id).forEach(l=>{const k=(l.goal||"none")+"|"+(l.opp||"none");if(!m.has(k))m.set(k,{goal:l.goal,opp:l.opp,items:[]});const it=m.get(k).items;if(!it.includes(i))it.push(i)}));return [...m.values()]}
+function edgesFor(s){
+  const E=[];s.objs.forEach(o=>E.push([nid.o(o),nid.s(s.id)]));
+  if(!state.open[s.id])return E;
+  const gs=groupsOf(s), rowsG=[...s.goals.map(g=>g.id)]; if(!rowsG.length||gs.some(x=>!x.goal)||s.opps.some(o=>!o.goal))rowsG.push(null);
+  rowsG.forEach(g=>{E.push([nid.s(s.id),nid.g(s.id,g)]);
+    s.opps.filter(o=>o.goal===g).forEach(o=>E.push([nid.g(s.id,g),nid.p(o.id)]));
+    gs.filter(x=>x.goal===g).forEach(x=>E.push([x.opp?nid.p(x.opp):nid.g(s.id,g),nid.q(s.id,g,x.opp)]))});
+  return E;
+}
+function allEdges(){return STRATS.flatMap(edgesFor)}
+function related(sel){
+  if(!sel)return null; const E=allEdges(), set=new Set([sel]);
+  const up=n=>E.filter(e=>e[1]===n).forEach(e=>{if(!set.has(e[0])){set.add(e[0]);up(e[0])}});
+  const down=n=>E.filter(e=>e[0]===n).forEach(e=>{if(!set.has(e[1])){set.add(e[1]);down(e[1])}});
+  if(sel.startsWith("o:")){down(sel)}
+  else{up(sel);down(sel)}
+  return set;
+}
+function stratCard(s){
+  const open=!!state.open[s.id];
+  const succ=s.success?measureLine(s.success):s.outputOnly?`<small class="amb">No outcome measure · ${plural(s.goals.filter(g=>g.measures.some(m=>m.kind==="output")).length,"output measure")} only</small>`:`<small>Success measured through its goals</small>`;
+  return `<div class="box strat ${s.status}" data-node="${nid.s(s.id)}" tabindex="0">
+    <div class="strat-t"><button class="chev" type="button" data-toggle="${esc(s.id)}" aria-expanded="${open}" aria-label="${open?"Collapse":"Expand"} ${esc(s.name)}">${CHEV}</button><button class="lnk" type="button" data-rec="${nid.s(s.id)}">${esc(s.id)} ${esc(s.name)}</button>${reviewPill(s)}</div>
+    <small style="margin:4px 0 2px">${ST_LABEL[s.status]} · ${plural(s.goals.length,"goal")}</small>${succ}</div>`;
+}
+function goalCard(s,g){
+  if(!g){return `<div class="box goal nog" data-node="${nid.g(s.id,null)}" tabindex="0"><div class="goal-t">No goal yet</div><small>work linked straight to ${esc(s.id)}</small></div>`}
+  const om=outcomeMeasures(g), out=g.measures.filter(m=>m.kind==="output");
+  const ms=om.length?om.map(measureLine).join(""):`<small class="amb">No outcome measure${out.length?` · ${plural(out.length,"output measure")} only`:""}</small>`;
+  return `<div class="box goal" data-node="${nid.g(s.id,g.id)}" tabindex="0"><div class="goal-t"><span class="gdot ${g.measured?"m":""}" title="${g.measured?"Measured":"Not measured"}"></span><button class="lnk" type="button" data-rec="${nid.g(s.id,g.id)}">${esc(g.id)} ${esc(g.name)}</button>${reviewPill(g)}</div>${ms}</div>`;
+}
+function vStrategy(){
+  const rel=related(state.sel);
+  const cls=n=>rel?(rel.has(n)?(n===state.sel?" sel":""):" dim"):"";
+  let rows=`<div class="c-strat colh"><b>Team strategies</b><small>how ${esc(META.team)} contributes</small></div><div class="c-goal colh"><b>Goals</b><small>outcomes we measure</small></div><div class="c-opp colh"><b>Opportunities</b><small>the customer gap (proposed)</small></div><div class="c-init colh"><b>Initiatives</b><small>the work</small></div>`;
+  STRATS.forEach(s=>{
+    const its=initsOf(s.id), gs=groupsOf(s);
+    if(!state.open[s.id]){
+      rows+=`<div class="c-strat sblock">${stratCard(s)}</div>
+       <div class="c-goal"><div class="sumc"><button class="lnk" type="button" data-toggle="${esc(s.id)}" aria-label="Expand ${esc(s.name)} to show its goals"><b>${plural(s.goals.length,"goal")}</b>, <b>${s.goals.filter(g=>g.measured).length}</b> measured ›</button></div></div>
+       <div class="c-opp"><div class="sumc">${s.opps.length?`<button class="lnk" type="button" data-toggle="${esc(s.id)}" aria-label="Expand ${esc(s.name)} to show its opportunities"><b>${s.opps.length}</b> proposed opportunities ›</button>`:"none proposed"}</div></div>
+       <div class="c-init"><div class="sumc">${its.length?`<button class="lnk" type="button" data-list="q:${esc(s.id)}:all:all"><b>${its.length}</b> in all ›</button>`:"<b>0</b> in all"}<br>${its.filter(i=>!linksIn(i,s.id).some(l=>l.goal)).length?`<button class="lnk" type="button" data-list="q:${esc(s.id)}:nogoal:all"><b class="amb">${its.filter(i=>!linksIn(i,s.id).some(l=>l.goal)).length}</b> with no goal ›</button>`:`<b class="amb">0</b> with no goal`}</div></div>`;
+      return;
+    }
+    const rowsG=[...s.goals.map(g=>g.id)]; if(!rowsG.length||gs.some(x=>!x.goal)||s.opps.some(o=>!o.goal))rowsG.push(null);
+    rows+=`<div class="c-strat sblock" style="grid-row:span ${rowsG.length}">${stratCard(s)}</div>`;
+    rowsG.forEach(gid=>{
+      const g=gid?GBY[gid]:null, ops=s.opps.filter(o=>o.goal===gid), grs=gs.filter(x=>x.goal===gid);
+      rows+=`<div class="c-goal">${goalCard(s,g)}</div>
+       <div class="c-opp">${ops.map(o=>`<div class="box oppc${rel&&rel.has(nid.p(o.id))?" selc":""}" data-node="${nid.p(o.id)}" tabindex="0"><b><button class="lnk" type="button" data-rec="${nid.p(o.id)}">${esc(o.name)}</button></b>${reviewPill(o)}<small>Proposed</small></div>`).join("")}</div>
+       <div class="c-init">${grs.length?grs.map(x=>`<div class="box grp" data-node="${nid.q(s.id,gid,x.opp)}" tabindex="0"><b>${x.items.length}</b><small>${x.items.length===1?"initiative":"initiatives"}</small><button class="btn sm" type="button" data-list="${nid.q(s.id,gid,x.opp)}">List ›</button></div>`).join(""):`<div class="box grp zero" data-node="${nid.q(s.id,gid,null)}"><b>0</b><small>none yet</small></div>`}</div>`;
+    });
+  });
+  const un=initsOf(null);
+  if(un.length){const ufte=r1(un.filter(i=>i.funded).reduce((a,i)=>a+avgH(i),0)), un0=un.filter(i=>!i.funded).length;
+    rows+=`<div class="c-strat sblock"><div class="box strat unl" data-node="${nid.s("none")}" tabindex="0"><div class="strat-t"><button class="lnk" type="button" data-rec="${nid.s("none")}">Not linked to a strategy</button></div><small style="margin:4px 0 2px" class="amb">Unlinked work</small><small>${plural(un.length,"initiative")} · ${fmt(ufte)} FTE (${esc(HZ.label)} average, funded)${un0?` · ${un0} unfunded`:""}</small></div></div>
+     <div class="c-goal"><div class="sumc">no goal</div></div><div class="c-opp"><div class="sumc">no opportunity</div></div>
+     <div class="c-init"><div class="box grp" data-node="${nid.q("none",null,null)}" tabindex="0"><b>${un.length}</b><small>unlinked</small><button class="btn sm" type="button" data-list="${nid.q("none",null,null)}">List ›</button></div></div>`}
+  const unNote=un.length?`<div class="callout"><b>${plural(un.length,"initiative")} ${un.length===1?"is":"are"} not linked to any strategy</b> (${fmt(r1(un.reduce((a,i)=>a+avgH(i),0)))} FTE, ${esc(HZ.label)} average). They are shown at the bottom of the board. Each needs an owner to link it to a strategy or to confirm it should stand alone.</div>`:"";
+  const html=`<div class="wrap view"><h2>Strategy</h2><p class="lede">How each piece of ${esc(META.team)}’s work connects to the goals, strategies and Org objectives it serves. Everything here is a best guess imported from the sources; items marked Review conflict, have low confidence or lack an owner.</p>
+   ${unNote}<div class="nsbar"><span class="label">North Star · Org vision</span><button class="lnk" type="button" data-rec="vision">${esc(VISION)}</button></div>
+   <div class="legend"><span class="lg"><i class="sw on"></i>Strategy On Track</span><span class="lg"><i class="sw risk"></i>At Risk</span><span class="lg"><i class="sw na"></i>Not assessed</span><span class="lg"><i class="sw dot"></i>goal measured</span><span class="lg"><i class="sw opp"></i>Opportunity (proposed)</span><span class="lg"><i class="sw ng"></i>No goal yet</span><span class="lg"><span class="by">by ${esc(HZ.label||"year")}</span>success measure and when it’s due (outcomes only)</span><span class="lg"><span class="pill amber">Review</span>flagged by the import</span><span class="lg"><span class="pill dash">Review</span>imported, not yet reviewed</span><span class="lg">No pill: reviewed by an owner</span><span class="sp"></span><button class="btn sm" type="button" id="expandAll">${STRATS.every(s=>state.open[s.id])?"Collapse all":"Expand all"}</button></div>
+   <div class="boardwrap"><div class="board" id="board">
+     <div class="ocol"><div class="colh"><b>Org objectives</b><small>why</small></div>${OBJECTIVES.map(o=>`<div class="box obj${cls(nid.o(o.id))}" data-node="${nid.o(o.id)}" tabindex="0"><b><button class="lnk" type="button" data-rec="${nid.o(o.id)}">${esc(o.name)}</button></b><small>${esc(o.id)}</small></div>`).join("")}</div>
+     <div class="rows">${rows}</div>
+     <svg class="wires" id="wires" aria-hidden="true"></svg>
+   </div></div>
+   <p class="hint">Ask “how?” left to right and “why?” right to left. Click a box to trace its links; click a name to open the record. Success criteria are outcome measures only with the date their target names. Capability, coverage and delivery measures are outputs, so they’re not shown as success. Initiative counts can overlap while opportunity links are proposed.</p>
+   <details class="dstack"><summary>The Decision Stack in detail: what the record says, what the work shows, what people understand</summary>${dstackTable()}</details></div>`;
+  return html.replace(/class="box ([^"]*)" data-node="([^"]+)"/g,(m,c,n)=>`class="box ${c}${c.includes(" dim")||c.includes(" sel")?"":cls(n)}" data-node="${n}"`);
+}
+function dstackTable(){
+  const L=[["North Star","Org vision"],["Org objectives",plural(OBJECTIVES.length,"objective")],["Team role","Team charter"],["Team strategies",plural(STRATS.length,"strategy","strategies")],["Team goals",plural(GOALS.length,"goal")],["Work","Initiatives in "+T.source]];
+  return `<div class="scroll" style="margin-top:12px"><table><thead><tr><th>Level</th><th>Said (record)</th><th>Done (work and data)</th><th>Understood (people)</th></tr></thead><tbody>${L.map(([k,s])=>`<tr><td><b>${k}</b><br><span class="muted">${s}</span></td><td>Indicative statement from the record.</td><td>Indicative evidence from work and data.</td><td class="muted">Not yet gathered</td></tr>`).join("")}</tbody></table></div>`;
+}
+function drawWires(){
+  const svg=$("#wires"), board=$("#board"); if(!svg||!board)return;
+  const B=board.getBoundingClientRect(), rel=related(state.sel); let out="";
+  allEdges().forEach(([a,b])=>{
+    const ea=board.querySelector(`[data-node="${a}"]`), eb=board.querySelector(`[data-node="${b}"]`); if(!ea||!eb)return;
+    const ra=ea.getBoundingClientRect(), rb=eb.getBoundingClientRect();
+    const x1=ra.right-B.left, y1=ra.top+ra.height/2-B.top, x2=rb.left-B.left, y2=rb.top+rb.height/2-B.top, dx=Math.max(16,(x2-x1)/2);
+    const on=rel&&rel.has(a)&&rel.has(b);
+    if(rel&&!on&&!a.startsWith("o:"))return;
+    out+=`<path class="${on?"on":""}" d="M${x1},${y1} C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}"/>`;
+  });
+  svg.innerHTML=out;
+}
+
+/* ---------- work ---------- */
+function activeIn(its,k,f){return its.filter(i=>i.q[k]>0&&(f===undefined||i.funded===f)).length}
+function vWork(){
+  const W=state.work, c=coverage(), gni=goalsNoInit(), unf=unfunded();
+  const findings=`<div class="findings"><div class="finding bad"><b>Coverage</b><span>Only ${c.inRec} of ${c.stated} stated strategy FTE${c.pct===null?"":` (${c.pct}%)`} is in recorded initiatives, so most capacity can’t be traced to work yet.</span></div>
+    <div class="finding"><b>Check</b><span>${gni.length} of ${GOALS.length} goals have no initiative: ${gni.map(g=>g.id).join(", ")}.</span></div>
+    <div class="finding"><b>Check</b><span>${unf.length?`${unf.length} initiatives are unfunded: ${unf.map(i=>i.name).join("; ")}.`:"No initiative is unfunded."}</span></div></div>`;
+  const seg=(id,opts,cur,sm)=>`<div class="seg${sm?" sm":""}" role="group" aria-label="${id}">${opts.map(([v,l])=>`<button type="button" data-${id}="${v}" aria-pressed="${cur===v}">${l}</button>`).join("")}</div>`;
+  let body="";
+  if(W.view==="roadmap") body=roadmap();
+  else body=fteTable(W.view==="strategy"?STRATS.map(s=>[`${esc(s.id)} ${esc(s.name)}`,initsOf(s.id),s.id]).concat([["Not linked to a strategy",initsOf(null),null]]):BENEF.map(b=>[b,INITS.filter(i=>i.benef===b)]));
+  return `<div class="wrap view"><h2>Work</h2><p class="lede">Work starts from outcomes: the outcome roadmap (Itamar Gilad’s template) shows each goal with its target. Every initiative should serve at least one goal. Headcount is shown, but it’s what the work costs, not what it’s worth. The other views group initiatives by strategy or beneficiary with their FTE per quarter.</p>
+   <div class="ctrls">${seg("wview",[["roadmap","Outcome roadmap"],["strategy","By strategy"],["beneficiary","By beneficiary"]],W.view)}
+   ${W.view==="roadmap"?seg("wlevel",[["strategies","Strategies"],["goals","Goals"],["deliveries","Deliveries"]],W.level,true)+`<button class="btn sm" type="button" id="resBtn" aria-pressed="${W.research}">Show research, discovery and delay</button>`:""}
+   <span class="meta">FTE from ${esc(T.source)} initiatives, ${esc(Q[0]||"")} to ${esc(Q[Q.length-1]||"")}</span></div>
+   ${findings}<div class="legend" style="margin:8px 0"><span class="lg"><span class="pill amber">Review</span>flagged by the import</span><span class="lg"><span class="pill dash">Review</span>imported, not yet reviewed</span><span class="lg">No pill: reviewed by an owner</span></div>${body}</div>`;
+}
+function irow(i){
+  const act=i.q.map((x,k)=>x>0?k:-1).filter(k=>k>=0), s0=act.length?act[0]:-1, e0=act.length?act[act.length-1]:-1;
+  return `<div class="rr irow"><div class="rl"><button class="lnk" type="button" data-rec="i:${esc(i.id)}"><b>${esc(i.name)}</b></button>${reviewPill(i)}<br>${i.funded?"Funded":'<span class="vio">Unfunded</span>'} · ${fmt(i.fte)} FTE · ${esc(T.workstream)} ${i.ws}</div><div class="bars">${s0<0?`<span class="muted" style="grid-column:1/${Q.length+1};font-size:12px">No FTE in this window</span>`:`<div class="ib${i.funded?"":" unf"}" style="grid-column:${s0+1}/${e0+2}" title="${esc(i.name)}: ${esc(Q[s0])} to ${esc(Q[e0])}"></div>`}</div></div>`;
+}
+function roadmap(){
+  const W=state.work;
+  const lg=`<div class="lgrow"><span><i class="k" style="background:var(--g-goal)"></i>Goal</span><span><i class="dia" style="margin-right:6px"></i><b>Target date:</b> when the goal’s target must be met. No diamond means a target has not been set, or that it falls after the period shown.</span></div>
+   <div class="lgrow"><span><i class="k" style="border:1px solid var(--line)"></i>Collapsed strategy: number of initiatives active in the quarter, not headcount (<span class="vio">+n violet</span> = unfunded)</span><span><i class="k" style="background:var(--bar-dark)"></i>Product delivery: funded initiative</span><span><i class="k" style="background:var(--violet-soft);border:1.5px solid var(--violet)"></i>Unfunded (violet outline)</span><span><i class="k" style="border:1.5px dashed var(--muted)"></i>Not recorded (dashed)</span>${W.research?`<span><i class="k" style="background:var(--g-res)"></i>Research</span><span><i class="k" style="background:var(--g-disc)"></i>Discovery</span><span><i class="k" style="background:var(--g-delay)"></i>Effect delay</span>`:""}</div>`;
+  let h=`<div class="rr hd"><div>Goal and work</div>${Q.map(q=>`<div>${q}</div>`).join("")}</div>`;
+  STRATS.forEach(s=>{
+    const its=initsOf(s.id), open=W.level!=="strategies"||W.open[s.id], fte=r1(its.filter(i=>i.funded).reduce((a,i)=>a+avgS(i,s.id),0));
+    const tq=s.goals.map(goalTarget), later=tq.filter(t=>t==="later").length, gni=s.goals.filter(g=>!its.some(i=>linksIn(i,s.id).some(l=>l.goal===g.id))).length, nunf=its.filter(i=>!i.funded).length;
+    h+=`<div class="rr srow"><div class="rl"><div class="t"><button class="chev" type="button" data-wopen="${esc(s.id)}" aria-expanded="${!!open}" aria-label="${open?"Collapse":"Expand"} ${esc(s.name)}">${CHEV}</button><b>${esc(s.id)} ${esc(s.name)}</b></div>${plural(s.goals.length,"goal")} · ${T.review} ${ST_LABEL[s.status]} · ${plural(its.length,"initiative")} · ${fmt(fte)} FTE${nunf?` · ${nunf} unfunded`:""}<br>${s.goals.filter(g=>g.measured).length} of ${plural(s.goals.length,"goal")} measured${gni?` · ${gni} with no initiative`:""}</div>
+     ${Q.map((_,k)=>{const f=activeIn(its,k,true),u=activeIn(its,k,false),d=tq.includes(k);return `<div class="qc"><b>${f}${u?` <span class="vio">+${u}</span>`:""}${d?' <i class="dia" title="Goal target this quarter"></i>':""}</b><span>${u?"initiatives · unfunded":"initiatives"}</span>${k===Q.length-1&&later?`<span class="later">${later} later →</span>`:""}</div>`}).join("")}</div>`;
+    if(!open)return;
+    const gl=[...s.goals,...(its.some(i=>linksIn(i,s.id).some(l=>!l.goal))?[null]:[])];
+    gl.forEach(g=>{
+      const gi=its.filter(i=>linksIn(i,s.id).some(l=>l.goal===(g?g.id:null)));
+      if(g){const t=goalTarget(g), end=t===null||t==="later"?Q.length-1:t;
+        h+=`<div class="rr grow"><div class="rl"><b style="font-size:13px">${esc(g.id)} ${esc(g.name)}</b><br>${outcomeMeasures(g).length?esc(outcomeMeasures(g)[0].m)+(outcomeMeasures(g)[0].by?" · by "+outcomeMeasures(g)[0].by:" · no date"):'<span class="amb">No outcome measure</span>'}</div>
+         <div class="bars"><div class="gb" style="grid-column:1/${end+2}"><span>${esc(g.id)}</span>${typeof t==="number"?'<i class="dia"></i>':""}</div>
+         ${W.research?`<div class="mini r" style="grid-column:1/2;grid-row:2" title="Research"></div><div class="mini d" style="grid-column:1/3;grid-row:3" title="Discovery"></div>${gi.length?`<div class="mini e" style="grid-column:${Math.min(Q.length,Math.max(...gi.map(i=>i.q.reduce((l,x,k)=>x>0?k:l,-1)))+1)}/${Q.length+1};grid-row:4" title="Effect delay"></div>`:""}`:""}</div></div>`;}
+      else h+=`<div class="rr grow"><div class="rl"><b style="font-size:13px">No goal yet</b><br>work linked straight to ${esc(s.id)}</div><div class="bars"></div></div>`;
+      if(W.level==="deliveries"||W.open[s.id]){
+        if(!gi.length&&g) h+=`<div class="rr irow"><div class="rl"><b>Not recorded</b><br>no initiative serves this goal</div><div class="bars"><div class="ib nr" style="grid-column:1/${Q.length+1}"></div></div></div>`;
+        gi.forEach(i=>{h+=irow(i)});
+      }
+    });
+  });
+  const un=initsOf(null);
+  if(un.length){
+    const open=W.level==="deliveries"||W.open.none, fte=r1(un.filter(i=>i.funded).reduce((a,i)=>a+avgH(i),0)), nunf=un.filter(i=>!i.funded).length;
+    h+=`<div class="rr srow"><div class="rl"><div class="t"><button class="chev" type="button" data-wopen="none" aria-expanded="${!!open}" aria-label="${open?"Collapse":"Expand"} unlinked work">${CHEV}</button><b>Not linked to a strategy</b></div><span class="amb">No strategy, goal or target</span> · ${plural(un.length,"initiative")} · ${fmt(fte)} FTE${nunf?` · ${nunf} unfunded`:""}</div>
+     ${Q.map((_,k)=>{const f=activeIn(un,k,true),u=activeIn(un,k,false);return `<div class="qc"><b>${f}${u?` <span class="vio">+${u}</span>`:""}</b><span>${u?"initiatives · unfunded":"initiatives"}</span></div>`}).join("")}</div>`;
+    if(open)un.forEach(i=>{h+=irow(i)});
+  }
+  return lg+`<div class="scroll"><div class="rg">${h}</div></div>`;
+}
+function fteTable(groups){
+  const sum=(its,k,f,sid)=>r1(its.filter(i=>i.funded===f).reduce((a,i)=>a+i.q[k]*(sid===undefined?1:sh(i,sid)),0));
+  let h=`<div class="card scroll"><table class="ft"><thead><tr><th>Group and initiative</th>${Q.map(q=>`<th class="n">${q}</th>`).join("")}<th class="n">Initiatives</th></tr></thead><tbody>`;
+  groups.forEach(([name,its,gsid],gi)=>{
+    const open=state.work.open["g"+gi];
+    h+=`<tr class="grp-r"><td><button class="lnk" type="button" data-wgrp="${gi}" aria-expanded="${!!open}">${open?"▾":"▸"} ${esc(name)}</button></td>${Q.map((_,k)=>{const u=sum(its,k,false,gsid);return `<td class="n">${fmt(sum(its,k,true,gsid))}${u?` <span class="vio">+${fmt(u)}</span>`:""}</td>`}).join("")}<td class="n">${its.length}</td></tr>`;
+    if(open)its.forEach(i=>h+=`<tr><td style="padding-left:22px"><button class="lnk" type="button" data-rec="i:${esc(i.id)}">${esc(i.name)}</button>${reviewPill(i)} <span class="muted">· ${i.funded?"Funded":'<span class="vio">Unfunded</span>'}${gsid!==undefined&&gsid!==null&&sh(i,gsid)<1?` · ${Math.round(100*sh(i,gsid))}% of its FTE counted here`:""}</span></td>${i.q.map(x=>{const v=x*(gsid===undefined?1:sh(i,gsid));return `<td class="n${i.funded?"":" vio"}">${v?fmt(v):"·"}</td>`}).join("")}<td></td></tr>`);
+  });
+  return h+`</tbody></table><p class="hint">FTE per quarter in funded initiatives; <span class="vio">+n</span> is unfunded FTE on top. Click a group to list its initiatives. An initiative that serves several strategies splits its FTE between them (equally unless the data says otherwise), so totals are not double counted.</p></div>`;
+}
+
+/* ---------- decisions ---------- */
+const CHOICES=[["continue","Continue",1],["reduce","Reduce by half",.5],["pause","Pause",0],["stop","Stop",0]];
+const chf=i=>CHOICES.find(c=>c[0]===(state.choice[i.id]||"continue"))[2];
+function vDecisions(){
+  if(!PILOT.length)return `<div class="wrap view"><h2>Decisions</h2><p class="lede">No decision pilot is configured. Name one or more strategies in the data file’s <span class="mono">pilot</span> list to open a decision here.</p></div>`;
+  const pil=INITS.filter(i=>i.links.some(l=>PILOT.includes(l.strat)));
+  const openEp=pil.reduce((a,i)=>a+(i.jira?i.jira.open:0),0), linked=pil.filter(i=>i.jira).length, opps=PILOT.reduce((a,s)=>a+SBY[s].opps.length,0);
+  const pn=PILOT.map(id=>SBY[id].name), pj=pn.join(" and "), pid=PILOT.join("/"), tr=T.tracker;
+  const gaps=[
+   [`${pil.length} of ${pil.length} ${pid} initiatives have no resourcing assessment`,`Would moving FTE between ${pj} change any date?`,"Each engineering owner’s call, with minimum viable and useful maximum FTE",`Engineering owners of ${pj}`,"Low"],
+   [`${openEp} of ${openEp} open epics have no size in ${tr}`,"Which milestones are capacity-sensitive, and by how much?","An estimate or SWAG per epic, and the critical path",`Engineering leads, in ${tr}`,"Low"],
+   [`${linked} epic-to-initiative links are unconfirmed`,"Which work actually moves if an initiative’s FTE changes?","Owners confirm or move each link","Initiative product and engineering owners","Medium"],
+   [`${pn[0]} value at stake isn’t sized`,`Is a ${pn[0]} FTE worth more or less than a ${pn[1]||"portfolio-average"} FTE?`,"The team’s share of the parent objective’s value",`${pn[0]} business owner, with Finance`,"Low"],
+   [`${opps} opportunities are proposed, not accepted`,"What the organisation gap does each option close?","Owners accept, reword or reject them",`${pj} owners`,"Medium"],
+   ["Discretion isn’t set by any owner","What is truly movable?","Discretionary or non-discretionary per initiative, with the reason","Initiative owners; the Team decision audience challenges them","Low"]];
+  const fund=INITS.filter(i=>i.funded), disc=fund.filter(i=>i.disc), nd=fund.filter(i=>!i.disc);
+  const rowsP=[...STRATS.map(s=>[s.id+" "+s.name,s.id]),["Not linked to a strategy",null]];
+  const val=(arr,sid)=>r1(arr.filter(i=>inStrat(i,sid)).reduce((a,i)=>a+avgS(i,sid),0));
+  const mx=Math.max(1e-9,...rowsP.map(r=>val(disc,r[1])));
+  const port=rowsP.map(([l,sid])=>{const v=val(disc,sid);return `<div class="pbar${PILOT.includes(sid)?" hl":""}"><span>${PILOT.includes(sid)?`<b>${esc(l)}</b>`:esc(l)}</span><span class="tr"><i style="width:${(100*v/mx).toFixed(1)}%"></i></span><span class="v">${fmt(v)}</span></div>`}).join("");
+  const ndList=state.showNonDisc?`<div style="margin-top:8px">${rowsP.map(([l,sid])=>{const v=val(nd,sid);return v?`<div class="pbar"><span>${esc(l)}</span><span class="tr"><i style="width:${(100*v/mx).toFixed(1)}%"></i></span><span class="v">${fmt(v)}</span></div>`:""}).join("")}</div>`:"";
+  return `<div class="wrap view"><h2>Decision due: ${esc(pj)}</h2>
+   <p class="lede">${esc(T.pilot)}. ${PILOT.length===1?"The strategy":"The strategies"} in depth, against the whole portfolio, with what they depend on and what could give up capacity. Set a decision on any initiative to see what moves, what it puts at risk and what evidence is missing.</p>
+   <div class="callout"><b>Test decision.</b> ${esc(pj)} ${PILOT.length===1?"was":"were"} chosen by hand for ${esc(T.pilot)}. We still need a process and criteria for how a decision makes it to this section; that’s deferred for now.</div>
+   <div class="card"><div class="label">${esc(T.pilot)} question</div><p class="pq">Have we allocated ${esc(META.team)} capacity as effectively as possible to deliver ${esc(PILOT.length>1?"both ":"")}${esc(pj)}, and if not, what are the realistic options?</p>
+     <div class="legend" style="margin:0"><span class="pill amber">Experiment</span><span>${esc(T.decision)} (Proposed). Opportunities, epic links and commitments are Proposed or Inferred; proxies are stand-ins. Nothing here is saved.</span></div></div>
+   <div class="card"><div class="card-h"><span class="num">?</span><h3>Gaps that block the decision</h3></div><p class="card-sub">The ${esc(T.brief)} asks ${esc(T.pilot)} to name the minimum evidence for each decision-critical gap. Computed from what the model is missing.</p>
+     <div class="scroll"><table><thead><tr><th>Gap</th><th>Decision question blocked</th><th>Minimum evidence needed</th><th>Owner or source</th><th>Confidence</th></tr></thead><tbody>${gaps.map(g=>`<tr><td><b>${esc(g[0])}</b></td><td>${esc(g[1])}</td><td>${esc(g[2])}</td><td>${esc(g[3])}</td><td>${esc(g[4])}</td></tr>`).join("")}</tbody></table></div></div>
+   <div class="card"><div class="card-h"><span class="num">1</span><h3>The whole portfolio</h3></div><p class="card-sub">Funded ${esc(HZ.label)} FTE in recorded initiatives: <b>${fmt(r1(fund.reduce((a,i)=>a+avgH(i),0)))}</b>. Discretionary work comes first; non-discretionary work sits below the line.</p>
+     <div class="label" style="margin-bottom:6px">Discretionary · ${fmt(r1(disc.reduce((a,i)=>a+avgH(i),0)))} FTE in ${disc.length} initiatives</div>${port}
+     <div class="below"><b>Below the line: non-discretionary · ${fmt(r1(nd.reduce((a,i)=>a+avgH(i),0)))} FTE in ${nd.length} initiatives</b><button class="btn sm" type="button" id="ndBtn" aria-expanded="${state.showNonDisc}">${state.showNonDisc?"Hide":"Show"}</button></div>${ndList}
+     <p class="hint" style="margin-bottom:0">Discretion is not set by any owner yet; until it is, the page suggests it by rule (${esc(T.discretionRule)}). Deprioritising or stopping non-discretionary work is allowed, but it asks for the reason to be challenged first.</p></div>
+   <div class="card"><div class="card-h"><span class="num">2</span><h3>${esc(pj)}, in depth</h3></div><p class="card-sub">Each initiative shows the evidence beside its resourcing assessment: plan FTE by quarter, ${esc(T.tracker)} epics, commitments, dependencies and any proxy.</p>
+     <div class="twocol">${PILOT.map(stratDepth).join("")}</div></div>
+   <div class="card" id="impact">${impactHtml()}</div>
+   <div class="card olist"><div class="card-h"><h3>Other decisions waiting</h3></div><p class="card-sub" style="margin-left:0">Recorded in ${esc(T.source)}. Each opens here once it has a pilot question and the evidence to judge it.</p>
+     ${OTHER_DECISIONS.map(d=>`<div class="row"><span><span class="mono muted">${esc(d.id)}</span> · ${esc(d.t)}</span><span class="muted">Proposed · ${esc(d.owner)} · due ${esc(d.due)}</span></div>`).join("")}</div>
+  </div>`;
+}
+function stratDepth(sid){
+  const s=SBY[sid], its=initsOf(sid), fte=r1(its.filter(i=>i.funded).reduce((a,i)=>a+avgS(i,sid),0));
+  const grp=[...s.opps.map(o=>[o,its.filter(i=>linksIn(i,sid).some(l=>l.opp===o.id))]),[null,its.filter(i=>!linksIn(i,sid).some(l=>l.opp))]];
+  return `<div class="scol"><div class="label">${sid}</div><h4>${esc(s.name)}</h4><small class="muted">${T.review} ${ST_LABEL[s.status]} · stated ${s.stated} FTE · in initiatives ${fmt(fte)} · ${plural(s.goals.length,"goal")} · ${s.opps.length} opportunities (proposed)</small>
+   <div class="proxy">${(s.proxies||[]).map(p=>`<div><span class="pill soft">Proxy · ${esc(p[0])}</span> <b>${esc(p[1])}:</b> ${esc(p[2])}${p[3]?`<small>${esc(p[3])}</small>`:""}<small>Indicative</small></div>`).join("")}</div>
+   ${grp.map(([o,list])=>`<div class="ogh">${o?`<div class="label">Opportunity ${esc(o.id)} <span class="pill soft">Proposed</span> <span style="text-transform:none;letter-spacing:0;font-weight:400">${o.goal?"under goal "+o.goal:"under the strategy (no goal yet)"}</span></div><b>${esc(o.name)}</b><small class="muted">Indicative description of this item.</small>`:`<div class="label">Linked straight to the strategy</div><b>Work with no opportunity yet</b>`}</div>
+     ${list.length?list.map(iniRow).join(""):`<p class="hint">No initiative serves this opportunity yet.</p>`}`).join("")}</div>`;
+}
+function iniRow(i){
+  const ch=state.choice[i.id]||"continue", j=i.jira;
+  const jira=j?`${esc(T.tracker)} ${j.open} open, <span class="amb">${j.unsized} unsized</span>${j.past?`, <span class="amb">${j.past} past target date</span>`:""}`:`<span class="pill dash">No epic linked</span>`;
+  return `<div class="ini${ch!=="continue"?" changed":""}"><button class="lnk nm" type="button" data-rec="i:${esc(i.id)}">${esc(i.name)}</button>
+   <select data-choice="${esc(i.id)}" aria-label="Decision for ${esc(i.name)}">${CHOICES.map(c=>`<option value="${c[0]}"${c[0]===ch?" selected":""}>${c[1]}</option>`).join("")}</select>
+   <div class="ln">${i.funded?"Funded":'<span class="vio">Unfunded</span>'} · ${fmt(avgH(i))} FTE avg ${esc(HZ.label)} <span class="pill ${i.disc?"":"out"}">${i.disc?"Discretionary":"Non-discretionary"} (suggested)</span> · not ranked</div>
+   <div class="ln"><span class="pill box">Resourcing not assessed</span> FTE ${i.q.map(fmt).join(" / ")} · ${jira}</div>
+   ${i.com||i.capSens?`<div class="ln">${i.com?`${plural(i.com,"commitment")}${i.comRisk?` <span class="amb">at risk</span>`:""}`:""}${i.capSens?` <span class="pill soft">Proxy · Low</span> Capacity-sensitive: Indicative`:""}</div>`:""}</div>`;
+}
+function impactHtml(){
+  const ch=INITS.filter(i=>i.links.some(l=>PILOT.includes(l.strat))&&(state.choice[i.id]||"continue")!=="continue");
+  const head=`<div class="card-h"><span class="num">3</span><h3>What your choices change</h3></div>`;
+  if(!ch.length)return head+`<p class="card-sub">Set Reduce, Pause or Stop on any initiative above to see what moves. Nothing is saved.</p>`;
+  const freed=sid=>r1(ch.filter(i=>inStrat(i,sid)&&i.funded).reduce((a,i)=>a+avgS(i,sid)*(1-chf(i)),0));
+  const risk=ch.reduce((a,i)=>a+i.com,0), nd=ch.filter(i=>!i.disc), miss=ch.filter(i=>!i.jira||i.jira.unsized).length;
+  return head+`<p class="card-sub">${plural(ch.length,"initiative")} changed. Nothing is saved. <button class="btn sm" type="button" id="resetCh">Reset</button></p>
+   <div class="impact">${PILOT.map(sid=>`<div class="tile"><b>${fmt(freed(sid))} FTE</b><span>released from ${SBY[sid].name} (${esc(HZ.label)} average). ${SBY[sid].name} states ${SBY[sid].stated} FTE.</span></div>`).join("")}
+    <div class="tile${risk?" att":""}"><b>${risk}</b><span>${risk===1?"commitment":"commitments"} put at risk</span></div>
+    <div class="tile${nd.length?" att":""}"><b>${nd.length}</b><span>non-discretionary ${nd.length===1?"initiative":"initiatives"} touched: ask for the reason first</span></div>
+    <div class="tile att"><b>${miss} of ${ch.length}</b><span>changed initiatives have no sized epic, so the effect on dates can’t be shown</span></div></div>`;
+}
+
+/* ---------- open questions & review ---------- */
+function vQuestions(){
+  const qs=state.allQ?QUESTIONS:QUESTIONS.slice(0,6);
+  return `<div class="wrap view"><h2>Open questions</h2><p class="lede">Questions the evidence raises that nobody has answered yet, each with a suggested decision maker. A question that needs a call becomes a decision in ${esc(T.source)}.</p>
+   <div class="notes">${qs.map(q=>`<article class="note"><div class="k"><span>${esc(q.id)}</span><span style="font-family:var(--font-body)">${esc(q.cat)}</span></div><h3>${esc(q.t)}</h3><p>${esc(q.why)}</p><small>Suggested decision maker <b>${esc(q.dm)}</b></small></article>`).join("")}</div>
+   <div style="margin-top:16px"><button class="btn" type="button" id="allQ">${state.allQ?"Show fewer":"Show all "+QUESTIONS.length+" questions"}</button></div></div>`;
+}
+function rvRows(){
+  const rows=[], pill=k=>`<span class="pill amber"><i class="dot"></i>${esc(k)}</span>`;
+  CHANGES.forEach(c=>rows.push({k:"Change",s:`change ${c.n} ${c.k} indicative update`,h:`<div class="qitem"><div><div class="m">${pill(c.k)}<span class="mono">${c.d}</span><span>${c.rev?"Review "+c.rev:"Review owner not recorded"}</span></div><b>Change ${c.n}: an indicative update</b><div class="diff"><del>Indicative earlier state.</del> → <ins>Indicative new state.</ins></div></div><button class="btn sm" type="button" data-goto="decisions">See in Decisions</button></div>`}));
+  CLAIMDOCS.forEach(d=>rows.push({k:"Claims",s:`source document ${d.id} ${d.kind} claims`,h:`<div class="qitem"><div><div class="m"><span class="pill"><i class="dot"></i>Claims</span><span>${esc(d.kind)}</span></div><b>Source document ${esc(d.id)} (indicative)</b><div class="muted" style="font-size:12.5px">${d.n} claims Proposed${d.conflicts?`, <span class="red">${d.conflicts} conflict with the record</span>`:""}</div></div><button class="btn sm" type="button" data-claims="${esc(d.id)}">See claims</button></div>`}));
+  const item=(r,flagged)=>{const od=overdueOf(r.x);return {od:od.length>0,k:r.kind,s:(r.x.name+" "+r.x.id+" "+r.kind+" "+flagsOf(r.x).map(f=>FLAG_LABEL[f]||f).join(" ")).toLowerCase(),h:`<div class="qitem"><div><div class="m">${flagged?`<span class="pill amber"><i class="dot"></i>${esc(r.kind)}</span>`:`<span class="pill dash">${esc(r.kind)}</span>`}<span>${r.x.conf?esc(r.x.conf)+" confidence":""}</span><span>${flagged?flagsOf(r.x).map(k=>esc(FLAG_LABEL[k]||k)).join(", "):"Not flagged by the import"}</span>${od.length?`<span class="pill box">Challenge overdue ${od[0].d} days</span><span>${esc(escLine(r.rid))}</span>`:""}</div><b>${esc(r.x.name)}</b>${(r.x.alternatives||[]).length?`<div class="muted" style="font-size:12.5px">Other values found: ${(r.x.alternatives||[]).map(a=>esc(a.value)+(a.source?" ("+esc(a.source)+")":"")).join("; ")}</div>`:""}</div><button class="btn sm" type="button" data-rec="${esc(r.rid)}">Open and review</button></div>`}};
+  flaggedNow().sort((a,b)=>overdueOf(b.x).length-overdueOf(a.x).length).forEach(r=>rows.push(item(r,true)));
+  DATACHECKS.forEach(m=>{const mm=/^Initiative (.+?)(?::| is )/.exec(m),ini=mm&&INITS.find(i=>i.name==="Initiative "+mm[1]);rows.push({k:"Data check",s:"data check "+String(m).toLowerCase(),h:`<div class="qitem mc"><b>Data check</b><span>${esc(m)}</span><span>${ini?`<button class="btn sm" type="button" data-rec="i:${esc(ini.id)}">Open</button>`:""}</span><span class="muted" style="font-size:12.5px">Found by the page while reading the data. Fix it in the data store.</span></div>`})});
+  modelRules().forEach(r=>rows.push({k:"Model check",s:"model check should not occur "+r.t,h:`<div class="qitem mc"><b>Model check</b><span>${r.items.length} ${esc(r.t)}</span><span><button class="btn sm" type="button" data-mcheck="${r.n}">See ${r.items.length}</button></span><span class="muted" style="font-size:12.5px">This should not occur. Link each one, or remove it, in the data store.</span></div>`}));
+  MODELCHECKS.forEach(m=>rows.push({k:"Model check",s:"model check "+(m.title||m.n),h:`<div class="qitem mc"><b>Model check</b><span>${esc(m.title||"Model check "+m.n)}</span><span></span><span class="muted" style="font-size:12.5px">${esc(m.detail||"Supplied with the data.")}</span></div>`}));
+  if(state.rv.all)unflaggedNow().forEach(r=>rows.push(item(r,false)));
+  return rows.sort((a,b)=>(b.od?1:0)-(a.od?1:0));
+}
+function vReview(){
+  const rv=state.rv, rows=rvRows(), kinds=["Change","Claims","Strategy","Goal","Opportunity","Initiative","Data check","Model check"].filter(k=>rows.some(r=>r.k===k));
+  const nod=rows.filter(r=>r.od).length; if(rv.kind!=="All"&&!kinds.includes(rv.kind)&&!(rv.kind==="Overdue"&&nod))rv.kind="All";
+  const q=rv.q.trim().toLowerCase(), vis=r=>(rv.kind==="All"||(rv.kind==="Overdue"?r.od:r.k===rv.kind))&&(!q||r.s.includes(q)), n=rows.filter(vis).length;
+  const chips=["All",...(nod?["Overdue"]:[]),...kinds].map(k=>`<button class="btn sm" type="button" data-rvkind="${esc(k)}" aria-pressed="${rv.kind===k}">${k==="Overdue"?"Challenges overdue":esc(k)} ${k==="All"?rows.length:k==="Overdue"?nod:rows.filter(r=>r.k===k).length}</button>`).join(" ");
+  return `<div class="wrap view"><h2>Waiting for review</h2><p class="lede">Everything the page shows is a best guess from the sources. This list is what needs an owner first: items the import flagged, changes, source documents and data checks. Open an item to mark it reviewed, challenge it, or prefer another value. <b>${UNREVIEWED()} of ${ITEMS.length}</b> strategies, goals, opportunities and initiatives have not yet been reviewed by an owner.</p>
+   <div class="legend" role="group" aria-label="Filter by type">${chips}</div>
+   <div class="rvtools"><label class="sr" for="rvSearch">Search this list</label><input id="rvSearch" type="search" placeholder="Search by name, ID or reason" value="${esc(rv.q)}"><label><input type="checkbox" id="rvAll"${rv.all?" checked":""}> Also list unreviewed items the import did not flag (${unflaggedNow().length})</label><span class="muted" id="rvCount" role="status">${plural(n,"item")} shown</span></div>
+   ${rows.map(r=>r.h.replace(/^<div class="qitem/,`<div data-s="${esc(r.s)}" data-k="${esc(r.k)}"${r.od?' data-od="1"':""}${vis(r)?"":" hidden"} class="qitem`)).join("")}</div>`;
+}
+
+/* ---------- drawer ---------- */
+function setModal(on){["#main","header.top",".credits","#chat","#chatFab"].forEach(q=>{const e=document.querySelector(q);if(e){if(on)e.setAttribute("inert","");else e.removeAttribute("inert")}})}
+function openDrawer(kicker,title,sub,body,push){
+  if(push&&!$("#drawer").hidden)state.drawerStack.push([$("#drKicker").textContent,$("#drTitle").textContent,$("#drSub").innerHTML,$("#drBody").innerHTML]);
+  else if(!push)state.drawerStack=[];
+  if($("#drawer").hidden)state.opener=document.activeElement;
+  $("#drKicker").textContent=kicker;$("#drTitle").textContent=title;$("#drSub").innerHTML=sub||"";
+  $("#drBody").innerHTML=(state.drawerStack.length?`<button class="btn sm" type="button" id="drBack" style="margin-bottom:8px">‹ Back</button>`:"")+body+(state.prov||"");state.prov="";
+  $("#drawer").hidden=false;$("#scrim").hidden=false;setModal(true);$("#drClose").focus();
+}
+function closeDrawer(){
+  const was=!$("#drawer").hidden;
+  $("#drawer").hidden=true;$("#scrim").hidden=true;state.drawerStack=[];setModal(false);
+  if(was){const o=state.opener;state.opener=null;if(o&&document.contains(o)&&o.focus)o.focus({preventScroll:true})}
+}
+const recActions=`<div class="legend" style="margin-top:14px"><button class="btn sm" type="button" data-contrib="1">Contribute</button><button class="btn sm" type="button" data-contrib="1">Challenge</button></div><p class="hint">Contributions go to the owner for review before they change the record.</p>`;
+function openList(q){
+  const [,sid,g,o]=q.split(":");
+  if(sid==="none"){const its=initsOf(null);return openDrawer(`Initiatives · ${its.length}`,"Not linked to a strategy",`No strategy, goal or opportunity · ${fmt(r1(its.reduce((a,i)=>a+avgH(i),0)))} FTE average in ${esc(HZ.label)}`,[...its].sort((a,b)=>b.fte-a.fte).map(i=>`<div class="li"><button class="lnk" type="button" data-rec="i:${esc(i.id)}" data-push="1">${esc(i.name)}</button><small>${i.funded?"Funded":"Unfunded"} · ${fmt(i.fte)} FTE · ${esc(T.workstream)} ${i.ws}</small></div>`).join("")+`<p class="hint">Click an initiative to open its record, contribute or challenge it.</p>`)}
+  if(g==="all"||g==="nogoal"){const s=SBY[sid],its=initsOf(sid).filter(i=>g==="all"||!linksIn(i,sid).some(l=>l.goal));return openDrawer(`Initiatives · ${its.length}`,g==="all"?`All work under ${sid} ${esc(s.name)}`:`${sid}: work with no goal`,`${fmt(r1(its.reduce((a,i)=>a+avgS(i,sid),0)))} FTE average in ${esc(HZ.label)}`,[...its].sort((a,b)=>b.fte-a.fte).map(i=>`<div class="li"><button class="lnk" type="button" data-rec="i:${esc(i.id)}" data-push="1">${esc(i.name)}</button>${reviewPill(i)}<small>${i.funded?"Funded":"Unfunded"} · ${fmt(i.fte)} FTE · ${esc(T.workstream)} ${i.ws}</small></div>`).join("")+`<p class="hint">Click an initiative to open its record, review or challenge it.</p>`)}
+  const s=SBY[sid], its=INITS.filter(i=>linksIn(i,sid).some(l=>(l.goal||"none")===g&&(l.opp||"none")===o));
+  const title=g==="none"&&o==="none"?`${sid}: work with no goal`:o!=="none"?`Opportunity ${o}`:`Goal ${g}`;
+  const sub=`${g==="none"&&o==="none"?`Linked straight to ${sid} ${esc(s.name)}`:o!=="none"?`Via proposed opportunity ${o}${g!=="none"?" under goal "+g:""}`:`Under goal ${g}`} · ${fmt(r1(its.reduce((a,i)=>a+avgS(i,sid),0)))} FTE average in ${esc(HZ.label)}`;
+  openDrawer(`Initiatives · ${its.length}`,title,sub,its.sort((a,b)=>b.fte-a.fte).map(i=>`<div class="li"><button class="lnk" type="button" data-rec="i:${esc(i.id)}" data-push="1">${esc(i.name)}</button><small>${i.funded?"Funded":"Unfunded"} · ${fmt(i.fte)} FTE · ${esc(T.workstream)} ${i.ws}</small></div>`).join("")+`<p class="hint">Click an initiative to open its record, contribute or challenge it.</p>`);
+}
+function linksHtml(i){
+  if(!i.links.length)return "Not linked to a strategy";
+  const ss=strOf(i);
+  return i.links.map(l=>`${esc(l.strat+" "+((SBY[l.strat]||{}).name||""))} · ${l.goal?"goal "+esc(l.goal):"no goal yet"}${l.opp?" · opportunity "+esc(l.opp)+" (proposed)":""}`).join("<br>")+(ss.length>1?`<br><span class="muted">FTE split: ${ss.map(x=>esc(x)+" "+Math.round(100*sh(i,x))+"%").join(", ")}</span>`:"");
+}
+function openRec(id,push){
+  { const [k0,a0,b0]=id.split(":"); const xx=k0==="s"&&a0!=="none"?SBY[a0]:k0==="g"?GBY[b0]:k0==="p"?OBY[a0]:k0==="i"?INITS.find(x=>x.id===a0):null; state.prov=provHtml(xx,xx?id:null); }
+  const [k,a,b]=id.split(":");
+  if(id==="vision")return openDrawer("North Star · Org vision",VISION,"Owner: Org leadership · source: Org strategy (indicative)",`<p>The Org vision is the outcome the organisation exists to create. It is not yet measured, so the North Star level shows as not assessed.</p>`+recActions,push);
+  if(k==="o"){const o=OBJECTIVES.find(x=>x.id===a),ss=STRATS.filter(s=>s.objs.includes(a));return openDrawer("Org objective · "+a,o.name,"Indicative description of this objective.",`<dl class="rec"><dt>Team strategies</dt><dd>${ss.map(s=>s.id+" "+s.name).join(", ")||"None"}</dd><dt>Status</dt><dd>Not assessed</dd></dl>`+recActions,push)}
+  if(k==="s"&&a==="none"){const its=initsOf(null);return openDrawer("Unlinked work","Not linked to a strategy","Initiatives with no strategy",`<p>${plural(its.length,"initiative")} ${its.length===1?"has":"have"} no strategy, so ${its.length===1?"it does":"they do"} not trace to a goal or an Org objective. An owner should link each one to a strategy, or confirm it stands alone and say why.</p><dl class="rec"><dt>FTE (${esc(HZ.label)} average)</dt><dd>${fmt(r1(its.reduce((x,i)=>x+avgH(i),0)))}</dd><dt>Unfunded</dt><dd>${its.filter(i=>!i.funded).length}</dd></dl>`+recActions,push)}
+  if(k==="s"){const s=SBY[a],its=initsOf(a);return openDrawer("Team strategy · "+a,s.name,`${T.review}: ${ST_LABEL[s.status]}`,`<dl class="rec"><dt>Serves</dt><dd>${s.objs.join(", ")}</dd><dt>Stated FTE</dt><dd>${s.stated}</dd><dt>FTE in initiatives</dt><dd>${fmt(r1(its.filter(i=>i.funded).reduce((x,i)=>x+avgS(i,a),0)))} (${esc(HZ.label)} average, funded)</dd><dt>Goals</dt><dd>${s.goals.map(g=>g.id).join(", ")}</dd><dt>Success measure</dt><dd>${s.success?esc(s.success.m)+(s.success.by?" · by "+s.success.by:" · no date"):"Through its goals"}</dd><dt>Initiatives</dt><dd>${its.length} (${its.filter(i=>!i.goal).length} with no goal)</dd></dl>`+recActions,push)}
+  if(k==="g"){const g=GBY[b];return openDrawer("Team goal · "+b,g.name,`Under ${a} ${SBY[a].name}`,`<dl class="rec"><dt>Measured</dt><dd>${g.measured?"Yes, a metric has a current value":"No current value"}</dd><dt>Measures</dt><dd>${g.measures.length?g.measures.map(m=>`${esc(m.m)} (${esc(m.kind)}${m.by?", by "+m.by:", no date"})`).join("<br>"):"None recorded"}</dd><dt>Initiatives</dt><dd>${INITS.filter(i=>i.links.some(l=>l.goal===b)).length}</dd></dl>`+recActions,push)}
+  if(k==="p"){const o=OBY[a];return openDrawer("Opportunity · Proposed",o.name,`${o.goal?"Under goal "+o.goal:"Under "+o.strat+" (no goal yet)"}`,`<p>Indicative description of this item. Opportunities are proposed until an owner accepts, rewords or rejects them.</p>`+recActions,push)}
+  if(k==="i"){const i=INITS.find(x=>x.id===a);return openDrawer("Initiative",i.name,`${i.funded?"Funded":"Unfunded"} · ${esc(T.workstream)} ${i.ws}`,`<dl class="rec"><dt>Serves</dt><dd>${linksHtml(i)}</dd><dt>FTE by quarter</dt><dd class="mono">${Q.map((q,n)=>q+" "+fmt(i.q[n])).join(" · ")}</dd><dt>Beneficiary</dt><dd>${esc(i.benef)}</dd><dt>Discretion</dt><dd>${i.disc?"Discretionary":"Non-discretionary"} (suggested by rule)</dd><dt>${esc(T.tracker)}</dt><dd>${i.jira?`${i.jira.open} open epics, ${i.jira.unsized} unsized`:"No epic linked"}</dd><dt>Commitments</dt><dd>${i.com?i.com+(i.comRisk?" (at risk)":""):"None recorded"}</dd></dl>`+recActions,push)}
+}
+function openClaims(d){
+  const doc=CLAIMDOCS.find(x=>x.id===d);
+  openDrawer(`Claims · ${doc.n}`,`Source document ${d} (indicative)`,`${esc(doc.kind)} · ${doc.n} claims Proposed`,[...Array(doc.n)].map((_,k)=>`<div class="li"><b>Claim ${d}${k+1}: an indicative statement from the source</b><small>${k<doc.conflicts?'<span class="red">Conflicts with the record:</span> the record says something different':"Proposed · matches nothing in the record yet"}</small></div>`).join("")+`<p class="hint">An owner accepts or rejects each claim. Accepted claims update the record and are logged.</p>`);
+}
+
+/* ---------- flock ---------- */
+let flockRun=0;
+function initFlock(){
+  const cv=$("#flock"); if(!cv)return; const run=++flockRun;
+  const SK=window.SKIN||{}, ctx=cv.getContext("2d"), dpr=Math.min(2,window.devicePixelRatio||1), score=flockScore(), reduce=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  let W=1,H=1; const size=()=>{const r=cv.getBoundingClientRect();W=r.width||600;H=r.height||280;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}; size();
+  const N=230,B=[]; for(let i=0;i<N;i++)B.push({x:W*.4+Math.random()*W*.2,y:H*.5+(Math.random()-.5)*H*.5,vx:1+Math.random(),vy:Math.random()-.5,p:Math.random()*6.28,g:Math.random()<.52?0:1,sp:.8+Math.random()*.4,wa:Math.random()*6.28});
+  let t=0,color="#111"; const cvar=SK.colorVar||"--fg"; let SX=W-90,SY=56;
+  const locStar=()=>{const s=document.querySelector(".starbig");if(!s)return;const r=s.getBoundingClientRect(),c=cv.getBoundingClientRect();SX=r.left+r.width/2-c.left;SY=r.top+r.height/2-c.top};locStar();
+  window.onresize=()=>{size();locStar()};
+  function step(){t++;
+    const coh=.0006+.0078*score*score+.002*score, ali=.004+.085*score, sep=.55, wander=.2+.75*(1-score), pull=.0005+.0019*score;
+    const lean=-.30+1.0*score, px=W*.45+Math.sin(t/310)*W*.15, py=H*.58+Math.sin(t/190+1)*H*.18;
+    const ax=Math.max(W*.08,Math.min(W*.94,px+lean*(SX-px))), ay=Math.max(H*.1,Math.min(H*.85,py+lean*(SY-py)));
+    const sw=Math.max(0,Math.sin(t/420)), split=Math.pow(sw,3)*.17*(.4+.6*score), bx=ax+Math.cos(t/520)*W*split, by=ay+Math.sin(t/520)*H*split*1.6, spd=1.4+.5*score;
+    for(const b of B){const nd=[1e18,1e18,1e18,1e18,1e18,1e18,1e18],no=[null,null,null,null,null,null,null];for(const o of B){if(o===b)continue;const dx=o.x-b.x,dy=o.y-b.y,d=dx*dx+dy*dy;if(d<nd[6]){let j=6;while(j>0&&nd[j-1]>d){nd[j]=nd[j-1];no[j]=no[j-1];j--}nd[j]=d;no[j]=o}}
+      let cx=0,cy=0,vx=0,vy=0,sx=0,sy=0;for(let i=0;i<7;i++){const d=nd[i],o=no[i];cx+=o.x;cy+=o.y;vx+=o.vx;vy+=o.vy;if(d<300){const f=1-d/300;sx+=(b.x-o.x)*f;sy+=(b.y-o.y)*f}}
+      cx/=7;cy/=7;vx/=7;vy/=7;b.vx+=(cx-b.x)*coh+(vx-b.vx)*ali+sx*sep*.012;b.vy+=(cy-b.y)*coh+(vy-b.vy)*ali+sy*sep*.012;
+      const tx=b.g?bx:ax,ty=b.g?by:ay;b.vx+=(tx-b.x)*pull;b.vy+=(ty-b.y)*pull;b.wa+=(Math.random()-.5)*.25;b.vx+=Math.cos(b.wa)*wander*.1;b.vy+=Math.sin(b.wa)*wander*.1;
+      const m=46;if(b.x<m)b.vx+=.24*(m-b.x)/m;if(b.x>W-26)b.vx-=.24*(b.x-(W-26))/m;if(b.y<m)b.vy+=.24*(m-b.y)/m;if(b.y>H-m-24)b.vy-=.24*(b.y-(H-m-24))/m;
+      const sp=Math.hypot(b.vx,b.vy)||1,want=spd*b.sp,nsp=sp+(want-sp)*.12;b.vx*=nsp/sp;b.vy*=nsp/sp}
+    for(const b of B){b.x+=b.vx;b.y+=b.vy}}
+  function draw(){ctx.clearRect(0,0,W,H);ctx.fillStyle=color;ctx.globalAlpha=SK.alpha||.85;
+    for(const b of B){const a=Math.atan2(b.vy,b.vx),f=.55+.45*Math.sin(t*.35+b.p);ctx.save();ctx.translate(b.x,b.y);ctx.rotate(a);ctx.beginPath();ctx.moveTo(6,0);ctx.lineTo(-4,-3.4*f);ctx.lineTo(-2,0);ctx.lineTo(-4,3.4*f);ctx.closePath();ctx.fill();ctx.restore()}ctx.globalAlpha=1}
+  const getC=()=>getComputedStyle(document.documentElement).getPropertyValue(cvar).trim()||color;
+  function loop(){if(run!==flockRun||!document.body.contains(cv))return;if(t%45===0)color=getC();if(!state.flockPaused)step();draw();requestAnimationFrame(loop)}
+  color=getC(); if(reduce){for(let i=0;i<500;i++)step();draw()}else loop();
+}
+
+/* ---------- routing and events ---------- */
+const RENDER={overview:vOverview,strategy:vStrategy,work:vWork,decisions:vDecisions,questions:vQuestions,review:vReview};
+const FKEYS=["data-toggle","data-wopen","data-wview","data-wlevel","data-wgrp","data-choice","data-list","data-rec","data-node","data-rvkind"];
+function focusKey(el){
+  if(!el||!el.closest||!el.closest("#main"))return null;
+  for(const k of FKEYS){const h=el.closest("["+k+"]");if(h&&el.closest("#main"))return "["+k+'="'+String(h.getAttribute(k)).replace(/\\/g,"\\\\").replace(/"/g,'\\"')+'"]'}
+  const id=el.closest("#resBtn,#ndBtn,#allQ,#expandAll,#resetCh,#rvAll");return id?"#"+id.id:null;
+}
+function annotate(){
+  document.querySelectorAll(".board [data-node]").forEach(e=>{e.setAttribute("role","group");e.setAttribute("aria-label",e.textContent.replace(/\s+/g," ").trim().slice(0,140));if(e.dataset.node===state.sel)e.setAttribute("aria-current","true")});
+  document.querySelectorAll("#main .ib[title],#main .dia[title],#main .mini[title]").forEach(e=>{e.setAttribute("role","img");e.setAttribute("aria-label",e.getAttribute("title"))});
+}
+function render(keepScroll){
+  const y=scrollY, fk=keepScroll?focusKey(document.activeElement):null; renderHeader(); $("#main").innerHTML=RENDER[state.view]();
+  if(state.view==="overview")initFlock(); else flockRun++;
+  if(state.view==="strategy"){
+    if(state.sel&&![...document.querySelectorAll(".board [data-node]")].some(e=>e.dataset.node===state.sel)){state.sel=null;return render(keepScroll)}
+    requestAnimationFrame(drawWires)}
+  annotate();
+  if(fk){try{const el=document.querySelector("#main "+fk)||document.querySelector(fk);if(el&&el.focus)el.focus({preventScroll:true})}catch(_){}}
+  if(keepScroll)scrollTo(0,y);
+}
+function route(){const h=location.hash.slice(1);const v=RENDER[h]?h:"overview";const changed=v!==state.view;state.view=v;if(changed)closeDrawer();render(!changed);if(changed){scrollTo(0,0);const l=VIEWS.find(x=>x[0]===v);$("#live").textContent=l?l[1]+" view":""}}
+addEventListener("hashchange",route);
+addEventListener("resize",()=>{if(state.view==="strategy")drawWires()});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(state.view==="strategy")drawWires()});
+document.addEventListener("click",e=>{
+  const t=e.target;
+  if(t.closest("#drClose")||t.closest("#scrim"))return closeDrawer();
+  if(t.closest("#drBack")){const p=state.drawerStack.pop();$("#drKicker").textContent=p[0];$("#drTitle").textContent=p[1];$("#drSub").innerHTML=p[2];$("#drBody").innerHTML=p[3];return}
+  if(t.closest("#themeBtn")){const r=document.documentElement;const dark=r.dataset.theme==="dark";r.dataset.theme=dark?"light":"dark";if(state.view==="strategy")drawWires();return}
+  const ra=t.closest("[data-rvact]"); if(ra)return doReview(ra);
+  const rk=t.closest("[data-rvkind]"); if(rk){state.rv.kind=rk.dataset.rvkind;return render(true)}
+  const mc=t.closest("[data-mcheck]"); if(mc){const r=modelRules().find(z=>z.n===Number(mc.dataset.mcheck));if(r)openDrawer("Model check",`${r.items.length} ${r.t}`,"These should not occur. Fix them in the data store, then reload.",r.items.map(i=>`<div class="li"><button class="lnk" type="button" data-rec="${esc(i.rid)}" data-push="1">${esc(i.x.name)}</button>${i.kind?`<small>${esc(i.kind)}</small>`:""}</div>`).join(""));return}
+  const gt=t.closest("[data-goto]"); if(gt){location.hash=gt.dataset.goto;return}
+  if(t.closest("#askTop")||t.closest("#chatFab"))return openChat(true,t.closest("button"));
+  if(t.closest("#chatClose"))return openChat(false);
+  const cc=t.closest("#chatChips .chip"); if(cc)return ask(cc.textContent);
+  const rec=t.closest("[data-rec]"); if(rec){e.stopPropagation();return openRec(rec.dataset.rec,!!rec.dataset.push)}
+  const ls=t.closest("[data-list]"); if(ls)return openList(ls.dataset.list);
+  if(t.closest("[data-contrib]"))return toast("Prototype: nothing is saved. In a live build this goes to the owner for review.");
+  const tg=t.closest("[data-toggle]"); if(tg){state.open[tg.dataset.toggle]=!state.open[tg.dataset.toggle];return render(true)}
+  if(t.closest("#expandAll")){const all=STRATS.every(s=>state.open[s.id]);STRATS.forEach(s=>state.open[s.id]=!all);return render(true)}
+  const nd=t.closest(".board [data-node]"); if(nd&&!nd.classList.contains("zero")){state.sel=state.sel===nd.dataset.node?null:nd.dataset.node;return render(true)}
+  const wv=t.closest("[data-wview]"); if(wv){state.work.view=wv.dataset.wview;state.work.open={};return render(true)}
+  const wl=t.closest("[data-wlevel]"); if(wl){state.work.level=wl.dataset.wlevel;state.work.open={};return render(true)}
+  const wo=t.closest("[data-wopen]"); if(wo){const id=wo.dataset.wopen;if(state.work.level!=="strategies"){state.work.level="strategies";state.work.open={};STRATS.forEach(s=>{if(s.id!==id)state.work.open[s.id]=true})}else state.work.open[id]=!state.work.open[id];return render(true)}
+  const wg=t.closest("[data-wgrp]"); if(wg){const k="g"+wg.dataset.wgrp;state.work.open[k]=!state.work.open[k];return render(true)}
+  if(t.closest("#flockPause")){state.flockPaused=!state.flockPaused;const b=$("#flockPause");b.setAttribute("aria-pressed",String(!!state.flockPaused));return}
+  if(t.closest("#resBtn")){state.work.research=!state.work.research;return render(true)}
+  if(t.closest("#ndBtn")){state.showNonDisc=!state.showNonDisc;return render(true)}
+  if(t.closest("#resetCh")){state.choice={};return render(true)}
+  if(t.closest("#allQ")){state.allQ=!state.allQ;return render(true)}
+  const cl=t.closest("[data-claims]"); if(cl)return openClaims(cl.dataset.claims);
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&!$("#drawer").hidden)return closeDrawer();
+  if(e.key==="Escape"&&!$("#chat").hidden)return openChat(false);
+  if(e.key==="Tab"&&!$("#drawer").hidden){const f=[...$("#drawer").querySelectorAll("button,[href],select,input,textarea,[tabindex]:not([tabindex='-1'])")].filter(x=>!x.disabled&&!x.closest("[hidden]"));if(f.length){const first=f[0],last=f[f.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}}
+  if((e.key==="Enter"||e.key===" ")&&e.target.matches(".board [data-node]")){e.preventDefault();e.target.click()}
+});
+document.addEventListener("input",e=>{if(e.target.id!=="rvSearch")return;state.rv.q=e.target.value;const q=state.rv.q.trim().toLowerCase();let n=0;document.querySelectorAll("#main [data-s]").forEach(r=>{const ok=(state.rv.kind==="All"||(state.rv.kind==="Overdue"?r.dataset.od:r.dataset.k===state.rv.kind))&&(!q||r.dataset.s.includes(q));r.hidden=!ok;if(ok)n++});const c=$("#rvCount");if(c)c.textContent=plural(n,"item")+" shown"});
+document.addEventListener("change",e=>{if(e.target.id==="rvAll"){state.rv.all=e.target.checked;return render(true)}const s=e.target.closest("[data-choice]");if(s){state.choice[s.dataset.choice]=s.value;render(true)}});
+function doReview(btn){
+  const rid=btn.dataset.rid, act=btn.dataset.rvact, role=(($("#rvRole")||{}).value||"").trim(), note=(($("#rvNote")||{}).value||"").trim(), msg=$("#rvMsg");
+  const r=ITEMS.find(z=>z.rid===rid); if(!r)return;
+  if(!role){msg.textContent="Add your role first, so the review can be traced to someone.";$("#rvRole").focus();return}
+  if((act==="challenge"||act==="reject")&&!note){msg.textContent=act==="reject"?"Add the reason you are rejecting this challenge.":"Add a note saying what you would challenge.";$("#rvNote").focus();return}
+  state.role=role;
+  if(act==="accept"||act==="reject"){
+    respondChallenge(rid,Number(btn.dataset.ch),act==="accept"?"accepted":"rejected",role,note);
+    const t2=document.createElement("div");t2.innerHTML=provHtml(r.x,rid);$("#rvwrap").replaceWith(t2.firstElementChild);$("#rvwrap").focus();
+    toast(act==="accept"?"Challenge accepted. The item stays flagged until it is edited and reviewed (sample: kept in this page only)":"Challenge rejected with your reason (sample: kept in this page only)");
+    return render(true);
+  }
+  const val=act==="prefer"?((r.x.alternatives||[])[Number(btn.dataset.val)]||{}).value:null;
+  recordReview(rid,act==="ok"||act==="prefer"?"reviewed":"challenge",role,note,val);
+  const tmp=document.createElement("div");tmp.innerHTML=provHtml(r.x,rid);$("#rvwrap").replaceWith(tmp.firstElementChild);$("#rvwrap").focus();
+  const ev=EVENTS[EVENTS.length-1];
+  toast(act==="challenge"?(ev.notify?`Challenge recorded. A live build would notify ${ev.notify}${ev.notifyVia?" (owner of "+ev.notifyVia+")":""}. Sample: nothing is sent.`:"Challenge recorded. No owner found up the chain, so it stays in the review list only."):"Marked reviewed (sample: kept in this page only)");
+  render(true);
+}
+
+/* ---------- Ask Starling (chat overlay) ---------- */
+const CHATCFG=D.chat||{};
+function chatItems(arr){return arr.map(r=>`<button class="lnk" type="button" data-rec="${esc(r.rid)}">${esc(r.x.name)}</button>`).join("")}
+function chatIntents(){
+  const top=(arr,n)=>arr.slice(0,n);
+  return [
+   {k:["conflict","disagree","contradict","differ"],f:()=>{const c=ITEMS.filter(r=>!r.x.reviewed&&(flagsOf(r.x).includes("conflict")||(r.x.alternatives||[]).length));return{t:c.length?`${plural(c.length,"item")} ${c.length===1?"has":"have"} sources that disagree. ${top(c,3).map(r=>`${r.x.name}: ${(r.x.alternatives||[]).map(a=>a.value+(a.source?" ("+a.source+")":"")).join(" vs ")||"see record"}`).join(". ")}.`:"No unreviewed item currently has conflicting sources.",cites:top(c,5),act:[["Open the review list","#review"]]}}},
+   {k:["overdue","unanswered","escalat","challenge"],f:()=>{const o=ITEMS.filter(r=>overdueOf(r.x).length);return{t:o.length?`${plural(o.length,"item")} ${o.length===1?"has":"have"} a challenge unanswered for more than ${CH_DAYS} days. ${top(o,3).map(r=>r.x.name+": "+escLine(r.rid)).join(" ")}`:`No challenge has been unanswered for more than ${CH_DAYS} days.`,cites:top(o,5),act:[["Open the review list","#review"]]}}},
+   {k:["unlinked","not linked","no strategy","orphan","unaligned","align"],f:()=>{const its=initsOf(null),fte=r1(its.reduce((a,i)=>a+avgH(i),0));return{t:its.length?`${plural(its.length,"initiative")} ${its.length===1?"is":"are"} not linked to a strategy, about ${fmt(fte)} FTE on average in ${HZ.label||"the period"}. Largest: ${top([...its].sort((a,b)=>b.fte-a.fte),3).map(i=>i.name+" ("+fmt(i.fte)+" FTE)").join(", ")}.`:"Every initiative is linked to a strategy.",cites:top([...its].sort((a,b)=>b.fte-a.fte),3).map(i=>ITEMS.find(r=>r.rid==="i:"+i.id)).filter(Boolean),act:[["See it on the Strategy tab","#strategy"]]}}},
+   {k:["no initiative","no work","uncovered","without work","goals"],f:()=>{const g=goalsNoInit();return{t:g.length?`${g.length} of ${GOALS.length} goals have no initiative: ${top(g,8).map(x=>x.id).join(", ")}${g.length>8?", …":""}.`:"Every goal has at least one initiative.",cites:top(g,5).map(x=>ITEMS.find(r=>r.rid==="g:"+x.strat+":"+x.id)).filter(Boolean),act:[["See the Work tab","#work"]]}}},
+   {k:["unfunded"],f:()=>{const u=unfunded();return{t:u.length?`${plural(u.length,"initiative")} ${u.length===1?"is":"are"} unfunded: ${top(u,5).map(i=>i.name).join(", ")}${u.length>5?", …":""}.`:"No initiative is unfunded.",cites:top(u,5).map(i=>ITEMS.find(r=>r.rid==="i:"+i.id)).filter(Boolean),act:[["See the Work tab","#work"]]}}},
+   {k:["fte","coverage","stated","capacity","headcount"],f:()=>{const c=coverage();return{t:`${c.inRec} of ${c.stated} stated strategy FTE${c.pct===null?"":` (${c.pct}%)`} is in recorded, funded initiatives linked to a strategy.`,cites:[],act:[["See the Work tab","#work"]]}}},
+   {k:["owner","who owns","no owner","accountable"],f:()=>{const c=ITEMS.filter(r=>!r.x.reviewed&&flagsOf(r.x).includes("no_owner"));return{t:c.length?`${plural(c.length,"item")} ${c.length===1?"has":"have"} no owner: ${top(c,4).map(r=>r.x.name).join(", ")}${c.length>4?", …":""}.`:"No unreviewed item is flagged as having no owner.",cites:top(c,5),act:[["Open the review list","#review"]]}}},
+   {k:["decision","decide"],f:()=>({t:`${plural(decisionCount(),"decision")} ${decisionCount()===1?"is":"are"} waiting.`,cites:[],act:[["See Decisions","#decisions"]]})},
+   {k:["question","open"],f:()=>({t:`${plural(QUESTIONS.length,"question")} ${QUESTIONS.length===1?"is":"are"} open. ${top(QUESTIONS,3).map(q=>q.t+" (suggested decision maker "+q.dm+")").join(". ")}.`,cites:[],act:[["See open questions","#questions"]]})},
+   {k:["review","flag","unreviewed","trust","confiden","uncertain","check","wrong"],f:()=>{const fl=flaggedNow();return{t:`${fl.length} items are flagged by the import, and ${UNREVIEWED()} of ${ITEMS.length} have not yet been reviewed by an owner.${fl.length?` Flagged: ${top(fl,4).map(r=>r.x.name).join(", ")}${fl.length>4?", …":""}.`:""}`,cites:top(fl,5),act:[["Open the review list","#review"]]}}}
+  ];
+}
+function chatAnswer(q){
+  const l=q.toLowerCase(), has=k=>new RegExp("\\b"+k.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).test(l);
+  const own=(CHATCFG.answers||[]).find(c=>(c.k||[]).some(has));
+  let t,cites=[],act=[],basis=true;
+  if(own){t=own.a;cites=(own.cites||[]).map(id=>ITEMS.find(r=>r.rid===id)).filter(Boolean);act=own.act||[]}
+  else{const hit=chatIntents().find(c=>c.k.some(has));
+    if(hit){const r=hit.f();t=r.t;cites=r.cites||[];act=r.act||[]}
+    else{t="I can’t find that in the data on this page. In this sample I can answer about review and flags, conflicting sources, unlinked work, goals with no initiative, unfunded work, FTE coverage, owners, decisions and open questions.";basis=false}}
+  return `${esc(t)}${cites.length?`<div class="cites">${chatItems(cites)}</div>`:""}${act.length?`<div class="cites">${act.map(a=>`<a href="${esc(a[1])}" data-closechat>${esc(a[0])}</a>`).join("")}</div>`:""}${basis?`<div class="basis">Based on best guesses: ${UNREVIEWED()} of ${ITEMS.length} items are not yet reviewed.</div>`:""}`;
+}
+function chatMsg(cls,html){const d=document.createElement("div");d.className="msg "+cls;d.innerHTML=html;$("#chatMsgs").appendChild(d);$("#chatMsgs").scrollTop=$("#chatMsgs").scrollHeight}
+function ask(q){chatMsg("u",esc(q));setTimeout(()=>chatMsg("a",chatAnswer(q)),200)}
+function openChat(o,from){
+  $("#chat").hidden=!o;$("#chatFab").hidden=o;$("#chatFab").setAttribute("aria-expanded",o);$("#askTop").setAttribute("aria-expanded",o);
+  if(o){state.chatOpener=from||document.activeElement;$("#chatIn").focus()}else{const f=state.chatOpener;state.chatOpener=null;const el=f&&f.isConnected&&!f.hidden?f:$("#askTop");if(el)el.focus()}
+}
+document.addEventListener("click",e=>{const c=e.target.closest("[data-closechat]");if(c)openChat(false)});
+$("#chatForm").onsubmit=e=>{e.preventDefault();const v=$("#chatIn").value.trim();if(!v)return;$("#chatIn").value="";ask(v)};
+chatMsg("a",esc(CHATCFG.intro||"Ask what needs review, where sources disagree, what work is unlinked, or what decision is next. I answer from the data on this page and say how much of it is unreviewed."));
+$("#chatChips").innerHTML=(CHATCFG.chips||["What needs review?","Where do sources disagree?","What work is unlinked?","Which goals have no initiative?","What is open?"]).map(c=>`<button class="chip" type="button">${esc(c)}</button>`).join("");
+route();
+</script>
+
+</html>
