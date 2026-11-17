@@ -1,0 +1,1019 @@
+meta:
+  template_version: 0.2.0
+  client_alias: Autotrader Group plc (public sources)
+  started: '2026-11-17'
+  interviewer: consultant
+  overall_status: in_progress
+  scope_unit: company
+technical:
+  assumptions:
+  - text: Stand-in trial using public documents only. No technical questions were asked.
+    check_with_role: consultant
+claims:
+- id: C001
+  field: sources.inventory
+  value:
+    id: S1
+    kind: 'Annual report 2026: Our strategy (pp.8-9)'
+    evidence_role: said+done
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C002
+  field: sources.inventory
+  value:
+    id: S2
+    kind: Full year results press release, year to 31 Mar 2026 (21 May 2026)
+    evidence_role: said+done+understood
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C003
+  field: sources.inventory
+  value:
+    id: S3
+    kind: 'Annual report 2026: CEO''s statement (pp.5-7)'
+    evidence_role: said
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C004
+  field: sources.inventory
+  value:
+    id: S4
+    kind: 'Annual report 2026: Working responsibly (pp.24-42)'
+    evidence_role: said+done
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C005
+  field: sources.inventory
+  value:
+    id: S5
+    kind: Half year results to 30 Sep 2026, AI-generated summary only
+    evidence_role: done
+  origin: derived
+  confidence: high
+  status: unreviewed
+- id: C006
+  field: scope.description
+  value: Autotrader Group plc (public documents only)
+  origin: stated
+  confidence: high
+  status: unreviewed
+- id: C007
+  field: model.vision
+  value: Driving Change Together. Responsibly.
+  origin: derived
+  confidence: high
+  sources:
+  - source_id: S1
+    locator: p.8 / At a glance
+    quote: Driving Change Together. Responsibly.
+  flags:
+  - single_source
+  status: unreviewed
+  note: This is the stated purpose. No separate vision statement was found.
+- id: C008
+  field: model.objectives
+  value:
+    id: OBJ-1
+    name: Grow operating profit and EPS
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: FY27 outlook
+    quote: Group operating profit expected at £395m–£415m
+  flags:
+  - unclear
+  status: unreviewed
+  note: Stated as FY27 guidance, not as an objective. Treated as the top-level commercial objective.
+- id: C009
+  field: model.objectives
+  value:
+    id: OBJ-2
+    name: Return surplus capital to shareholders
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Capital allocation
+    quote: return about one third of net income via dividends
+  - source_id: S2
+    locator: FY27 outlook
+    quote: Shareholder returns of c.£600m, including c.£500m of share buybacks
+  flags:
+  - unclear
+  status: unreviewed
+  note: Capital allocation policy. No strategy or initiative in the sources serves it.
+- id: C010
+  field: model.objectives
+  value:
+    id: OBJ-3
+    name: Be a responsible business
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: p.24
+    quote: Our ESG strategy is underpinned by our purpose
+  flags:
+  - unclear
+  status: unreviewed
+  note: Taken from the purpose and the Working responsibly section.
+- id: C011
+  field: model.strategies
+  value:
+    id: ST1
+    name: 'Marketplace: be the best place to buy and sell a car'
+    status: not_assessed
+    objectives:
+    - OBJ-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.8
+    quote: Be the best place to buy and sell a car
+  flags:
+  - no_owner
+  status: unreviewed
+  note: No owner is named for this pillar in the sources.
+- id: C012
+  field: model.strategies
+  value:
+    id: ST2
+    name: 'Platform: be the industry''s data and technology platform'
+    status: not_assessed
+    objectives:
+    - OBJ-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.8
+    quote: Be the industry’s data and technology platform
+  flags:
+  - no_owner
+  status: unreviewed
+  note: No owner is named for this pillar in the sources.
+- id: C013
+  field: model.strategies
+  value:
+    id: ST3
+    name: 'Digital retailing: be the enabler for more to be done online'
+    status: not_assessed
+    objectives:
+    - OBJ-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.9
+    quote: Be the enabler for more to be done online
+  flags:
+  - no_owner
+  - conflict
+  alternatives:
+  - value: 'Three focus areas: marketplace, platform and digital retailing, with working responsibly embedded in all three'
+    source_id: S3
+    locator: p.5
+    quote: our marketplace; our platform; and digital retailing
+  status: unreviewed
+  note: The Our strategy page shows four pillars, but the CEO statement and the highlights page say three focus areas with working responsibly
+    embedded in everything. Counted four here so the page can show both; which is right is a question for the company.
+- id: C014
+  field: model.strategies
+  value:
+    id: ST4
+    name: 'Working responsibly: be a responsible business'
+    status: not_assessed
+    objectives:
+    - OBJ-3
+  origin: derived
+  confidence: low
+  sources:
+  - source_id: S1
+    locator: p.9
+    quote: Be a responsible business
+  flags:
+  - no_owner
+  - conflict
+  alternatives:
+  - value: 'Three focus areas: marketplace, platform and digital retailing, with working responsibly embedded in all three'
+    source_id: S3
+    locator: p.5
+    quote: our marketplace; our platform; and digital retailing
+  status: unreviewed
+  note: The Our strategy page shows four pillars, but the CEO statement and the highlights page say three focus areas with working responsibly
+    embedded in everything. Counted four here so the page can show both; which is right is a question for the company.
+- id: C015
+  field: model.goals
+  value:
+    id: ST1-1
+    name: Largest audience in UK car buying
+    strategy: ST1
+    measured: true
+    measures:
+    - name: Share of time on UK automotive marketplaces
+      kind: outcome
+      target: '6x all main competitors combined (FY25: 6x). No target'
+      current: 'yes'
+    - name: Cross-platform visits per month
+      kind: outcome
+      target: '81.7 million (FY25: 81.6 million). No target'
+      current: 'yes'
+  origin: inferred
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.8
+    quote: 6x more time was spent on Autotrader than all our main competitors combined.
+  flags:
+  - single_source
+  - unclear
+  status: unreviewed
+  note: Goal named from the KPIs the company reports under this pillar. Autotrader states targets for emissions and diversity only; commercial
+    KPIs have no stated target.
+- id: C016
+  field: model.goals
+  value:
+    id: ST1-2
+    name: Retailers stay and spend more
+    strategy: ST1
+    measured: true
+    measures:
+    - name: Average retailer forecourts
+      kind: outcome
+      target: '13,942 (FY25: 14,013). FY27 guided 1-2% lower'
+      current: 'yes'
+    - name: Average revenue per retailer (ARPR)
+      kind: outcome
+      target: '£2,995 (FY25: £2,854), up 5%. No target'
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Operational KPIs
+  flags:
+  - single_source
+  - unclear
+  status: unreviewed
+- id: C017
+  field: model.goals
+  value:
+    id: ST1-3
+    name: Widest choice of cars
+    strategy: ST1
+    measured: true
+    measures:
+    - name: Live car listings
+      kind: outcome
+      target: '451,000 (FY25: 449,000). No target'
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.8
+    quote: Live car listings increased marginally year-on-year to 451,000
+  flags:
+  - single_source
+  - unclear
+  status: unreviewed
+- id: C018
+  field: model.goals
+  value:
+    id: ST2-1
+    name: Grow use of data and technology services
+    strategy: ST2
+    measured: true
+    measures:
+    - name: API calls per month
+      kind: outcome
+      target: '155 million (FY25: 91 million). No target'
+      current: 'yes'
+    - name: Lender integrations
+      kind: output
+      target: Listed as a KPI; no figure found
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.8
+  flags:
+  - single_source
+  - unclear
+  status: unreviewed
+- id: C019
+  field: model.goals
+  value:
+    id: ST3-1
+    name: Scale Deal Builder with retailers
+    strategy: ST3
+    measured: true
+    measures:
+    - name: Deal Builder retailers
+      kind: outcome
+      target: 'c.6,700 in Mar 2026 (Mar 2025: c.2,000)'
+      current: 'yes'
+    - name: Deal Builder vehicles live
+      kind: outcome
+      target: '175k (Mar 2025: 84k)'
+      current: 'yes'
+    - name: Deals with full reservation
+      kind: outcome
+      target: '137k (FY25: 49k)'
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Operational KPIs
+  flags:
+  - single_source
+  - unclear
+  status: unreviewed
+- id: C020
+  field: model.goals
+  value:
+    id: ST3-2
+    name: Grow leasing
+    strategy: ST3
+    measured: true
+    measures:
+    - name: Autorama vehicle deliveries
+      kind: outcome
+      target: '8,056 (FY25: 6,268). No target'
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Operational KPIs
+  flags:
+  - single_source
+  - unclear
+  status: unreviewed
+- id: C021
+  field: model.goals
+  value:
+    id: ST4-1
+    name: Net zero in operations by 2040
+    strategy: ST4
+    measured: true
+    measures:
+    - name: Scope 1 and 2 emissions
+      kind: outcome
+      target: 50% cut by FY2030/31 from FY2022/23. Now 689 tCO2e, up from 320
+      target_year: 2031
+      current: 'yes'
+    - name: Scope 3 emissions
+      kind: outcome
+      target: 46.2% cut by FY2030/31. Now 143,435 tCO2e, up from 92,848
+      target_year: 2031
+      current: 'yes'
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: p.29-30,33
+    quote: committed to reaching net zero in its operations by 2040
+  flags:
+  - single_source
+  - unclear
+  status: unreviewed
+  note: Goal named from the KPIs the company reports under this pillar. Autotrader states targets for emissions and diversity only; commercial
+    KPIs have no stated target.
+- id: C022
+  field: model.goals
+  value:
+    id: ST4-2
+    name: More ethnically diverse senior management
+    strategy: ST4
+    measured: true
+    measures:
+    - name: Ethnically diverse senior managers (ALT and ALT-1)
+      kind: outcome
+      target: 10% by March 2027
+      target_year: 2027
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: p.38
+  flags:
+  - conflict
+  - unclear
+  alternatives:
+  - value: 'Ethnically diverse % of leadership is 9% (FY25: 10%) and of total staff 20%'
+    source_id: S2
+    locator: Cultural KPIs
+  - value: 'Ethnically diverse people on the Autotrader Leadership Team: 6%, unchanged'
+    source_id: S4
+    locator: p.38
+  status: unreviewed
+- id: C023
+  field: model.goals
+  value:
+    id: ST4-3
+    name: Colleagues proud to work here
+    strategy: ST4
+    measured: true
+    measures:
+    - name: Employees proud to work at Autotrader
+      kind: outcome
+      target: '72% (FY25: 91%). No target stated'
+      current: 'yes'
+  origin: inferred
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.9
+    quote: 72% of employees proud to work for Autotrader
+  flags:
+  - conflict
+  - unclear
+  alternatives:
+  - value: Listed as a Marketplace KPI (Employee engagement)
+    source_id: S1
+    locator: p.8
+  status: unreviewed
+- id: C024
+  field: model.opportunities
+  value:
+    id: ST3-a
+    name: Retailers pushed back on how fast Deal Builder rolled out
+    strategy: ST3
+    goal: ST3-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: p.5
+    quote: concerns with the speed and nature of our Deal Builder product roll-out
+  flags:
+  - single_source
+  status: unreviewed
+- id: C025
+  field: model.opportunities
+  value:
+    id: ST1-a
+    name: Return the prominence product to growth
+    strategy: ST1
+    goal: ST1-2
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: p.5
+    quote: returning prominence to long-term growth
+  flags:
+  - single_source
+  status: unreviewed
+- id: C026
+  field: model.opportunities
+  value:
+    id: ST1-b
+    name: Win back retailers
+    strategy: ST1
+    goal: ST1-2
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: p.5
+    quote: remain focused on winning back retailers
+  flags:
+  - single_source
+  status: unreviewed
+- id: C027
+  field: model.opportunities
+  value:
+    id: ST2-a
+    name: AI agents may treat Autotrader as a source of truth; under 1% of audience comes from AI chat today
+    strategy: ST2
+    goal: ST2-1
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: p.5-6
+    quote: rely on Autotrader as a trusted source of truth
+  flags:
+  - single_source
+  status: unreviewed
+- id: C028
+  field: work.initiatives
+  value:
+    id: I01
+    name: Co-Driver
+    links:
+    - strategy: ST1
+      goal: ST1-2
+    - strategy: ST2
+      goal: ST2-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.8
+    quote: Launch of Co-Driver product
+  flags:
+  - unclear
+  - conflict
+  status: unreviewed
+  note: 'Named in a public document. Link is inferred. Funding and FTE are not published at this level: funded assumed true; FTE unknown. Whole-company
+    headcount is 1,239 at 31 Mar 2026.'
+- id: C029
+  field: work.initiatives
+  value:
+    id: I02
+    name: Deal Builder
+    links:
+    - strategy: ST3
+      goal: ST3-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.9
+    quote: Deal Builder live with c.6,700 retailers in March 2026
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C030
+  field: work.initiatives
+  value:
+    id: I03
+    name: Buying Signals
+    links:
+    - strategy: ST3
+      goal: ST3-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.9
+    quote: Launch of Buying Signals
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C031
+  field: work.initiatives
+  value:
+    id: I04
+    name: Deal Builder retailer listening sessions and advisory groups
+    links:
+    - strategy: ST3
+      goal: ST3-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: p.7
+    quote: customer advisory groups
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C032
+  field: work.initiatives
+  value:
+    id: I05
+    name: Evolved package structure for the prominence product (H1 FY27)
+    links:
+    - strategy: ST1
+      goal: ST1-2
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: p.5
+    quote: evolved package structure
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C033
+  field: work.initiatives
+  value:
+    id: I06
+    name: '''I''m looking for'' AI-powered suggested search'
+    links:
+    - strategy: ST2
+      goal: ST2-1
+    - strategy: ST1
+      goal: ST1-1
+    funded: true
+    fte_by_quarter: []
+  origin: inferred
+  confidence: low
+  sources:
+  - source_id: S1
+    locator: p.8
+  flags:
+  - unclear
+  - conflict
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C034
+  field: work.initiatives
+  value:
+    id: I07
+    name: AI gateway for proprietary and open-source models
+    links:
+    - strategy: ST2
+      goal: ST2-1
+    funded: true
+    fte_by_quarter: []
+  origin: inferred
+  confidence: low
+  sources:
+  - source_id: S1
+    locator: p.8
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C035
+  field: work.initiatives
+  value:
+    id: I08
+    name: Technology partner and lender integrations
+    links:
+    - strategy: ST2
+      goal: ST2-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S1
+    locator: p.8
+    quote: Over 220 technology partners
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C036
+  field: work.initiatives
+  value:
+    id: I09
+    name: Leasing offers in core search and a more scalable leasing checkout
+    links:
+    - strategy: ST3
+      goal: ST3-2
+    funded: true
+    fte_by_quarter: []
+  origin: inferred
+  confidence: low
+  sources:
+  - source_id: S1
+    locator: p.8-9
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C037
+  field: work.initiatives
+  value:
+    id: I10
+    name: Autorama leasing (vehicles on balance sheet)
+    links:
+    - strategy: ST3
+      goal: ST3-2
+    - strategy: ST4
+      goal: ST4-1
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: p.34
+    quote: manage the volume of vehicles held on balance sheet through Autorama
+  flags:
+  - unclear
+  - conflict
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C038
+  field: work.initiatives
+  value:
+    id: I11
+    name: Responsible Change Forum (ESG governance)
+    links:
+    - strategy: ST4
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: p.26
+    quote: Responsible Change Forum
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C039
+  field: work.initiatives
+  value:
+    id: I12
+    name: Helping consumers make more sustainable vehicle choices
+    links:
+    - strategy: ST4
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: p.26
+    quote: helping consumers make more sustainable vehicle choices
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C040
+  field: work.initiatives
+  value:
+    id: I13
+    name: Digital inclusion roadmap with Good Things Foundation and Greater Manchester
+    links:
+    - strategy: ST4
+    funded: true
+    fte_by_quarter: []
+  origin: inferred
+  confidence: low
+  sources:
+  - source_id: S4
+    locator: p.27,39
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C041
+  field: work.initiatives
+  value:
+    id: I14
+    name: Carbon Literacy Trust toolkits for automotive and digital sectors
+    links:
+    - strategy: ST4
+      goal: ST4-1
+    funded: true
+    fte_by_quarter: []
+  origin: inferred
+  confidence: low
+  sources:
+  - source_id: S1
+    locator: p.9
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C042
+  field: work.initiatives
+  value:
+    id: I15
+    name: Energy, fleet and supplier climate actions
+    links:
+    - strategy: ST4
+      goal: ST4-1
+    funded: true
+    fte_by_quarter: []
+  origin: inferred
+  confidence: low
+  sources:
+  - source_id: S4
+    locator: p.34
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C043
+  field: work.initiatives
+  value:
+    id: I16
+    name: T-Level placement and L4 software engineering apprenticeship
+    links:
+    - strategy: ST4
+    funded: true
+    fte_by_quarter: []
+  origin: inferred
+  confidence: low
+  sources:
+  - source_id: S1
+    locator: p.9
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C044
+  field: work.initiatives
+  value:
+    id: I17
+    name: Cyber security and AI risk programme
+    links:
+    - strategy: ST4
+    funded: true
+    fte_by_quarter: []
+  origin: inferred
+  confidence: low
+  sources:
+  - source_id: S4
+    locator: p.40
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C045
+  field: work.initiatives
+  value:
+    id: I18
+    name: Employee engagement recovery plan
+    links:
+    - strategy: ST4
+      goal: ST4-3
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S3
+    locator: p.7
+    quote: committed to improving engagement over the next 12 months
+  flags:
+  - unclear
+  status: unreviewed
+  note: Named in a public document. Link inferred. Funded assumed; FTE unknown.
+- id: C046
+  field: work.initiatives
+  value:
+    id: I19
+    name: Move to one reported operating segment (FY27)
+    links: []
+    funded: true
+    fte_by_quarter: []
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: FY27 outlook
+    quote: Reporting moves to one operating segment from FY27
+  flags:
+  - unclear
+  status: unreviewed
+  note: Finance reporting change. Serves no pillar in the sources.
+- id: C047
+  field: cadence.horizon
+  value:
+    quarters:
+    - label: Q1 ’26-27
+      year: 2026
+    - label: Q2 ’26-27
+      year: 2026
+    - label: Q3 ’26-27
+      year: 2026
+    - label: Q4 ’26-27
+      year: 2027
+    horizon:
+      label: FY27 (Apr 2026 – Mar 2027)
+      from: 0
+      to: 3
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: FY27 outlook
+    quote: Group operating profit expected at £395m–£415m
+  flags:
+  - unclear
+  status: unreviewed
+  note: Guidance and the diversity target both run to March 2027.
+- id: C048
+  field: roles.owner
+  value:
+    id: ST4
+    owner: Responsible Change Forum (CEO, CFO and senior leaders), reporting to the Corporate Responsibility Committee
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: p.26
+  status: unreviewed
+- id: C049
+  field: roles.owner
+  value:
+    id: I17
+    owner: Chief Technology Officer
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S4
+    locator: p.40
+    quote: Chief Technology Officer
+  status: unreviewed
+- id: C050
+  field: evidence.understood
+  value:
+    measure: Employees proud to work at Autotrader
+    value: 72% in March 2026; 91% in March 2025; 97% in March 2024
+    reasons_given:
+    - restructures
+    - external factors
+    - tighter approach to working in the office
+    - fall in share price
+    - retailer sentiment about Deal Builder
+  origin: derived
+  confidence: high
+  sources:
+  - source_id: S2
+    locator: Cultural KPIs
+  - source_id: S3
+    locator: p.7
+    quote: It has been a challenging year for colleagues
+  flags:
+  - single_source
+  status: unreviewed
+  note: One company-wide measure. It does not say whether people understand the strategy. Other people measures such as recruitment and turnover
+    are said to be largely unchanged.
+- id: C051
+  field: evidence.done
+  value:
+    measure: Group headcount
+    value: 1,239 at 31 Mar 2026 (1,290 a year earlier); average 1,244 (1,267)
+  origin: derived
+  confidence: medium
+  sources:
+  - source_id: S2
+    locator: Cultural KPIs
+  - source_id: S4
+    locator: People section
+  flags:
+  - conflict
+  status: unreviewed
+  note: Two headcount figures. Not split by pillar or initiative.
+- id: C052
+  field: evidence.done
+  value:
+    measure: Half year to 30 Sep 2026
+    value: Operating profit guidance of £395-415m maintained; group revenue £313.4m
+  origin: derived
+  confidence: low
+  sources:
+  - source_id: S5
+    locator: Summary
+  flags:
+  - stale
+  - single_source
+  status: unreviewed
+  note: Only an AI-generated summary was readable. The full announcement was not read, so FY26 pages may already be superseded for the second
+    half of FY27.
+coverage_gaps:
+- tier: Initiatives
+  gap: no_fte_evidence
+- tier: Strategies
+  gap: owner_unknown
+- tier: Org objectives
+  gap: no_understood_evidence
+open_items:
+- claim_id: C006
+  flags:
+  - conflict
+  question: Does the company run on three focus areas or four pillars?
+  reviewer_role: Head of Strategy
+  needed_by: '2026-12-01'
+- claim_id: C007
+  flags:
+  - no_owner
+  question: Who owns each of the four pillars and the commercial objective?
+  reviewer_role: CEO
+  needed_by: '2026-12-01'
+- claim_id: C008
+  flags:
+  - unclear
+  question: Which strategy or initiative serves the capital return objective?
+  reviewer_role: CFO
+  needed_by: '2026-12-15'
+- claim_id: C009
+  flags:
+  - conflict
+  question: Is the engagement measure a Marketplace KPI, a Working responsibly KPI, or both, and what is the target?
+  reviewer_role: Chief People Officer
+  needed_by: '2026-12-15'

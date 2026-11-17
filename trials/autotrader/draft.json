@@ -1,0 +1,1318 @@
+{
+ "schema": "starling-data/1",
+ "meta": {
+  "org": "Autotrader Group plc (public sources)",
+  "team": "company",
+  "teamFull": "Autotrader Group plc (public documents only)",
+  "snapshot": "17 Nov 2026",
+  "sources": 5,
+  "claims": 52,
+  "built": "2026-11-17"
+ },
+ "text": {},
+ "quarters": [
+  {
+   "label": "Q1 ’26-27",
+   "year": 2026
+  },
+  {
+   "label": "Q2 ’26-27",
+   "year": 2026
+  },
+  {
+   "label": "Q3 ’26-27",
+   "year": 2026
+  },
+  {
+   "label": "Q4 ’26-27",
+   "year": 2027
+  }
+ ],
+ "horizon": {
+  "label": "FY27 (Apr 2026 – Mar 2027)",
+  "from": 0,
+  "to": 3
+ },
+ "vision": "Driving Change Together. Responsibly.",
+ "objectives": [
+  {
+   "id": "OBJ-1",
+   "name": "Grow operating profit and EPS",
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S2",
+     "locator": "FY27 outlook",
+     "quote": "Group operating profit expected at £395m–£415m"
+    }
+   ]
+  },
+  {
+   "id": "OBJ-2",
+   "name": "Return surplus capital to shareholders",
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S2",
+     "locator": "Capital allocation",
+     "quote": "return about one third of net income via dividends"
+    },
+    {
+     "source": "S2",
+     "locator": "FY27 outlook",
+     "quote": "Shareholder returns of c.£600m, including c.£500m of share buybacks"
+    }
+   ]
+  },
+  {
+   "id": "OBJ-3",
+   "name": "Be a responsible business",
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S4",
+     "locator": "p.24",
+     "quote": "Our ESG strategy is underpinned by our purpose"
+    }
+   ]
+  }
+ ],
+ "strategies": [
+  {
+   "id": "ST1",
+   "name": "Marketplace: be the best place to buy and sell a car",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-1"
+   ],
+   "goals": [
+    {
+     "id": "ST1-1",
+     "name": "Largest audience in UK car buying",
+     "strat": "ST1",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Share of time on UK automotive marketplaces",
+       "t": "6x all main competitors combined (FY25: 6x). No target",
+       "kind": "outcome",
+       "by": null
+      },
+      {
+       "m": "Cross-platform visits per month",
+       "t": "81.7 million (FY25: 81.6 million). No target",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "unclear"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "p.8",
+       "quote": "6x more time was spent on Autotrader than all our main competitors combined."
+      }
+     ]
+    },
+    {
+     "id": "ST1-2",
+     "name": "Retailers stay and spend more",
+     "strat": "ST1",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Average retailer forecourts",
+       "t": "13,942 (FY25: 14,013). FY27 guided 1-2% lower",
+       "kind": "outcome",
+       "by": null
+      },
+      {
+       "m": "Average revenue per retailer (ARPR)",
+       "t": "£2,995 (FY25: £2,854), up 5%. No target",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "unclear"
+     ],
+     "sources": [
+      {
+       "source": "S2",
+       "locator": "Operational KPIs"
+      }
+     ]
+    },
+    {
+     "id": "ST1-3",
+     "name": "Widest choice of cars",
+     "strat": "ST1",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Live car listings",
+       "t": "451,000 (FY25: 449,000). No target",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "unclear"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "p.8",
+       "quote": "Live car listings increased marginally year-on-year to 451,000"
+      }
+     ]
+    }
+   ],
+   "opps": [
+    {
+     "id": "ST1-a",
+     "name": "Return the prominence product to growth",
+     "goal": "ST1-2",
+     "strat": "ST1",
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S3",
+       "locator": "p.5",
+       "quote": "returning prominence to long-term growth"
+      }
+     ]
+    },
+    {
+     "id": "ST1-b",
+     "name": "Win back retailers",
+     "goal": "ST1-2",
+     "strat": "ST1",
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S3",
+       "locator": "p.5",
+       "quote": "remain focused on winning back retailers"
+      }
+     ]
+    }
+   ],
+   "conf": "medium",
+   "flags": [
+    "no_owner"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.8",
+     "quote": "Be the best place to buy and sell a car"
+    }
+   ]
+  },
+  {
+   "id": "ST2",
+   "name": "Platform: be the industry's data and technology platform",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-1"
+   ],
+   "goals": [
+    {
+     "id": "ST2-1",
+     "name": "Grow use of data and technology services",
+     "strat": "ST2",
+     "measured": true,
+     "measures": [
+      {
+       "m": "API calls per month",
+       "t": "155 million (FY25: 91 million). No target",
+       "kind": "outcome",
+       "by": null
+      },
+      {
+       "m": "Lender integrations",
+       "t": "Listed as a KPI; no figure found",
+       "kind": "output",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "unclear"
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "p.8"
+      }
+     ]
+    }
+   ],
+   "opps": [
+    {
+     "id": "ST2-a",
+     "name": "AI agents may treat Autotrader as a source of truth; under 1% of audience comes from AI chat today",
+     "goal": "ST2-1",
+     "strat": "ST2",
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S3",
+       "locator": "p.5-6",
+       "quote": "rely on Autotrader as a trusted source of truth"
+      }
+     ]
+    }
+   ],
+   "conf": "medium",
+   "flags": [
+    "no_owner"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.8",
+     "quote": "Be the industry’s data and technology platform"
+    }
+   ]
+  },
+  {
+   "id": "ST3",
+   "name": "Digital retailing: be the enabler for more to be done online",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-1"
+   ],
+   "goals": [
+    {
+     "id": "ST3-1",
+     "name": "Scale Deal Builder with retailers",
+     "strat": "ST3",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Deal Builder retailers",
+       "t": "c.6,700 in Mar 2026 (Mar 2025: c.2,000)",
+       "kind": "outcome",
+       "by": null
+      },
+      {
+       "m": "Deal Builder vehicles live",
+       "t": "175k (Mar 2025: 84k)",
+       "kind": "outcome",
+       "by": null
+      },
+      {
+       "m": "Deals with full reservation",
+       "t": "137k (FY25: 49k)",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "unclear"
+     ],
+     "sources": [
+      {
+       "source": "S2",
+       "locator": "Operational KPIs"
+      }
+     ]
+    },
+    {
+     "id": "ST3-2",
+     "name": "Grow leasing",
+     "strat": "ST3",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Autorama vehicle deliveries",
+       "t": "8,056 (FY25: 6,268). No target",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "unclear"
+     ],
+     "sources": [
+      {
+       "source": "S2",
+       "locator": "Operational KPIs"
+      }
+     ]
+    }
+   ],
+   "opps": [
+    {
+     "id": "ST3-a",
+     "name": "Retailers pushed back on how fast Deal Builder rolled out",
+     "goal": "ST3-1",
+     "strat": "ST3",
+     "conf": "medium",
+     "flags": [
+      "single_source"
+     ],
+     "sources": [
+      {
+       "source": "S3",
+       "locator": "p.5",
+       "quote": "concerns with the speed and nature of our Deal Builder product roll-out"
+      }
+     ]
+    }
+   ],
+   "conf": "medium",
+   "flags": [
+    "no_owner",
+    "conflict"
+   ],
+   "alternatives": [
+    {
+     "value": "Three focus areas: marketplace, platform and digital retailing, with working responsibly embedded in all three",
+     "source": "S3, p.5"
+    }
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.9",
+     "quote": "Be the enabler for more to be done online"
+    }
+   ]
+  },
+  {
+   "id": "ST4",
+   "name": "Working responsibly: be a responsible business",
+   "status": "na",
+   "stated": 0,
+   "objs": [
+    "OBJ-3"
+   ],
+   "goals": [
+    {
+     "id": "ST4-1",
+     "name": "Net zero in operations by 2040",
+     "strat": "ST4",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Scope 1 and 2 emissions",
+       "t": "50% cut by FY2030/31 from FY2022/23. Now 689 tCO2e, up from 320",
+       "by": "2031",
+       "kind": "outcome"
+      },
+      {
+       "m": "Scope 3 emissions",
+       "t": "46.2% cut by FY2030/31. Now 143,435 tCO2e, up from 92,848",
+       "by": "2031",
+       "kind": "outcome"
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "single_source",
+      "unclear"
+     ],
+     "sources": [
+      {
+       "source": "S4",
+       "locator": "p.29-30,33",
+       "quote": "committed to reaching net zero in its operations by 2040"
+      }
+     ]
+    },
+    {
+     "id": "ST4-2",
+     "name": "More ethnically diverse senior management",
+     "strat": "ST4",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Ethnically diverse senior managers (ALT and ALT-1)",
+       "t": "10% by March 2027",
+       "by": "2027",
+       "kind": "outcome"
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "conflict",
+      "unclear"
+     ],
+     "alternatives": [
+      {
+       "value": "Ethnically diverse % of leadership is 9% (FY25: 10%) and of total staff 20%",
+       "source": "S2, Cultural KPIs"
+      },
+      {
+       "value": "Ethnically diverse people on the Autotrader Leadership Team: 6%, unchanged",
+       "source": "S4, p.38"
+      }
+     ],
+     "sources": [
+      {
+       "source": "S4",
+       "locator": "p.38"
+      }
+     ]
+    },
+    {
+     "id": "ST4-3",
+     "name": "Colleagues proud to work here",
+     "strat": "ST4",
+     "measured": true,
+     "measures": [
+      {
+       "m": "Employees proud to work at Autotrader",
+       "t": "72% (FY25: 91%). No target stated",
+       "kind": "outcome",
+       "by": null
+      }
+     ],
+     "conf": "medium",
+     "flags": [
+      "conflict",
+      "unclear"
+     ],
+     "alternatives": [
+      {
+       "value": "Listed as a Marketplace KPI (Employee engagement)",
+       "source": "S1, p.8"
+      }
+     ],
+     "sources": [
+      {
+       "source": "S1",
+       "locator": "p.9",
+       "quote": "72% of employees proud to work for Autotrader"
+      }
+     ]
+    }
+   ],
+   "opps": [],
+   "conf": "low",
+   "flags": [
+    "no_owner",
+    "conflict"
+   ],
+   "alternatives": [
+    {
+     "value": "Three focus areas: marketplace, platform and digital retailing, with working responsibly embedded in all three",
+     "source": "S3, p.5"
+    }
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.9",
+     "quote": "Be a responsible business"
+    }
+   ],
+   "owner": "Responsible Change Forum (CEO, CFO and senior leaders), reporting to the Corporate Responsibility Committee"
+  }
+ ],
+ "initiatives": [
+  {
+   "id": "I01",
+   "name": "Co-Driver",
+   "strat": "ST1",
+   "goal": "ST1-2",
+   "links": [
+    {
+     "strat": "ST1",
+     "goal": "ST1-2",
+     "opp": null
+    },
+    {
+     "strat": "ST2",
+     "goal": "ST2-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear",
+    "conflict"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.8",
+     "quote": "Launch of Co-Driver product"
+    }
+   ]
+  },
+  {
+   "id": "I02",
+   "name": "Deal Builder",
+   "strat": "ST3",
+   "goal": "ST3-1",
+   "links": [
+    {
+     "strat": "ST3",
+     "goal": "ST3-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.9",
+     "quote": "Deal Builder live with c.6,700 retailers in March 2026"
+    }
+   ]
+  },
+  {
+   "id": "I03",
+   "name": "Buying Signals",
+   "strat": "ST3",
+   "goal": "ST3-1",
+   "links": [
+    {
+     "strat": "ST3",
+     "goal": "ST3-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.9",
+     "quote": "Launch of Buying Signals"
+    }
+   ]
+  },
+  {
+   "id": "I04",
+   "name": "Deal Builder retailer listening sessions and advisory groups",
+   "strat": "ST3",
+   "goal": "ST3-1",
+   "links": [
+    {
+     "strat": "ST3",
+     "goal": "ST3-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "p.7",
+     "quote": "customer advisory groups"
+    }
+   ]
+  },
+  {
+   "id": "I05",
+   "name": "Evolved package structure for the prominence product (H1 FY27)",
+   "strat": "ST1",
+   "goal": "ST1-2",
+   "links": [
+    {
+     "strat": "ST1",
+     "goal": "ST1-2",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "p.5",
+     "quote": "evolved package structure"
+    }
+   ]
+  },
+  {
+   "id": "I06",
+   "name": "'I'm looking for' AI-powered suggested search",
+   "strat": "ST2",
+   "goal": "ST2-1",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": "ST2-1",
+     "opp": null
+    },
+    {
+     "strat": "ST1",
+     "goal": "ST1-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "low",
+   "flags": [
+    "unclear",
+    "conflict"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.8"
+    }
+   ]
+  },
+  {
+   "id": "I07",
+   "name": "AI gateway for proprietary and open-source models",
+   "strat": "ST2",
+   "goal": "ST2-1",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": "ST2-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "low",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.8"
+    }
+   ]
+  },
+  {
+   "id": "I08",
+   "name": "Technology partner and lender integrations",
+   "strat": "ST2",
+   "goal": "ST2-1",
+   "links": [
+    {
+     "strat": "ST2",
+     "goal": "ST2-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.8",
+     "quote": "Over 220 technology partners"
+    }
+   ]
+  },
+  {
+   "id": "I09",
+   "name": "Leasing offers in core search and a more scalable leasing checkout",
+   "strat": "ST3",
+   "goal": "ST3-2",
+   "links": [
+    {
+     "strat": "ST3",
+     "goal": "ST3-2",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "low",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.8-9"
+    }
+   ]
+  },
+  {
+   "id": "I10",
+   "name": "Autorama leasing (vehicles on balance sheet)",
+   "strat": "ST3",
+   "goal": "ST3-2",
+   "links": [
+    {
+     "strat": "ST3",
+     "goal": "ST3-2",
+     "opp": null
+    },
+    {
+     "strat": "ST4",
+     "goal": "ST4-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear",
+    "conflict"
+   ],
+   "sources": [
+    {
+     "source": "S4",
+     "locator": "p.34",
+     "quote": "manage the volume of vehicles held on balance sheet through Autorama"
+    }
+   ]
+  },
+  {
+   "id": "I11",
+   "name": "Responsible Change Forum (ESG governance)",
+   "strat": "ST4",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S4",
+     "locator": "p.26",
+     "quote": "Responsible Change Forum"
+    }
+   ]
+  },
+  {
+   "id": "I12",
+   "name": "Helping consumers make more sustainable vehicle choices",
+   "strat": "ST4",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S4",
+     "locator": "p.26",
+     "quote": "helping consumers make more sustainable vehicle choices"
+    }
+   ]
+  },
+  {
+   "id": "I13",
+   "name": "Digital inclusion roadmap with Good Things Foundation and Greater Manchester",
+   "strat": "ST4",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "low",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S4",
+     "locator": "p.27,39"
+    }
+   ]
+  },
+  {
+   "id": "I14",
+   "name": "Carbon Literacy Trust toolkits for automotive and digital sectors",
+   "strat": "ST4",
+   "goal": "ST4-1",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": "ST4-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "low",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.9"
+    }
+   ]
+  },
+  {
+   "id": "I15",
+   "name": "Energy, fleet and supplier climate actions",
+   "strat": "ST4",
+   "goal": "ST4-1",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": "ST4-1",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "low",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S4",
+     "locator": "p.34"
+    }
+   ]
+  },
+  {
+   "id": "I16",
+   "name": "T-Level placement and L4 software engineering apprenticeship",
+   "strat": "ST4",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "low",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S1",
+     "locator": "p.9"
+    }
+   ]
+  },
+  {
+   "id": "I17",
+   "name": "Cyber security and AI risk programme",
+   "strat": "ST4",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": null,
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "low",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S4",
+     "locator": "p.40"
+    }
+   ]
+  },
+  {
+   "id": "I18",
+   "name": "Employee engagement recovery plan",
+   "strat": "ST4",
+   "goal": "ST4-3",
+   "links": [
+    {
+     "strat": "ST4",
+     "goal": "ST4-3",
+     "opp": null
+    }
+   ],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S3",
+     "locator": "p.7",
+     "quote": "committed to improving engagement over the next 12 months"
+    }
+   ]
+  },
+  {
+   "id": "I19",
+   "name": "Move to one reported operating segment (FY27)",
+   "links": [],
+   "fte": 0,
+   "q": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "funded": true,
+   "disc": false,
+   "benef": "Not recorded",
+   "com": 0,
+   "comRisk": 0,
+   "capSens": false,
+   "conf": "medium",
+   "flags": [
+    "unclear"
+   ],
+   "sources": [
+    {
+     "source": "S2",
+     "locator": "FY27 outlook",
+     "quote": "Reporting moves to one operating segment from FY27"
+    }
+   ]
+  }
+ ],
+ "pilot": [],
+ "questions": [
+  {
+   "id": "Q1",
+   "cat": "Conflict",
+   "t": "Does the company run on three focus areas or four pillars?",
+   "why": "Flagged: conflict",
+   "dm": "Head of Strategy"
+  },
+  {
+   "id": "Q2",
+   "cat": "No owner",
+   "t": "Who owns each of the four pillars and the commercial objective?",
+   "why": "Flagged: no_owner",
+   "dm": "CEO"
+  },
+  {
+   "id": "Q3",
+   "cat": "Unclear",
+   "t": "Which strategy or initiative serves the capital return objective?",
+   "why": "Flagged: unclear",
+   "dm": "CFO"
+  },
+  {
+   "id": "Q4",
+   "cat": "Conflict",
+   "t": "Is the engagement measure a Marketplace KPI, a Working responsibly KPI, or both, and what is the target?",
+   "why": "Flagged: conflict",
+   "dm": "Chief People Officer"
+  }
+ ],
+ "changes": [],
+ "claimDocs": [
+  {
+   "id": "S1",
+   "kind": "Annual report 2026: Our strategy (pp.8-9)",
+   "n": 18,
+   "conflicts": 5
+  },
+  {
+   "id": "S2",
+   "kind": "Full year results press release, year to 31 Mar 2026 (21 May 2026)",
+   "n": 9,
+   "conflicts": 1
+  },
+  {
+   "id": "S3",
+   "kind": "Annual report 2026: CEO's statement (pp.5-7)",
+   "n": 8,
+   "conflicts": 0
+  },
+  {
+   "id": "S4",
+   "kind": "Annual report 2026: Working responsibly (pp.24-42)",
+   "n": 12,
+   "conflicts": 3
+  },
+  {
+   "id": "S5",
+   "kind": "Half year results to 30 Sep 2026, AI-generated summary only",
+   "n": 1,
+   "conflicts": 0
+  }
+ ],
+ "modelChecks": [],
+ "otherDecisions": []
+}
